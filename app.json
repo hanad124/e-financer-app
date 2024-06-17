@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "expense-tracker-app",
+    "scheme": "expense-tracker-app",
     "slug": "expense-tracker-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -22,6 +23,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": ["expo-router"]
   }
 }
