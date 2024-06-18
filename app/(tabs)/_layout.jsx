@@ -1,21 +1,17 @@
-import { View, Text, Image } from "react-native";
-import { Tabs, Redirect } from "expo-router";
-
+import React from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { Tabs } from "expo-router";
 import { icons } from "../../assets/constants";
 
-const TabIcon = ({ focused, icon, color, name, ...props }) => {
+const TabIcon = ({ focused, icon, color, name, isCreateTab }) => {
+  const imageStyle = isCreateTab
+    ? styles.createIcon
+    : [styles.icon, { tintColor: focused ? color : "rgba(0,0,0,0.5)" }];
   return (
-    <View className="items-center gap-1 justify-center">
-      <Image
-        source={icon}
-        resizeMode="contain"
-        tintColor={focused ? color : "rgba(0,0,0,0.5)"}
-        className={`w-5 h-5 ${focused ? "tint-primary" : "tint-gray-400"}`}
-      />
+    <View style={styles.tabItem}>
+      <Image source={icon} resizeMode="contain" style={imageStyle} />
       <Text
-        className={`
-      ${focused ? "font-psemibold text-primary" : "font-pregular"} text-[10px]
-        `}
+        style={[styles.text, { color: focused ? color : "rgba(0,0,0,0.5)" }]}
       >
         {name}
       </Text>
@@ -25,100 +21,118 @@ const TabIcon = ({ focused, icon, color, name, ...props }) => {
 
 const TabsLayout = () => {
   return (
-    <>
-      <Tabs
-        initialRouteName="home"
-        screenOptions={{
-          tabBarShowLabel: false,
-          tabBarActiveTintColor: "#6957E7",
-          tabBarInactiveTintColor: "rgba(0,0,0,0.5)",
-
-          tabBarStyle: {
-            paddingVertical: 10,
-            height: 70,
-            borderTopLeftRadius: 25,
-            borderTopRightRadius: 25,
-          },
+    <Tabs
+      initialRouteName="home"
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: "#6957E7",
+        tabBarInactiveTintColor: "rgba(0,0,0,0.5)",
+        tabBarStyle: {
+          paddingVertical: 10,
+          height: 70,
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: "Home",
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              icon={icons.HomeIcon}
+              color="#6957E7"
+              focused={focused}
+              name="Home"
+            />
+          ),
         }}
-      >
-        <Tabs.Screen
-          name="home"
-          options={{
-            title: "Home",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.HomeIcon}
-                color={"#6957E7"}
-                focused={focused}
-                name="Home"
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="statistics"
-          options={{
-            title: "Statistics",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.statisticsIcon}
-                color={"#6957E7"}
-                focused={focused}
-                name="Statistics"
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="create"
-          options={{
-            title: "Create",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.addIcon}
-                focused={focused}
-                name="Create"
-                color={"#6957E7"}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="goals"
-          options={{
-            title: "goals",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.heartIcon}
-                color={"#6957E7"}
-                focused={focused}
-                name="goals"
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: "profile",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.userIcon}
-                color={"#6957E7"}
-                focused={focused}
-                name="profile"
-              />
-            ),
-          }}
-        />
-      </Tabs>
-    </>
+      />
+      <Tabs.Screen
+        name="statistics"
+        options={{
+          title: "Statistics",
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              icon={icons.statisticsIcon}
+              color="#6957E7"
+              focused={focused}
+              name="Statistics"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: "Add Transaction",
+          // headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              icon={icons.addIcon}
+              focused={focused}
+              color="#6957E7"
+              isCreateTab={true}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="goals"
+        options={{
+          title: "Goals",
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              icon={icons.heartIcon}
+              color="#6957E7"
+              focused={focused}
+              name="Goals"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              icon={icons.userIcon}
+              color="#6957E7"
+              focused={focused}
+              name="Profile"
+            />
+          ),
+        }}
+      />
+    </Tabs>
   );
 };
+
+const styles = StyleSheet.create({
+  tabItem: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    width: 20,
+    height: 20,
+  },
+  text: {
+    fontSize: 10,
+    fontFamily: "sans-serif",
+  },
+  createIcon: {
+    top: -30,
+
+    width: 50,
+    height: 50,
+  },
+});
 
 export default TabsLayout;

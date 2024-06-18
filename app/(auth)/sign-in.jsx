@@ -14,9 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import { Eye, EyeOff, Loader } from "lucide-react-native";
 import { login } from "../../apicalls/auth";
-import { getToken, saveToken } from "../../utils/storage"; // Import your token storage functions
+import { getToken, saveToken } from "../../utils/storage";
 
-// Define validation schema using zod
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
@@ -41,8 +40,9 @@ const SignIn = () => {
       console.log("token", token);
       if (token) {
         // Redirect to home screen or dashboard if user is already authenticated
-        router.push("/home");
+        // router.push("/home");
       }
+      // router.push("/sign-in");
     };
     checkAuth();
   }, []);

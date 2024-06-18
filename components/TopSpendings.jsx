@@ -6,13 +6,12 @@ import rightArrowIcon from "../assets/icons/rightarrow-icon.png";
 const TopSpendings = () => {
   const { categories } = useCategoriesStore();
 
-  console.log("categories", categories);
   const categoriesData = categories.categories;
 
   return (
     <View>
       <View className="flex flex-row justify-between items-center">
-        <Text className="text-lg font-bold">Top Spendings</Text>
+        <Text className="text-lg font-pmedium">Top Spendings</Text>
         <Image
           source={rightArrowIcon}
           resizeMode="contain"

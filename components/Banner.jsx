@@ -85,13 +85,15 @@ const Banner = () => {
           <Text className="text-white text-start text-sm ">
             {" "}
             <Text className="text-white text-start mt-2">
-              ${transactions?.startOfMonthExpense}
+              {/* ${transactions?.startOfMonthExpense} */}
+              $44
             </Text>
           </Text>
           <Text className="text-white text-right text-sm">
             {" "}
             <Text className="text-white text-start mt-2">
-              ${transactions?.totalMonthlyExpense}
+              {/* ${transactions?.totalMonthlyExpense} */}
+              $340
             </Text>
           </Text>
         </View>

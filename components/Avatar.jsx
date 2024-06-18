@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useAuthStore } from "../store/auth";
+import { removeToken } from "../utils/storage";
 
 const Avatar = () => {
   const user = useAuthStore((state) => state.user);
@@ -19,10 +20,23 @@ const Avatar = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: userData.avatar }} style={styles.avatar} />
+    <View
+      style={styles.container}
+      // onPress={() => {
+      //   alert("Image loading...");
+      //   removeToken();
+      // }}
+    >
+      <TouchableOpacity
+        onPress={() => {
+          alert("Removing token...");
+          removeToken();
+        }}
+      >
+        <Image source={{ uri: userData?.avatar }} style={styles.avatar} />
+      </TouchableOpacity>
       <View style={styles.textContainer}>
-        <Text style={styles.name}>Hello {userData.name}</Text>
+        <Text style={styles.name}>Hello {userData?.name}</Text>
         <Text style={styles.email}>{greeting}</Text>
       </View>
     </View>

@@ -24,6 +24,7 @@ export const getToken = async () => {
 export const removeToken = async () => {
   try {
     await AsyncStorage.removeItem("token");
+    console.log("Token removed from AsyncStorage");
   } catch (error) {
     console.error("Error removing token from AsyncStorage:", error);
   }

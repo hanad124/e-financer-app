@@ -13,7 +13,7 @@ const AuthLayout = () => {
         // Redirect to home screen or dashboard if user is already authenticated
         router.push("/home");
       } else {
-        router.push("/auth/sign-in");
+        router.push("/sign-in");
       }
     };
     checkAuth();
