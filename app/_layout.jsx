@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { Slot, Stack } from "expo-router";
+import { Slot, Stack, router } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import SessionProvider from "../components/ctx";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,6 +35,18 @@ const RootLayout = () => {
     <Stack>
       <Stack.Screen
         name="index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="(auth)"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="(tabs)"
         options={{
           headerShown: false,
         }}

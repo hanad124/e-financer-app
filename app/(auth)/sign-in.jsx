@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
-import { useForm, Controller } from "react-hook-form";
+import { Link, router } from "expo-router";
+import { useForm, Controller, set } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
-import { Eye, EyeOff } from "lucide-react-native";
+import { Eye, EyeOff, Loader } from "lucide-react-native";
+import { login } from "../../apicalls/auth";
+import { getToken, saveToken } from "../../utils/storage"; // Import your token storage functions
 
 // Define validation schema using zod
 const signInSchema = z.object({
@@ -22,6 +24,8 @@ const signInSchema = z.object({
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -30,16 +34,40 @@ const SignIn = () => {
     resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-    // Handle sign-in logic here
-    alert("Sign in successful");
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await getToken();
+      console.log("token", token);
+      if (token) {
+        // Redirect to home screen or dashboard if user is already authenticated
+        router.push("/home");
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      const res = await login(data);
+      if (res.status === 200) {
+        setLoading(false);
+        await saveToken(res.data.user.token);
+        router.push("/home");
+      } else {
+        alert(`${res.data.message}`);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("API call error", error);
+    }
   };
 
   return (
-    <SafeAreaView className="h-full">
-      <ScrollView>
-        <View className="w-full justify-center h-full px-4 my-6 mt-10">
+    <SafeAreaView>
+      <ScrollView className="">
+        <View className="w-full justify-center min-h-[90vh] px-4 my-6 mt-10">
           <Text className="text-3xl text-black font-bold text-center">
             Welcome Back
           </Text>
@@ -111,11 +139,14 @@ const SignIn = () => {
               Forgot password?
             </Link>
 
-            <View className="mt-6">
+            <View className="mt-10">
               <CustomButton
                 text="Sign In"
                 handlePress={handleSubmit(onSubmit)}
-                containerStyles={"w-full mt-6 "}
+                containerStyles={`w-full mt-6 flex items-center gap-2 justify-center
+                } `}
+                isLoading={loading}
+                loadinState={"logging in..."}
               />
             </View>
           </View>
