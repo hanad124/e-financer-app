@@ -65,8 +65,6 @@ const GroupedBars = () => {
     fetchTransactions();
   }, [selectedFilter, transactions]);
 
-  console.log("Transactions:", transactions?.transactions); // Debug output
-
   useEffect(() => {
     const now = dayjs();
     const filtered = transactions.transactions?.filter((t) =>
@@ -109,7 +107,6 @@ const GroupedBars = () => {
         break;
     }
 
-    console.log("Filtered Transactions:", filtered); // Debug output
     setFilteredTransactions(filtered);
   };
 
@@ -170,7 +167,6 @@ const GroupedBars = () => {
       },
     ]);
 
-    console.log("Bar Data:", barData); // Debug output
     return barData;
   };
 
@@ -314,7 +310,7 @@ const GroupedBars = () => {
                 ?.slice(0, 11)
                 .reverse()
                 .map((transaction) => (
-                  <>
+                  <View key={transaction?.id}>
                     {
                       <View
                         className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
@@ -348,7 +344,7 @@ const GroupedBars = () => {
                         </Text>
                       </View>
                     }
-                  </>
+                  </View>
                 ))}
             </View>
           </View>

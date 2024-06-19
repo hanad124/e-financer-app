@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
-import { Loader } from "lucide-react-native";
+import { View, Text, TouchableOpacity, Animated, Easing } from "react-native";
+import React, { useRef, useEffect } from "react";
+import Feather from "@expo/vector-icons/Feather";
 
 const CustomButton = ({
   text,
@@ -9,30 +9,72 @@ const CustomButton = ({
   isLoading,
   loadinState,
 }) => {
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (isLoading) {
+      Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinValue.stopAnimation();
+    }
+  }, [isLoading]);
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
   return (
     <TouchableOpacity
-      className={`bg-primary rounded-lg w-full text-center py-4 ${containerStyles} `}
+      style={{
+        ...styles.buttonContainer,
+        ...containerStyles,
+        ...{ opacity: isLoading ? 0.5 : 1, 
+          marginTop: 24,
+         },
+        
+      }}
       onPress={handlePress}
     >
       {isLoading ? (
-        <View className="flex" style={styles.button}>
-          <Text className="text-white text-center">{loadinState}</Text>
-          <Loader size={18} color="white" className="animate-spin" />
+        <View style={styles.button}>
+          <Text style={styles.text}>{loadinState}</Text>
+          <Animated.View style={{ transform: [{ rotate: spin }] }}>
+            <Feather name="loader" size={18} color="white" />
+          </Animated.View>
         </View>
       ) : (
-        <Text className="text-white text-center">{text}</Text>
+        <Text style={styles.text}>{text}</Text>
       )}
     </TouchableOpacity>
   );
 };
 
-export default CustomButton;
-
 const styles = {
+  buttonContainer: {
+    backgroundColor: "#6957E7",
+    borderRadius: 10,
+    width: "100%",
+    textAlign: "center",
+    paddingVertical: 16,
+  },
   button: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 4,
   },
+  text: {
+    color: "white",
+    textAlign: "center",
+  },
 };
+
+export default CustomButton;

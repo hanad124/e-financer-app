@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import { Eye, EyeOff, Loader } from "lucide-react-native";
 import { login } from "../../apicalls/auth";
-import { getToken, saveToken } from "../../utils/storage";
+import { getToken, saveToken, saveUser } from "../../utils/storage";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -39,10 +39,10 @@ const SignIn = () => {
     const checkAuth = async () => {
       const token = await getToken();
       console.log("token", token);
-      if (token) {
-        // Redirect to home screen or dashboard if user is already authenticated
-        // router.push("/home");
-      }
+      // if (token) {
+      //   // Redirect to home screen or dashboard if user is already authenticated
+      //   router.push("/home");
+      // }
       // router.push("/sign-in");
     };
     checkAuth();
@@ -55,6 +55,7 @@ const SignIn = () => {
       if (res.status === 200) {
         setLoading(false);
         await saveToken(res.data.user.token);
+        await saveUser(res.data.user);
         router.push("/home");
         reset();
       } else {
@@ -141,9 +142,9 @@ const SignIn = () => {
               Forgot password?
             </Link>
 
-            <View className="mt-10">
+            <View className="">
               <CustomButton
-                text="Sign In"
+                text="Log in"
                 handlePress={handleSubmit(onSubmit)}
                 containerStyles={`w-full mt-6 flex items-center gap-2 justify-center
                 } `}

@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import { useAuthStore } from "../../store/auth";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { getUser } from "../../utils/storage";
 
 import BannerImage from "../../assets/images/banner-img.png";
 
@@ -37,6 +38,7 @@ const Profile = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -45,6 +47,14 @@ const Profile = () => {
       description: userData?.description,
     },
   });
+
+  useEffect(() => {
+    console.log("userData", userData);
+
+    setValue("name", userData?.name);
+    setValue("email", userData?.email);
+    setValue("description", userData?.description);
+  }, [useAuthStore.getState().user]);
 
   const onSubmit = (data) => {
     console.log("data", data);

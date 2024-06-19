@@ -29,3 +29,23 @@ export const removeToken = async () => {
     console.error("Error removing token from AsyncStorage:", error);
   }
 };
+
+// store user data in AsyncStorage
+export const saveUser = async (user) => {
+  try {
+    await AsyncStorage.setItem("user", JSON.stringify(user));
+  } catch (error) {
+    console.error("Error saving user to AsyncStorage:", error);
+  }
+};
+
+// get user data from AsyncStorage
+export const getUser = async () => {
+  try {
+    const user = await AsyncStorage.getItem("user");
+    return JSON.parse(user);
+  } catch (error) {
+    console.error("Error getting user from AsyncStorage:", error);
+    return null;
+  }
+};

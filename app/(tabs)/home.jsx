@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <SafeAreaView>
       <ScrollView className="">
-        <View className="w-full  min-h-[90vh] px-4 my-6 mt-6 bg-white">
+        <View className="w-full  min-h-[90vh] px-4 my-6 pt-6 bg-white">
           <Avatar />
           <Banner />
           <TopSpendings />

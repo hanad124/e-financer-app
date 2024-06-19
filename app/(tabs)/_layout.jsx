@@ -28,8 +28,8 @@ const TabsLayout = () => {
         tabBarActiveTintColor: "#6957E7",
         tabBarInactiveTintColor: "rgba(0,0,0,0.5)",
         tabBarStyle: {
-          paddingVertical: 10,
-          height: 70,
+          paddingVertical: 5,
+          height: 60,
           borderTopLeftRadius: 25,
           borderTopRightRadius: 25,
         },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     fontFamily: "sans-serif",
   },
   createIcon: {
-    top: -30,
+    top: -23,
     width: 50,
     height: 50,
   },

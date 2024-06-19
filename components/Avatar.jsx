@@ -10,13 +10,17 @@ import {
 import { useAuthStore } from "../store/auth";
 import { removeToken } from "../utils/storage";
 import { useNavigation, router } from "expo-router";
+import { getUser } from "../utils/storage";
 
 import { LogOut } from "lucide-react-native";
 
 const Avatar = () => {
   const user = useAuthStore((state) => state.user);
-  const userData = user?.data;
+  // const userData = user?.data;
   const [greeting, setGreeting] = useState("");
+  const [userData, setUserData] = useState("");
+
+  console.log("userData", userData);
 
   const navigation = useNavigation();
 
@@ -29,6 +33,15 @@ const Avatar = () => {
     } else {
       setGreeting("Good evening");
     }
+  }, []);
+
+  // get user data from AsyncStorage
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getUser();
+      setUserData(user);
+    };
+    fetchUser();
   }, []);
 
   return (

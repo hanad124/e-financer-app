@@ -6,6 +6,7 @@ import rightArrowIcon from "../assets/icons/rightarrow-icon.png";
 const TopSpendings = () => {
   const { categories } = useCategoriesStore();
 
+  console.log("categories", categories);
   const categoriesData = categories.categories;
 
   return (

@@ -335,8 +335,7 @@ const UpdateTransaction = () => {
                     );
                   }
                 }}
-                containerStyles={`w-full mt-6 
-                  } `}
+                containerStyles="w-full mt-6 "
                 isLoading={loading}
                 loadinState={"updating transaction..."}
               />

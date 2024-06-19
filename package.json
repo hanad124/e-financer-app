@@ -25,6 +25,7 @@
     "expo-status-bar": "~1.12.1",
     "https": "^1.0.0",
     "lucide-react-native": "^0.395.0",
+    "moti": "^0.29.0",
     "native-base": "2.13.8",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
