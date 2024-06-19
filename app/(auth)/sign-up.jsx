@@ -5,7 +5,10 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  ToastAndroid,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { useForm, Controller, set } from "react-hook-form";
@@ -27,9 +30,12 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const navigation = useNavigation();
+
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(signUpSchema),
@@ -39,23 +45,13 @@ const SignIn = () => {
     setLoading(true);
     try {
       const res = await signUp(data);
-      console.log("res", res);
-      if (res.status === 200) {
-        // Toast.show({
-        //   type: "success",
-        //   text1: "Success",
-        //   text2: "Login successful",
-        // });
+      if (res.data.success) {
+        ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
+        router.push("/sign-in");
         setLoading(false);
-        alert(`${res.data.message}`);
-        router.push("/home");
+        reset();
       } else {
-        // Toast.show({
-        //   type: "error",
-        //   text1: "Error",
-        //   text2: "Login failed",
-        // });
-        alert(`${res.data.message}`);
+        ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
         setLoading(false);
       }
     } catch (error) {

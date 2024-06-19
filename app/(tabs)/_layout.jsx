@@ -69,7 +69,6 @@ const TabsLayout = () => {
         name="create"
         options={{
           title: "Add Transaction",
-          // headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TabIcon
               icon={icons.addIcon}
@@ -129,7 +128,6 @@ const styles = StyleSheet.create({
   },
   createIcon: {
     top: -30,
-
     width: 50,
     height: 50,
   },

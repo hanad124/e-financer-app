@@ -10,7 +10,7 @@ export const useAuthStore = create((set) => ({
       const res = await getUserInfo();
       set({ user: res.data });
     } catch (error) {
-      console.error("API call error", error);
+      console.error("API call error::::::", error);
     }
   },
 }));

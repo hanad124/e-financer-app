@@ -1,11 +1,25 @@
 import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
+import { useState, useEffect } from "react";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../assets/constants";
 import CustomButton from "../components/CustomButton";
+import SplashScreenView from "../SplashScreenView";
 
 export default function Page() {
+  const [isShowSplashSCreen, setIsShowSplashScreen] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsShowSplashScreen(false);
+    }, 3000);
+  }, []);
+
+  if (isShowSplashSCreen) {
+    return <SplashScreenView />;
+  }
+
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView className="" contentContainerStyle={{ height: "100%" }}>

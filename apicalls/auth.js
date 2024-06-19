@@ -30,7 +30,7 @@ export const getUserInfo = async () => {
     console.log("response", res);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    console.error("API call error:::::", error);
     return error.response;
   }
 };

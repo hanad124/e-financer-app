@@ -30,6 +30,9 @@ export const useTransactionsStore = create((set) => ({
     const res = await deleteTransaction(payload);
     set({ transactions: [...transactions, res.data] });
   },
+
+  transactionId: "",
+  setTransactionId: (id) => set({ transactionId: id }),
 }));
 
 const initializeStore = async () => {

@@ -12,7 +12,7 @@ import uppIcon from "../assets/icons/up-icon.png";
 import downIcon from "../assets/icons/down-icon.png";
 import { useTransactionsStore } from "../store/transactions";
 const Banner = () => {
-  const [progress, setProgress] = useState(57);
+  const [progress, setProgress] = useState(0);
   const animatedValue = useRef(new Animated.Value(0)).current;
   const isFirstRender = useRef(true);
 
@@ -86,14 +86,14 @@ const Banner = () => {
             {" "}
             <Text className="text-white text-start mt-2">
               {/* ${transactions?.startOfMonthExpense} */}
-              $44
+              $0
             </Text>
           </Text>
           <Text className="text-white text-right text-sm">
             {" "}
             <Text className="text-white text-start mt-2">
               {/* ${transactions?.totalMonthlyExpense} */}
-              $340
+              $0
             </Text>
           </Text>
         </View>

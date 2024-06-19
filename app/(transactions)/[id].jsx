@@ -19,10 +19,17 @@ import { useTransactionsStore } from "../../store/transactions";
 import { RadioButton } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import { createTransaction } from "../../apicalls/transactions";
+import {
+  createTransaction,
+  getTransactionById,
+  updateTransaction,
+} from "../../apicalls/transactions";
 
 import ExpenseIcon from "../../assets/icons/expense-icon.png";
 import IncomeIcon from "../../assets/icons/income-icon.png";
+import { router, useNavigation } from "expo-router";
+
+import { ArrowLeft } from "lucide-react-native";
 
 const TransactionSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -32,8 +39,10 @@ const TransactionSchema = z.object({
   description: z.string().optional(),
 });
 
-const Create = () => {
+const UpdateTransaction = () => {
   const { categories } = useCategoriesStore();
+
+  const navigation = useNavigation();
 
   const transactionTypes = [
     {
@@ -63,7 +72,35 @@ const Create = () => {
     register,
   } = useForm({
     resolver: zodResolver(TransactionSchema),
+    defaultValues: {
+      amount: 0,
+    },
   });
+
+  // set default values
+  useEffect(() => {
+    const fetchData = async () => {
+      const transactionId = useTransactionsStore.getState().transactionId;
+
+      if (transactionId) {
+        const res = await getTransactionById(transactionId);
+        const transaction = res.data?.transaction;
+
+        console.log("transaction data:", transaction);
+
+        setSelectedTransactionType(transaction?.type);
+        setValue("title", transaction?.title);
+        setValue("amount", Number(transaction?.amount));
+        setValue("description", transaction?.description);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      useTransactionsStore.setState({ transactionId: "" });
+    };
+  }, [useTransactionsStore.getState().transactionId]);
 
   useEffect(() => {
     setValue("type", selectedTransactionType);
@@ -82,15 +119,19 @@ const Create = () => {
 
     setLoading(true);
     try {
-      const res = await createTransaction(data);
+      const res = await updateTransaction(
+        useTransactionsStore.getState().transactionId,
+        data
+      );
 
       if (res.status === 200) {
         setLoading(false);
         reset();
         ToastAndroid.show(
-          `${res.data.message || "Transaction created successfully!"}`,
+          `${res.data.message || "Transaction updated successfully!"}`,
           ToastAndroid.SHORT
         );
+        router.push("/home");
         await useTransactionsStore.getState().getTransactions();
       } else {
         ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
@@ -104,14 +145,25 @@ const Create = () => {
 
   return (
     <SafeAreaView>
-      <ScrollView className="">
-        <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
+      <ScrollView className="mt-10">
+        <View className="flex flex-row items-center justify-between px-4 my-2 mb-6">
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            className="flex flex-row items-center"
+          >
+            <ArrowLeft size={20} color={"black"} />
+            <Text className="text-lg font-pmedium text-gray-800 ml-2">
+              Back
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View className="w-full  min-h-[90vh] px-4 my-6 mt-0">
           <View className="">
             <Text className="text-lg font-pmedium text-gray-800">
               Select Transaction Type
             </Text>
             <View className="flex flex-col gap-y-4 justify-start mt-1 ">
-              {transactionTypes?.map((type) => (
+              {transactionTypes.map((type) => (
                 <TouchableOpacity
                   key={type.id}
                   style={[styles]}
@@ -171,6 +223,7 @@ const Create = () => {
           </View>
           <View className="mt-4">
             <Text className="text-sm font-pregular text-gray-800">Amount</Text>
+
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -182,8 +235,6 @@ const Create = () => {
                   className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
                   onBlur={onBlur}
                   onChangeText={(text) => {
-                    // check if the value is a number
-                    // change the value to a number
                     const numberValue = parseFloat(text);
                     onChange(numberValue);
                   }}
@@ -231,12 +282,12 @@ const Create = () => {
                   value={selectedCategory}
                 >
                   <View className="flex flex-row flex-wrap  relative w-full">
-                    {categoriesData?.map((category) => (
+                    {categoriesData.map((category) => (
                       <TouchableOpacity
                         key={category.id}
                         style={[styles.categoryContainer]}
                         onPress={() => setSelectedCategory(category.id)}
-                        className="flex flex-col items-center bg-none bg-transparent"
+                        className="flex flex-col items-center"
                       >
                         <View
                           styles={
@@ -269,7 +320,7 @@ const Create = () => {
               </View>
 
               <CustomButton
-                text="Create Transaction"
+                text="Update Transaction"
                 handlePress={() => {
                   handleSubmit(onSubmit)();
 
@@ -285,9 +336,9 @@ const Create = () => {
                   }
                 }}
                 containerStyles={`w-full mt-6 
-                } `}
+                  } `}
                 isLoading={loading}
-                loadinState={"creating transaction..."}
+                loadinState={"updating transaction..."}
               />
             </View>
           </View>
@@ -304,7 +355,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
     borderRadius: 10,
-    // backgroundColor: "#f0f0f0",
+    backgroundColor: "#f0f0f0",
   },
   selectedCategory: {
     backgroundColor: "#d0e0fc",
@@ -319,4 +370,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Create;
+export default UpdateTransaction;

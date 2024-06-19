@@ -28,6 +28,7 @@ const SignIn = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(signInSchema),
@@ -55,6 +56,7 @@ const SignIn = () => {
         setLoading(false);
         await saveToken(res.data.user.token);
         router.push("/home");
+        reset();
       } else {
         alert(`${res.data.message}`);
         setLoading(false);

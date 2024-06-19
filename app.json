@@ -1,29 +1,29 @@
 {
   "expo": {
-    "name": "expense-tracker-app",
-    "scheme": "expense-tracker-app",
-    "slug": "expense-tracker-app",
+    "name": "e-financer",
+    "scheme": "e-financer",
+    "slug": "e-financer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#6957E7"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/Logo.png",
+        "backgroundColor": "#6957E7"
       },
       "permissions": ["INTERNET", "ACCESS_NETWORK_STATE"]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/Logo.png"
     },
     "plugins": ["expo-router"]
   }

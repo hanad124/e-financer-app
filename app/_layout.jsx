@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { Slot, Stack, router } from "expo-router";
+import { Slot, Stack, useRouter } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -48,6 +48,12 @@ const RootLayout = () => {
         />
         <Stack.Screen
           name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(transactions)/[id]"
           options={{
             headerShown: false,
           }}

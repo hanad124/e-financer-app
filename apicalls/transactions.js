@@ -22,9 +22,9 @@ export const createTransaction = async (payload) => {
 };
 
 // update transaction
-export const updateTransaction = async (payload) => {
+export const updateTransaction = async (id, payload) => {
   try {
-    const res = await axiosInstance.patch("/transactions", payload);
+    const res = await axiosInstance.patch(`/transactions/${id}`, payload);
     return res;
   } catch (error) {
     console.error("API call error", error);
@@ -35,7 +35,8 @@ export const updateTransaction = async (payload) => {
 // delete transaction
 export const deleteTransaction = async (payload) => {
   try {
-    const res = await axiosInstance.delete("/transactions", payload);
+    const res = await axiosInstance.delete(`/transactions/${payload}`);
+
     return res;
   } catch (error) {
     console.error("API call error", error);

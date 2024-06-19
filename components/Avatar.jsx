@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
 import { useAuthStore } from "../store/auth";
 import { removeToken } from "../utils/storage";
+import { useNavigation, router } from "expo-router";
+
+import { LogOut } from "lucide-react-native";
 
 const Avatar = () => {
   const user = useAuthStore((state) => state.user);
   const userData = user?.data;
   const [greeting, setGreeting] = useState("");
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -20,25 +32,24 @@ const Avatar = () => {
   }, []);
 
   return (
-    <View
-      style={styles.container}
-      // onPress={() => {
-      //   alert("Image loading...");
-      //   removeToken();
-      // }}
-    >
+    <View style={styles.container}>
+      <View className="flex flex-row items-center gap-4">
+        <Image source={{ uri: userData?.avatar }} style={styles.avatar} />
+        <View style={styles.textContainer}>
+          <Text style={styles.name}>Hello {userData?.name}</Text>
+          <Text style={styles.email}>{greeting}</Text>
+        </View>
+      </View>
+
       <TouchableOpacity
         onPress={() => {
-          alert("Removing token...");
           removeToken();
+          ToastAndroid.show("Logged out!", ToastAndroid.SHORT);
+          router.push("/sign-in");
         }}
       >
-        <Image source={{ uri: userData?.avatar }} style={styles.avatar} />
+        <LogOut size={24} color={"black"} />
       </TouchableOpacity>
-      <View style={styles.textContainer}>
-        <Text style={styles.name}>Hello {userData?.name}</Text>
-        <Text style={styles.email}>{greeting}</Text>
-      </View>
     </View>
   );
 };
@@ -48,6 +59,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Horizontal layout
     alignItems: "center", // Center items vertically
     padding: 10,
+    justifyContent: "space-between",
   },
   avatar: {
     width: 50,
