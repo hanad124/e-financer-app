@@ -6,12 +6,16 @@ import {
   Image,
   StyleSheet,
   ToastAndroid,
+  Linking,
+  Platform,
 } from "react-native";
+
+import call from "react-native-phone-call";
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller, set } from "react-hook-form";
-import { z } from "zod";
+import { number, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import { useCategoriesStore } from "../../store/categories";
@@ -27,6 +31,7 @@ import IncomeIcon from "../../assets/icons/income-icon.png";
 const TransactionSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   amount: z.number().min(1, "Amount must be greater than 0"),
+  number: z.number().min(1, "Number is required"),
   type: z.string().min(1, "Type is required"),
   category: z.string().min(1, "Category is required"),
   description: z.string().optional(),
@@ -47,11 +52,25 @@ const Create = () => {
       icon: ExpenseIcon,
     },
   ];
+
+  // account type [Merchant, EvcPlus]
+  const accountTypes = [
+    {
+      id: "MERCHANT",
+      name: "Merchant",
+    },
+    {
+      id: "EVCPLUS",
+      name: "EVCPlus",
+    },
+  ];
+
   const categoriesData = categories.categories;
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTransactionType, setSelectedTransactionType] =
     useState("EXPENSE");
+  const [selectedAccountType, setSelectedAccountType] = useState("EVCPLUS");
 
   const {
     control,
@@ -68,7 +87,8 @@ const Create = () => {
   useEffect(() => {
     setValue("type", selectedTransactionType);
     setValue("category", selectedCategory);
-  }, [selectedTransactionType, selectedCategory]);
+    setValue("accountType", selectedAccountType);
+  }, [selectedTransactionType, selectedCategory, selectedAccountType]);
 
   // track errors
   useEffect(() => {
@@ -91,6 +111,39 @@ const Create = () => {
           `${res.data.message || "Transaction created successfully!"}`,
           ToastAndroid.SHORT
         );
+        // if (Platform.OS === "web") {
+        //   // Linking.openURL("/app/tabs/transactions");
+        // }
+        // if (Platform.OS === "android") {
+        //   if (selectedAccountType === "MERCHANT") {
+        //     Linking.openURL(`tel:*789*${data.number}*${data.amount}#`);
+        //   }
+        //   if (selectedAccountType === "EVCPLUS") {
+        //     Linking.openURL(`tel:*712*${data.number}*${data.amount}#`);
+        //   }
+        // }
+        // if (Platform.OS === "ios") {
+        //   Linking.openURL("telprompt:*712*614481010*1000#");
+        // }
+
+        if (selectedAccountType === "MERCHANT") {
+          args = {
+            number: `*789*${data.number}*${data.amount}#`,
+            prompt: true,
+            skipCanOpen: false,
+          };
+
+          call(args).catch(console.error);
+        }
+        if (selectedAccountType === "EVCPLUS") {
+          args = {
+            number: `*712*${data.number}*${data.amount}#`,
+            prompt: true,
+            skipCanOpen: false,
+          };
+
+          call(args).catch(console.error);
+        }
         await useTransactionsStore.getState().getTransactions();
       } else {
         ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
@@ -107,10 +160,10 @@ const Create = () => {
       <ScrollView className="">
         <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
           <View className="">
-            <Text className="text-lg font-pmedium text-gray-800">
+            <Text className="text-lg mt-2 text-gray-800 mb-[5px]">
               Select Transaction Type
             </Text>
-            <View className="flex flex-col gap-y-4 justify-start mt-1 ">
+            <View className="flex flex-col gap-y-4 justify-start ">
               {transactionTypes?.map((type) => (
                 <TouchableOpacity
                   key={type.id}
@@ -138,9 +191,50 @@ const Create = () => {
                       className=""
                     />
                   </View>
-                  <Text style={styles.categoryText} className="font-pmedium">
+                  <Text style={styles.categoryText} className="">
                     {type.name}
                   </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <View className="mt-2">
+            <Text className="text-lg  text-gray-800 mb-[5px]">
+              Select Account Type
+            </Text>
+            <View className="flex flex-row space-x-2 mt-1 justify-start ">
+              {accountTypes?.map((type) => (
+                <TouchableOpacity
+                  key={type.id}
+                  style={[styles]}
+                  onPress={() => {
+                    setSelectedAccountType(type.id);
+                    console.log("type", selectedAccountType);
+                  }}
+                  className="flex flex-row gap-x-4 items-center"
+                >
+                  <View
+                    style={selectedAccountType === type.id && styles}
+                    className={`${
+                      selectedAccountType === type.id
+                        ? "bg-primary"
+                        : "bg-primary/5"
+                    } flex flex-col items-center p-4 rounded-lg`}
+                  >
+                    <Text
+                      style={styles.categoryText}
+                      className={`
+                     ${
+                       selectedAccountType === type.id
+                         ? "text-white"
+                         : "text-primary"
+                     }
+                      `}
+                    >
+                      {type.name}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>
@@ -196,6 +290,35 @@ const Create = () => {
             />
             {errors.amount && (
               <Text className="text-red-500">{errors.amount.message}</Text>
+            )}
+          </View>
+          <View className="mt-4">
+            <Text className="text-sm font-pregular text-gray-800">Number</Text>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  keyboardType="numeric"
+                  style={{
+                    padding: 10,
+                  }}
+                  className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                  onBlur={onBlur}
+                  onChangeText={(text) => {
+                    // check if the value is a number
+                    // change the value to a number
+                    const numberValue = parseFloat(text);
+                    onChange(numberValue);
+                  }}
+                  value={value}
+                  placeholder="Number"
+                />
+              )}
+              name="number"
+              rules={{ required: "Number is required" }}
+            />
+            {errors.number && (
+              <Text className="text-red-500">{errors.number.message}</Text>
             )}
           </View>
 

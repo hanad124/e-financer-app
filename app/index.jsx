@@ -40,6 +40,7 @@ export default function Page() {
             <CustomButton
               text={"Get Started"}
               handlePress={() => router.push("/sign-in")}
+              // handlePress={() => router.push("/home")}
               containerStyles="w-full mt-10"
             />
           </View>

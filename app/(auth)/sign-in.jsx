@@ -52,7 +52,7 @@ const SignIn = () => {
     setLoading(true);
     try {
       const res = await login(data);
-      if (res.status === 200) {
+      if (res) {
         setLoading(false);
         await saveToken(res.data.user.token);
         await saveUser(res.data.user);

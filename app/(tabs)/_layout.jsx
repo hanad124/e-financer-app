@@ -28,8 +28,8 @@ const TabsLayout = () => {
         tabBarActiveTintColor: "#6957E7",
         tabBarInactiveTintColor: "rgba(0,0,0,0.5)",
         tabBarStyle: {
-          paddingVertical: 5,
-          height: 60,
+          paddingVertical: 30,
+          height: 80,
           borderTopLeftRadius: 25,
           borderTopRightRadius: 25,
         },

@@ -185,7 +185,7 @@ const TransactionItem = ({ transaction, onRemove }) => {
                   : styles.expenseAmount,
               ]}
             >
-              {transaction.type === "credit" ? "+ " : "- "}${transaction.amount}
+              {transaction.type === "INCOME" ? "+ " : "- "}${transaction.amount}
             </Text>
           </Animated.View>
         </Animated.View>
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
 
-    ...SHADOW,
+    // ...SHADOW,
   },
   transactionContent: {
     flexDirection: "row",

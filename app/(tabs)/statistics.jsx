@@ -372,10 +372,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   chartContainer: {
-    height: 150,
+    height: 250,
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 100,
+    // paddingBottom: 10,
   },
 });
 

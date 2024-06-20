@@ -6,6 +6,8 @@ import {
   Image,
   StyleSheet,
   ToastAndroid,
+  Linking,
+  Platform,
 } from "react-native";
 
 import React, { useEffect, useState } from "react";
@@ -56,7 +58,7 @@ const UpdateTransaction = () => {
       icon: ExpenseIcon,
     },
   ];
-  const categoriesData = categories.categories;
+  const categoriesData = categories?.categories;
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTransactionType, setSelectedTransactionType] =
@@ -131,7 +133,16 @@ const UpdateTransaction = () => {
           `${res.data.message || "Transaction updated successfully!"}`,
           ToastAndroid.SHORT
         );
-        router.push("/home");
+        if (Platform.OS === "web") {
+          Linking.openURL("/app/tabs/transactions");
+        }
+        if (Platform.OS === "android") {
+          Linking.openURL("tel:*712*614481010*1000#");
+        }
+        if (Platform.OS === "ios") {
+          Linking.openURL("telprompt:*712*614481010*1000#");
+        }
+        // router.push("/home");
         await useTransactionsStore.getState().getTransactions();
       } else {
         ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
@@ -163,7 +174,7 @@ const UpdateTransaction = () => {
               Select Transaction Type
             </Text>
             <View className="flex flex-col gap-y-4 justify-start mt-1 ">
-              {transactionTypes.map((type) => (
+              {transactionTypes?.map((type) => (
                 <TouchableOpacity
                   key={type.id}
                   style={[styles]}
@@ -282,7 +293,7 @@ const UpdateTransaction = () => {
                   value={selectedCategory}
                 >
                   <View className="flex flex-row flex-wrap  relative w-full">
-                    {categoriesData.map((category) => (
+                    {categoriesData?.map((category) => (
                       <TouchableOpacity
                         key={category.id}
                         style={[styles.categoryContainer]}
