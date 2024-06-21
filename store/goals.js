@@ -6,27 +6,31 @@ import {
   updateGoal,
 } from "../apicalls/goals";
 
-export const useGoalsStore = create((set) => ({
+export const useGoalsStore = create((set, get) => ({
   goals: [],
   goal: {},
   getGoals: async () => {
     const res = await getGoals();
     set({ goals: res.data });
   },
-
   createGoal: async (payload) => {
     const res = await createGoal(payload);
-    set({ goals: [...goals, res.data] });
+    set((state) => ({ goals: [...state.goals, res.data] }));
   },
   updateGoal: async (payload) => {
     const res = await updateGoal(payload);
-    set({ goals: [...goals, res.data] });
+    set((state) => ({
+      goals: state.goals.map((goal) =>
+        goal.id === res.data.id ? res.data : goal
+      ),
+    }));
   },
-  deleteGoal: async (payload) => {
-    const res = await deleteGoal(payload);
-    set({ goals: [...goals, res.data] });
+  deleteGoal: async (id) => {
+    await deleteGoal(id);
+    set((state) => ({
+      goals: state.goals.filter((goal) => goal.id !== id),
+    }));
   },
-
   goalId: "",
   setGoalId: (id) => set({ goalId: id }),
 }));

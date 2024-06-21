@@ -16,7 +16,7 @@ const CustomButton = ({
       Animated.loop(
         Animated.timing(spinValue, {
           toValue: 1,
-          duration: 1000,
+          duration: 600,
           easing: Easing.linear,
           useNativeDriver: true,
         })
@@ -36,10 +36,7 @@ const CustomButton = ({
       style={{
         ...styles.buttonContainer,
         ...containerStyles,
-        ...{ opacity: isLoading ? 0.5 : 1, 
-          marginTop: 24,
-         },
-        
+        ...{ opacity: isLoading ? 0.5 : 1, marginTop: 24 },
       }}
       onPress={handlePress}
     >

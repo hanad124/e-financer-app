@@ -57,7 +57,22 @@ const RecentTransactions = () => {
   const handleRemoveTransaction = useCallback(
     (transaction) => {
       try {
-        DeleteTransactionApi(transaction.id);
+        const res = DeleteTransactionApi(transaction.id);
+
+        console.log("del res", res.status);
+
+        if (res.status === 200) {
+          useTransactionsStore.getState().getTransactions();
+        }
+
+        // // useTransactionsStore.getState().getTransactions();
+
+        // useTransactionsStore.setState((state) => {
+        //   state.transactions.transactions =
+        //     state.transactions.transactions.filter(
+        //       (item) => item.id !== transaction.id
+        //     );
+        // });
       } catch (error) {
         console.log(error);
       }

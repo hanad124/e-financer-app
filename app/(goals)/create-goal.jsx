@@ -31,7 +31,11 @@ import { useCategoriesStore } from "../../store/categories";
 
 // schema [name, amount, targetDate, icon]
 const schema = z.object({
-  name: z.string().min(3, "Goal name is required"),
+  name: z
+    .string()
+    .nonempty("Name is required")
+    .min(3, "Name is too short")
+    .max(15, "Name is too long"),
   amount: z
     .number()
     .min(1, "Amount is required")

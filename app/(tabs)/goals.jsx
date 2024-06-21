@@ -5,11 +5,11 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeft, CirclePlus } from "lucide-react-native";
 import { router } from "expo-router";
-
 import { useNavigation } from "@react-navigation/native"; // assuming you are using react-navigation
 import { LinearGradient } from "expo-linear-gradient";
 import { useGoalsStore } from "../../store/goals";
@@ -17,14 +17,21 @@ import { useGoalsStore } from "../../store/goals";
 const Goals = () => {
   const navigation = useNavigation();
   const { goals, getGoals } = useGoalsStore();
-  const animatedValues = useRef(
-    goals?.goals?.map(() => new Animated.Value(0)) || []
-  ).current;
-  const isFirstRender = useRef(true);
+  const [filter, setFilter] = useState("ongoing"); // State for filter
+  const animatedValues = useRef([]).current;
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      goals?.goals?.forEach((goal, index) => {
+    getGoals();
+  }, []);
+
+  useEffect(() => {
+    if (goals?.goals) {
+      goals.goals.forEach((goal, index) => {
+        if (!animatedValues[index]) {
+          animatedValues[index] = new Animated.Value(
+            (goal?.savedAmount / goal?.amount) * 100
+          );
+        }
         const progressValue = (goal?.savedAmount / goal?.amount) * 100;
         Animated.timing(animatedValues[index], {
           toValue: progressValue,
@@ -32,17 +39,21 @@ const Goals = () => {
           useNativeDriver: false,
         }).start();
       });
-      isFirstRender.current = false;
     }
-  }, [goals, animatedValues]);
+  }, [goals]);
 
-  useEffect(() => {
-    getGoals();
-  }, []);
+  const filteredGoals = goals?.goals?.filter((goal) => {
+    if (filter === "ongoing") {
+      return goal.savedAmount < goal.amount;
+    } else if (filter === "completed") {
+      return goal.savedAmount >= goal.amount;
+    }
+    return true;
+  });
 
   return (
     <SafeAreaView>
-      <ScrollView className=" bg-white h-screen">
+      <ScrollView className="bg-white h-screen">
         <View className="mt-10">
           {/* header */}
           <View
@@ -53,7 +64,7 @@ const Goals = () => {
             }}
           >
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ArrowLeft className="text-black " size={24} />
+              <ArrowLeft className="text-black" size={24} />
             </TouchableOpacity>
             <Text
               style={{
@@ -66,10 +77,40 @@ const Goals = () => {
             </Text>
           </View>
 
+          {/* filter buttons */}
+          <View className="flex flex-row justify-center mt-4">
+            <TouchableOpacity
+              onPress={() => setFilter("ongoing")}
+              className={`px-4 py-2 rounded-full ${
+                filter === "ongoing" ? "bg-primary" : "bg-gray-200"
+              } mx-2`}
+            >
+              <Text
+                className={`text-${filter === "ongoing" ? "white" : "black"}`}
+              >
+                Ongoing
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setFilter("completed")}
+              className={`px-4 py-2 rounded-full ${
+                filter === "completed" ? "bg-primary" : "bg-gray-200"
+              } mx-2`}
+            >
+              <Text
+                className={`text-${filter === "completed" ? "white" : "black"}`}
+              >
+                Completed
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           {/* goals */}
           <View className="flex flex-col items-center justify-center mx-4">
-            <View className="flex flex-col items-center justify-center mt-10 w-full">
-              {goals?.goals?.map((goal, index) => {
+            <View className="flex flex-col items-center justify-center mt-5 w-full">
+              {filteredGoals?.map((goal, index) => {
+                const progressPercentage =
+                  (goal?.savedAmount / goal?.amount) * 100;
                 const progressWidth = animatedValues[index]?.interpolate({
                   inputRange: [0, 100],
                   outputRange: ["0%", "100%"],
@@ -81,18 +122,20 @@ const Goals = () => {
                     style={{
                       flex: 1,
                       borderRadius: 10,
-                      marginVertical: 10,
+                      marginVertical: 7,
                     }}
                   >
                     <LinearGradient
-                      colors={["rgba(62,101,252,1)", "rgba(153,16,180,1)"]}
-                      start={{ x: 0, y: 1 }}
+                      colors={[
+                        "rgba(0, 124, 255, .8)",
+                        "rgba(153, 0, 255, .6)",
+                      ]}
+                      start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                       style={{
-                        borderRadius: 10,
-                        padding: 10,
+                        borderRadius: 15,
                         paddingHorizontal: 30,
-                        paddingVertical: 30,
+                        paddingVertical: 25,
                       }}
                     >
                       <View
@@ -101,23 +144,29 @@ const Goals = () => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <View>
+                        <View className="flex flex-col items-center">
+                          <View className="bg-white p-2 rounded-full">
+                            <Image
+                              source={{ uri: goal?.icon }}
+                              tintColor={"#FF6D3F"}
+                              style={{
+                                width: 34,
+                                height: 34,
+                              }}
+                            />
+                          </View>
                           <Text style={{ color: "white", fontWeight: "bold" }}>
                             {goal?.name}
                           </Text>
                         </View>
                         <View>
-                          <Text style={{ color: "white", fontWeight: "bold" }}>
-                            Saved
-                          </Text>
+                          <Text className="text-white text-[18px]">Saved</Text>
                           <Text style={{ color: "white" }}>
                             $ {goal?.savedAmount}
                           </Text>
                         </View>
                         <View>
-                          <Text style={{ color: "white", fontWeight: "bold" }}>
-                            Target
-                          </Text>
+                          <Text className="text-white text-[18px]">Target</Text>
                           <Text style={{ color: "white" }}>
                             $ {goal?.amount}
                           </Text>
@@ -136,14 +185,25 @@ const Goals = () => {
                             style={{
                               width: "80%",
                               backgroundColor: "#E0E0E0",
-                              height: 10,
+                              height: 8,
                               borderRadius: 20,
                             }}
                           >
-                            <Animated.View
+                            {/* <Animated.View
                               style={{
                                 width: progressWidth,
-                                height: 10,
+                                height: 8,
+                                backgroundColor: "#FF6D3F",
+                                borderRadius: 20,
+                              }}
+                            /> */}
+
+                            <Animated.View
+                              style={{
+                                width: `${
+                                  (goal?.savedAmount / goal?.amount) * 100
+                                }%`,
+                                height: 8,
                                 backgroundColor: "#FF6D3F",
                                 borderRadius: 20,
                               }}
@@ -153,11 +213,7 @@ const Goals = () => {
                             <Text
                               style={{ color: "white", fontWeight: "bold" }}
                             >
-                              {goals &&
-                                (
-                                  (goal?.savedAmount / goal?.amount) *
-                                  100
-                                )?.toFixed(0) + "%"}
+                              {progressPercentage.toFixed(0)}%
                             </Text>
                           </View>
                         </View>
@@ -169,13 +225,11 @@ const Goals = () => {
             </View>
           </View>
 
-          {/* 
-          add new goal button
-           */}
-          <View className="flex flex-row items-center justify-center mt-10">
+          {/* add new goal button */}
+          <View className="flex flex-row items-center justify-center mt-5">
             <TouchableOpacity
               onPress={() => router.push("/(goals)/create-goal")}
-              className="flex flex-row items-center space-x-2 justify-center  text-black rounded-full p-4"
+              className="flex flex-row items-center space-x-2 justify-center text-black rounded-full p-4"
             >
               <CirclePlus size={20} color={"black"} />
               <Text className="text-black">Add New Goal</Text>

@@ -12,11 +12,11 @@ export const useTransactionsStore = create((set) => ({
   transaction: {},
   getTransactions: async () => {
     const res = await getTransactions();
-    set({ transactions: res.data });
+    set({ transactions: res?.data });
   },
   getTransactionById: async (id) => {
     const res = await getTransactionById(id);
-    set({ transaction: res.data });
+    set({ transaction: res?.data });
   },
   createTransaction: async (payload) => {
     const res = await createTransaction(payload);
