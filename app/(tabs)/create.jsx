@@ -156,8 +156,8 @@ const Create = () => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView className="">
+    <SafeAreaView className="bg-white">
+      <ScrollView className="bg-white">
         <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
           <View className="">
             <Text className="text-lg mt-2 text-gray-800 mb-[5px]">

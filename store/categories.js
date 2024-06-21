@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   getCategories,
+  getCategoryIcons,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -9,12 +10,19 @@ import {
 
 export const useCategoriesStore = create((set) => ({
   categories: [],
+  icons: [],
   totalIncome: 0,
   totalExpense: 0,
   getCategories: async () => {
     const res = await getCategories();
     if (res.status === 200) {
       set({ categories: res.data });
+    }
+  },
+  getCategoryIcons: async () => {
+    const res = await getCategoryIcons();
+    if (res) {
+      set({ icons: res.data?.icons });
     }
   },
   createCategory: async (payload) => {
@@ -55,6 +63,7 @@ export const useCategoriesStore = create((set) => ({
 
 const initializeStore = async () => {
   useCategoriesStore.getState().getCategories();
+  useCategoriesStore.getState().getCategoryIcons();
 };
 
 initializeStore();

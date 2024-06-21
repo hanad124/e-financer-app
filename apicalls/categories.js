@@ -11,6 +11,17 @@ export const getCategories = async () => {
   }
 };
 
+// get all categories/icons
+export const getCategoryIcons = async () => {
+  try {
+    const res = await axiosInstance.get("/categories/icons");
+    return res;
+  } catch (error) {
+    console.error("API call error", error);
+    return error.response;
+  }
+};
+
 // create category
 export const createCategory = async (payload) => {
   try {

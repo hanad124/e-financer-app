@@ -7,7 +7,9 @@ import {
   Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, CirclePlus } from "lucide-react-native";
+import { router } from "expo-router";
+
 import { useNavigation } from "@react-navigation/native"; // assuming you are using react-navigation
 import { LinearGradient } from "expo-linear-gradient";
 import { useGoalsStore } from "../../store/goals";
@@ -40,7 +42,7 @@ const Goals = () => {
 
   return (
     <SafeAreaView>
-      <ScrollView className=" bg-white">
+      <ScrollView className=" bg-white h-screen">
         <View className="mt-10">
           {/* header */}
           <View
@@ -165,6 +167,19 @@ const Goals = () => {
                 );
               })}
             </View>
+          </View>
+
+          {/* 
+          add new goal button
+           */}
+          <View className="flex flex-row items-center justify-center mt-10">
+            <TouchableOpacity
+              onPress={() => router.push("/(goals)/create-goal")}
+              className="flex flex-row items-center space-x-2 justify-center  text-black rounded-full p-4"
+            >
+              <CirclePlus size={20} color={"black"} />
+              <Text className="text-black">Add New Goal</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

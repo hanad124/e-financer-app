@@ -58,6 +58,12 @@ const RootLayout = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="(goals)/create-goal"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );

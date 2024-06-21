@@ -30,3 +30,11 @@ export const useGoalsStore = create((set) => ({
   goalId: "",
   setGoalId: (id) => set({ goalId: id }),
 }));
+
+const initializeStore = () => {
+  const store = useGoalsStore.getState();
+  store.getGoals();
+  return store;
+};
+
+initializeStore();
