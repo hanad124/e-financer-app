@@ -34,3 +34,14 @@ export const getUserInfo = async () => {
     return error.response;
   }
 };
+
+// update user profile
+export const updateProfile = async (payload) => {
+  try {
+    const res = await axiosInstance.patch("/auth/update-profile", payload);
+    return res;
+  } catch (error) {
+    console.error("API call error", error);
+    return error.response;
+  }
+};

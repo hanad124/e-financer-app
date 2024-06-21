@@ -11,13 +11,19 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller, set } from "react-hook-form";
 import { z } from "zod";
+import * as FileSystem from "expo-file-system";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import { useAuthStore } from "../../store/auth";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUser } from "../../utils/storage";
 
+import { updateProfile } from "../../apicalls/auth";
+
 import BannerImage from "../../assets/images/banner-img.png";
+
+import * as ImagePicker from "expo-image-picker";
 
 // Profile schema
 const ProfileSchema = z.object({
@@ -28,9 +34,58 @@ const ProfileSchema = z.object({
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
-  const user = useAuthStore((state) => state.user);
+  const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+  const [image, setImage] = useState(null);
+  const [resultImage, setResultImage] = useState(null);
+  const user = useAuthStore((state) => state.user); // Assuming this gets the logged-in user's data
 
-  console.log("user", user?.data);
+  useEffect(() => {
+    (async () => {
+      const galleryStatus =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      setHasGalleryPermission(galleryStatus.status === "granted");
+    })();
+  }, []);
+
+  // const pickImage = async () => {
+  //   if (hasGalleryPermission) {
+  //     let result = await ImagePicker.launchImageLibraryAsync({
+  //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //       allowsEditing: true,
+  //       aspect: [4, 3],
+  //       quality: 1,
+  //     });
+
+  //     if (!result.cancelled) {
+  //       setImage(result?.assets[0]?.uri);
+  //     }
+  //   }
+  // };
+
+  const pickImage = async () => {
+    if (hasGalleryPermission) {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      console.log("result", result);
+
+      if (!result.cancelled) {
+        const base64Image = await FileSystem.readAsStringAsync(
+          result?.assets[0]?.uri,
+          {
+            encoding: "base64",
+          }
+        );
+        const imageData = `data:image/jpeg;base64,${base64Image}`;
+
+        setImage(imageData);
+      }
+    }
+  };
 
   const userData = user?.data;
 
@@ -56,8 +111,27 @@ const Profile = () => {
     setValue("description", userData?.description);
   }, [useAuthStore.getState().user]);
 
-  const onSubmit = (data) => {
+  // track errors
+  useEffect(() => {
+    console.log("errors", errors);
+  }, [errors]);
+
+  const onSubmit = async (data) => {
+    image && (data.avatar = image);
     console.log("data", data);
+    try {
+      setLoading(true);
+      const response = await updateProfile(data);
+      console.log("response", response);
+      if (response.success) {
+        alert(`${response.message}`);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log("error", error);
+      alert(`{response.message}`);
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,16 +156,36 @@ const Profile = () => {
           />
 
           <View className="flex items-center justify-center mt-24">
-            <Image
-              source={{
-                uri: userData?.avatar,
-              }}
+            <TouchableOpacity
+              onPress={pickImage}
               style={{
                 width: 100,
                 height: 100,
                 borderRadius: 50,
+                backgroundColor: "#D3D8DB",
+                borderWidth: 1,
+                borderColor: "#D3D8DB",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 4,
               }}
-            />
+            >
+              {image ? (
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
+                />
+              ) : (
+                <Image
+                  source={{
+                    uri:
+                      user?.data?.avatar ||
+                      "https://img.freepik.com/free-icon/user_318-644324.jpg?w=360",
+                  }}
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
+                />
+              )}
+            </TouchableOpacity>
             <Text className="text-xl font-pmedium mt-2">{userData?.name}</Text>
             <Text className="text-sm font-pregular text-slate-500">
               {userData?.email}
@@ -156,7 +250,7 @@ const Profile = () => {
 
             <CustomButton
               text="Save"
-              onPress={handleSubmit(onSubmit)}
+              handlePress={handleSubmit(onSubmit)}
               containerStyles="mt-10"
               isLoading={loading}
               loadinState="Saving..."
