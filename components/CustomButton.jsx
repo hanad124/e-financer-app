@@ -8,6 +8,7 @@ const CustomButton = ({
   containerStyles,
   isLoading,
   loadinState,
+  ...props
 }) => {
   const spinValue = useRef(new Animated.Value(0)).current;
 

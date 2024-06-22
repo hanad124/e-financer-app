@@ -8,25 +8,30 @@ import {
   ToastAndroid,
   Linking,
   Platform,
+  TouchableOpacity,
 } from "react-native";
+import { router, useNavigation } from "expo-router";
 
 import call from "react-native-phone-call";
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller, set } from "react-hook-form";
-import { number, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { number, z } from "zod";
 import CustomButton from "../../components/CustomButton";
 import { useCategoriesStore } from "../../store/categories";
 import { useTransactionsStore } from "../../store/transactions";
 import { RadioButton } from "react-native-paper";
-import { TouchableOpacity } from "react-native-gesture-handler";
+// import { TouchableOpacity } from "react-native-gesture-handler";
 
 import { createTransaction } from "../../apicalls/transactions";
 
 import ExpenseIcon from "../../assets/icons/expense-icon.png";
+import { ArrowLeft } from "lucide-react-native";
 import IncomeIcon from "../../assets/icons/income-icon.png";
+import PlusIcon from "../../assets/icons/category-plus-icon.png";
+import { Plus } from "lucide-react-native";
 
 const TransactionSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -39,6 +44,8 @@ const TransactionSchema = z.object({
 
 const Create = () => {
   const { categories } = useCategoriesStore();
+
+  const navigation = useNavigation();
 
   const transactionTypes = [
     {
@@ -91,6 +98,10 @@ const Create = () => {
       number: 0,
     },
   });
+
+  useEffect(() => {
+    useCategoriesStore.getState().getCategories();
+  }, []);
 
   useEffect(() => {
     setValue("type", selectedTransactionType);
@@ -158,9 +169,20 @@ const Create = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white">
+    <SafeAreaView className="bg-white pt-5">
       <ScrollView className="bg-white">
         <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
+          <View className="flex flex-row items-center justify-between  my-2 mb-6">
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="flex flex-row items-center"
+            >
+              <ArrowLeft size={20} color={"black"} />
+              <Text className="text-lg font-pmedium text-gray-800 ml-2">
+                Back
+              </Text>
+            </TouchableOpacity>
+          </View>
           <View className="">
             <Text className="text-lg mt-2 text-gray-800 mb-[5px]">
               Select Transaction Type
@@ -296,6 +318,7 @@ const Create = () => {
               <Text className="text-red-500">{errors.amount.message}</Text>
             )}
           </View>
+
           {selectedTransactionType === "EXPENSE" && (
             <View className="mt-4">
               <Text className="text-sm font-pregular text-gray-800">
@@ -395,8 +418,51 @@ const Create = () => {
                         <Text style={styles.categoryText}>{category.name}</Text>
                       </TouchableOpacity>
                     ))}
+                    {/*
+                     */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        router.push("/categories/create");
+                      }}
+                      className="flex flex-col items-center bg-none bg-transparent mt-3 ml-2"
+                    >
+                      <View className="flex flex-col items-center justify-center p-4 rounded-lg bg-primary/5">
+                        {/* <Image
+                          source={PlusIcon}
+                          style={[styles.categoryIcon]}
+                          resizeMode="contain"
+                          tintColor="#6957E7"
+                          className=""
+                        /> */}
+
+                        <Plus size={30} color="#6957E7" />
+                      </View>
+                      <Text>others</Text>
+                    </TouchableOpacity>
                   </View>
                 </RadioButton.Group>
+
+                {/* <TouchableOpacity
+                style={[styles.categoryContainer]}
+                className="flex flex-col items-center"
+                onPress={alert("This feature is not yet available")}
+              >
+                <View
+                  style={styles.categoryContainer}
+                  className={`${
+                    selectedCategory === "add" ? "bg-primary" : "bg-primary/5"
+                  } flex flex-col items-center p-4 rounded-lg`}
+                >
+                  <Image
+                    source={PlusIcon}
+                    style={[styles.categoryIcon]}
+                    resizeMode="contain"
+                    tintColor={selectedCategory === "add" ? "white" : "#6957E7"}
+                    className=""
+                  />
+                </View>
+                <Text>others</Text>
+              </TouchableOpacity> */}
               </View>
 
               <CustomButton

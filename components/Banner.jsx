@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   progressBarBackground: {
-    height: 10,
+    height: 7,
     backgroundColor: "#e0e0e0",
     borderRadius: 10,
     overflow: "hidden",

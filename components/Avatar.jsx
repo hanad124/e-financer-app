@@ -10,7 +10,7 @@ import {
 import { useAuthStore } from "../store/auth";
 import { removeToken } from "../utils/storage";
 import { useNavigation, router } from "expo-router";
-import { getUser } from "../utils/storage";
+// import { getUser } from "../utils/storage";
 
 import { LogOut } from "lucide-react-native";
 
@@ -36,20 +36,20 @@ const Avatar = () => {
   }, []);
 
   // get user data from AsyncStorage
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await getUser();
-      setUserData(user);
-    };
-    fetchUser();
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <View style={styles.container}>
       <View className="flex flex-row items-center gap-4">
-        <Image source={{ uri: userData?.avatar }} style={styles.avatar} />
+        <TouchableOpacity
+          onPress={() => {
+            router.push("/profile");
+          }}
+        >
+          <Image source={{ uri: user?.data?.avatar }} style={styles.avatar} />
+        </TouchableOpacity>
         <View style={styles.textContainer}>
-          <Text style={styles.name}>Hello {userData?.name}</Text>
+          <Text style={styles.name}>Hello {user?.data?.name}</Text>
           <Text style={styles.email}>{greeting}</Text>
         </View>
       </View>
@@ -57,7 +57,7 @@ const Avatar = () => {
       <TouchableOpacity
         onPress={() => {
           removeToken();
-          ToastAndroid.show("Logged out!", ToastAndroid.SHORT);
+          // ToastAndroid.show("Logged out!", ToastAndroid.SHORT);
           router.push("/sign-in");
         }}
       >

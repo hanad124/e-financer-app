@@ -18,18 +18,18 @@ export const useTransactionsStore = create((set) => ({
     const res = await getTransactionById(id);
     set({ transaction: res?.data });
   },
-  createTransaction: async (payload) => {
-    const res = await createTransaction(payload);
-    set({ transactions: [...transactions, res.data] });
-  },
-  updateTransaction: async (payload) => {
-    const res = await updateTransaction(payload);
-    set({ transactions: [...transactions, res.data] });
-  },
-  deleteTransaction: async (payload) => {
-    const res = await deleteTransaction(payload);
-    set({ transactions: [...transactions, res.data] });
-  },
+  // createTransaction: async (payload) => {
+  //   const res = await createTransaction(payload);
+  //   set({ transactions: [...transactions, res.data] });
+  // },
+  // updateTransaction: async (payload) => {
+  //   const res = await updateTransaction(payload);
+  //   set({ transactions: [...transactions, res.data] });
+  // },
+  // deleteTransaction: async (payload) => {
+  //   const res = await deleteTransaction(payload);
+  //   set({ transactions: [...transactions, res.data] });
+  // },
 
   transactionId: "",
   setTransactionId: (id) => set({ transactionId: id }),

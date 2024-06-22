@@ -64,6 +64,24 @@ const RootLayout = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="categories/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="categories/[id]"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="categories/create"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );

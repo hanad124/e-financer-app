@@ -69,6 +69,8 @@ const TabsLayout = () => {
         name="create"
         options={{
           title: "Add Transaction",
+          headerShown: false,
+
           tabBarIcon: ({ focused }) => (
             <TabIcon
               icon={icons.addIcon}

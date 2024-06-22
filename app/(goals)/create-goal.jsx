@@ -14,7 +14,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "expo-router";
+import { useNavigation, router } from "expo-router";
 import { useForm, Controller, set } from "react-hook-form";
 import { number, z } from "zod";
 import { RadioButton } from "react-native-paper";
@@ -50,6 +50,8 @@ const CreateGoal = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [seatchIcon, setSearchIcon] = useState("");
+  const [filteredIcons, setFilteredIcons] = useState([]);
 
   const icons = useCategoriesStore((state) => state.icons);
 
@@ -88,19 +90,29 @@ const CreateGoal = () => {
     setLoading(true);
     try {
       const response = await createGoal(data);
-      if (response?.status === 201) {
-        Alert.alert(response?.data?.message);
-        setLoading(false);
-        reset();
-        useGoalsStore.getState().getGoals();
-      }
+      console.log("category response", response?.data?.message);
+      // if (response?.data?.status === 200) {
+      Alert.alert(response?.data?.message);
+      setLoading(false);
+      reset();
+      useGoalsStore.getState().getGoals();
+      router.push("goals");
+      // }
     } catch (error) {
       console.log(error);
       Alert.alert(response?.data?.message);
     }
   };
 
-  console.log("selected icon", selectedIcon);
+  // search icons
+  const searchIcon = (text) => {
+    setSearchIcon(text);
+    const filteredIcons = icons.filter((icon) =>
+      icon?.name.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredIcons(filteredIcons);
+    console.log("filtered icons", filteredIcons);
+  };
 
   return (
     <SafeAreaView className="bg-white">
@@ -232,6 +244,22 @@ const CreateGoal = () => {
           </View>
 
           {/* 
+          search icons
+           */}
+          <View className="mt-5">
+            <Text className="text-black">Search Icon</Text>
+            <TextInput
+              style={{
+                padding: 10,
+              }}
+              className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+              onChangeText={(text) => searchIcon(text)}
+              value={seatchIcon}
+              placeholder="Search Icon"
+            />
+          </View>
+
+          {/* 
           icons section
            */}
           <View className="mt-5">
@@ -242,39 +270,77 @@ const CreateGoal = () => {
                 value={selectedIcon}
               >
                 <View className="flex flex-row flex-wrap w-full space-x-2 min-w-full">
-                  {icons?.map((icon) => (
-                    <TouchableOpacity
-                      key={icon?.id}
-                      onPress={() => setSelectedIcon(icon?.icon)}
-                      className=""
-                    >
-                      <View
-                        style={[
-                          {
-                            borderRadius: 8,
-                            padding: 8,
-                            margin: 4,
-                          },
-                        ]}
-                        className={`flex flex-col items-center p-4 rounded-lg ${
-                          selectedIcon === icon?.icon
-                            ? "bg-primary"
-                            : "bg-primary/5"
-                        }`}
-                      >
-                        <Image
-                          source={{ uri: icon?.icon }}
-                          style={{
-                            width: 35,
-                            height: 35,
-                          }}
-                          tintColor={
-                            selectedIcon === icon?.icon ? "white" : "#6957E7"
-                          }
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  ))}
+                  {filteredIcons.length > 0
+                    ? filteredIcons?.map((icon) => (
+                        <TouchableOpacity
+                          key={icon?.id}
+                          onPress={() => setSelectedIcon(icon?.icon)}
+                          className=""
+                        >
+                          <View
+                            style={[
+                              {
+                                borderRadius: 8,
+                                padding: 8,
+                                margin: 4,
+                              },
+                            ]}
+                            className={`flex flex-col items-center p-4 rounded-lg ${
+                              selectedIcon === icon?.icon
+                                ? "bg-primary"
+                                : "bg-primary/5"
+                            }`}
+                          >
+                            <Image
+                              source={{ uri: icon?.icon }}
+                              style={{
+                                width: 35,
+                                height: 35,
+                              }}
+                              tintColor={
+                                selectedIcon === icon?.icon
+                                  ? "white"
+                                  : "#6957E7"
+                              }
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      ))
+                    : icons?.map((icon) => (
+                        <TouchableOpacity
+                          key={icon?.id}
+                          onPress={() => setSelectedIcon(icon?.icon)}
+                          className=""
+                        >
+                          <View
+                            style={[
+                              {
+                                borderRadius: 8,
+                                padding: 8,
+                                margin: 4,
+                              },
+                            ]}
+                            className={`flex flex-col items-center p-4 rounded-lg ${
+                              selectedIcon === icon?.icon
+                                ? "bg-primary"
+                                : "bg-primary/5"
+                            }`}
+                          >
+                            <Image
+                              source={{ uri: icon?.icon }}
+                              style={{
+                                width: 35,
+                                height: 35,
+                              }}
+                              tintColor={
+                                selectedIcon === icon?.icon
+                                  ? "white"
+                                  : "#6957E7"
+                              }
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      ))}
                 </View>
               </RadioButton.Group>
             </View>
@@ -291,8 +357,9 @@ const CreateGoal = () => {
               }
             }}
             isLoading={loading}
-            className="mt-5"
+            containerStyles="mb-10"
             loadinState={"Creating Goal"}
+            className="my-24"
           />
         </View>
       </ScrollView>

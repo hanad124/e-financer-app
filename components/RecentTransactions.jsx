@@ -59,8 +59,6 @@ const RecentTransactions = () => {
       try {
         const res = DeleteTransactionApi(transaction.id);
 
-        console.log("del res", res.status);
-
         if (res.status === 200) {
           useTransactionsStore.getState().getTransactions();
         }

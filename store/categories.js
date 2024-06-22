@@ -59,6 +59,9 @@ export const useCategoriesStore = create((set) => ({
       return res.data;
     }
   },
+
+  categoryId: "",
+  setCategoryId: (id) => set({ categoryId: id }),
 }));
 
 const initializeStore = async () => {

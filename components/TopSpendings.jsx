@@ -1,23 +1,28 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { useCategoriesStore } from "../store/categories";
 import rightArrowIcon from "../assets/icons/rightarrow-icon.png";
+import { router } from "expo-router";
 
 const TopSpendings = () => {
   const { categories } = useCategoriesStore();
 
-  console.log("categories", categories);
   const categoriesData = categories.categories;
 
   return (
     <View>
       <View className="flex flex-row justify-between items-center">
         <Text className="text-lg font-pmedium">Top Spendings</Text>
-        <Image
-          source={rightArrowIcon}
-          resizeMode="contain"
-          style={{ width: 11, height: 11 }}
-        />
+        <TouchableOpacity
+          onPress={() => router.push("/categories")}
+          className="flex flex-row items-center"
+        >
+          <Image
+            source={rightArrowIcon}
+            resizeMode="contain"
+            style={{ width: 11, height: 11 }}
+          />
+        </TouchableOpacity>
       </View>
       {/* 
       display top 3 categories with highest spending with their icons
@@ -25,7 +30,8 @@ const TopSpendings = () => {
       <View className="flex flex-row mt-2">
         {categoriesData
           ?.sort((a, b) => b.totalExpense - a.totalExpense)
-          .slice(0, 4)
+          .slice(0, 6)
+          ?.reverse()
           .map((category) => {
             return (
               <View

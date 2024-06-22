@@ -34,9 +34,9 @@ export const createCategory = async (payload) => {
 };
 
 // update category
-export const updateCategory = async (payload) => {
+export const updateCategory = async (id, payload) => {
   try {
-    const res = await axiosInstance.patch("/categories", payload);
+    const res = await axiosInstance.patch(`/categories/${id}`, payload);
     return res;
   } catch (error) {
     console.error("API call error", error);
@@ -47,7 +47,7 @@ export const updateCategory = async (payload) => {
 // delete category
 export const deleteCategory = async (payload) => {
   try {
-    const res = await axiosInstance.delete("/categories", payload);
+    const res = await axiosInstance.delete(`/categories/${payload}`);
     return res;
   } catch (error) {
     console.error("API call error", error);

@@ -35,9 +35,8 @@ const ProfileSchema = z.object({
 const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
-  const [image, setImage] = useState(null);
-  const [resultImage, setResultImage] = useState(null);
   const user = useAuthStore((state) => state.user); // Assuming this gets the logged-in user's data
+  const [image, setImage] = useState(user?.data?.avatar);
 
   useEffect(() => {
     (async () => {
@@ -46,21 +45,6 @@ const Profile = () => {
       setHasGalleryPermission(galleryStatus.status === "granted");
     })();
   }, []);
-
-  // const pickImage = async () => {
-  //   if (hasGalleryPermission) {
-  //     let result = await ImagePicker.launchImageLibraryAsync({
-  //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //       allowsEditing: true,
-  //       aspect: [4, 3],
-  //       quality: 1,
-  //     });
-
-  //     if (!result.cancelled) {
-  //       setImage(result?.assets[0]?.uri);
-  //     }
-  //   }
-  // };
 
   const pickImage = async () => {
     if (hasGalleryPermission) {
@@ -118,15 +102,20 @@ const Profile = () => {
 
   const onSubmit = async (data) => {
     image && (data.avatar = image);
-    console.log("data", data);
+    // console.log("data", data);
     try {
       setLoading(true);
       const response = await updateProfile(data);
-      console.log("response", response);
-      if (response.success) {
-        alert(`${response.message}`);
+      // console.log("response", response);
+      console.log("Profile response", response.data);
+      if (response?.data?.success) {
+        useAuthStore.setState({
+          user: response.data,
+        });
+        useAuthStore.getState().getUserInfo();
+        alert(`${response?.data?.message}`);
+        setLoading(false);
       }
-      setLoading(false);
     } catch (error) {
       console.log("error", error);
       alert(`{response.message}`);
