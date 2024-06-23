@@ -19,6 +19,7 @@ import { useCategoriesStore } from "../../store/categories";
 
 import { ArrowLeft, Trash2, Pencil, Plus } from "lucide-react-native";
 import { deleteCategory } from "../../apicalls/categories";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const index = () => {
   const [search, setSearch] = useState("");
@@ -66,12 +67,8 @@ const index = () => {
 
   return (
     <SafeAreaView className="bg-white pt-5">
+      <LoadingOverlay loading={loading} />
       <ScrollView className="bg-white">
-        {loading && (
-          <View className="fixed top-0 left-0 w-full h-full bg-black opacity-5 flex justify-center items-center z-50">
-            <Text className="text-white">Loading...</Text>
-          </View>
-        )}
         <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
           <TouchableOpacity
             onPress={() => navigation.goBack()}

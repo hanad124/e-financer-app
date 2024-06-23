@@ -47,13 +47,25 @@ const RootLayout = () => {
           }}
         />
         <Stack.Screen
-          name="(tabs)"
+          name="(auth)/reset-password"
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="(transactions)/[id]"
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />{" "}
+        <Stack.Screen
+          name="transactions/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="transactions/[id]"
           options={{
             headerShown: false,
           }}

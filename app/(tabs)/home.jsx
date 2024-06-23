@@ -9,9 +9,9 @@ import RecentTransactions from "../../components/RecentTransactions";
 
 const Home = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white">
       <ScrollView className="">
-        <View className="w-full  min-h-[90vh] px-4 my-6 pt-6 bg-white">
+        <View className="w-full  min-h-[90vh] px-4 my-6">
           <Avatar />
           <Banner />
           <TopSpendings />

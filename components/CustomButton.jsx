@@ -8,6 +8,7 @@ const CustomButton = ({
   containerStyles,
   isLoading,
   loadinState,
+  disabled,
   ...props
 }) => {
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -38,8 +39,11 @@ const CustomButton = ({
         ...styles.buttonContainer,
         ...containerStyles,
         ...{ opacity: isLoading ? 0.5 : 1, marginTop: 24 },
+        ...{ opacity: disabled ? 0.5 : 1 },
       }}
       onPress={handlePress}
+      disabled={isLoading || disabled}
+      {...props}
     >
       {isLoading ? (
         <View style={styles.button}>

@@ -11,8 +11,6 @@ export const axiosInstance = axios.create({
   },
 });
 
-// disable cors for development
-
 // Add a request interceptor to include the token
 axiosInstance.interceptors.request.use(
   async (config) => {

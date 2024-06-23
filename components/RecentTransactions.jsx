@@ -30,16 +30,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_HEIGHT = 70;
 const WIDTH_CARD = SCREEN_WIDTH * 0.85;
 
-const SHADOW = {
-  shadowColor: "black",
-  shadowOffset: {
-    width: 0,
-    height: 10,
-  },
-  shadowOpacity: 0.5,
-  shadowRadius: 5,
-};
-
 const RecentTransactions = () => {
   const { transactions, deleteTransaction } = useTransactionsStore();
   const [transactionList, setTransactionList] = useState(
@@ -54,156 +44,61 @@ const RecentTransactions = () => {
     setTransactionList(transactions?.transactions ?? []);
   }, [transactions]);
 
-  const handleRemoveTransaction = useCallback(
-    (transaction) => {
-      try {
-        const res = DeleteTransactionApi(transaction.id);
-
-        if (res.status === 200) {
-          useTransactionsStore.getState().getTransactions();
-        }
-
-        // // useTransactionsStore.getState().getTransactions();
-
-        // useTransactionsStore.setState((state) => {
-        //   state.transactions.transactions =
-        //     state.transactions.transactions.filter(
-        //       (item) => item.id !== transaction.id
-        //     );
-        // });
-      } catch (error) {
-        console.log(error);
-      }
-
-      setTransactionList((prev) =>
-        prev.filter((item) => item.id !== transaction.id)
-      );
-
-      ToastAndroid.show("Transaction deleted", ToastAndroid.SHORT);
-    },
-    [deleteTransaction]
-  );
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text className="text-lg font-pmedium">Recent Transactions</Text>
-        {/* <Link href={`/transactions`} style={{ textDecoration: "none" }}> */}
-        <Text style={styles.viewAllText}>View all</Text>
+        <TouchableOpacity onPress={() => router.push("/transactions")}>
+          <Text className="text-lg font-pmedium">Recent Transactions</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/transactions")}>
+          {/* <Link href={`/transactions`} style={{ textDecoration: "none" }}> */}
+          <Text style={styles.viewAllText}>View all</Text>
+        </TouchableOpacity>
         {/* </Link> */}
       </View>
-      <View className="flex flex-col ">
-        {transactionList
-          .slice(0, 11)
+      <View className="flex flex-col justify-center items-center w-full  ">
+        {transactions.transactions
+          ?.slice(0, 11)
           .reverse()
           .map((transaction) => (
-            <TransactionItem
-              key={transaction.id}
-              transaction={transaction}
-              onRemove={handleRemoveTransaction}
-            />
+            <View key={transaction?.id}>
+              {
+                <View
+                  className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
+                  key={transaction?.id}
+                >
+                  <View className="flex flex-row gap-2 items-center">
+                    <View className="bg-white/60 p-1 rounded-lg">
+                      <Image
+                        source={{ uri: transaction.category?.icon }}
+                        style={{ width: 30, height: 30 }}
+                      />
+                    </View>
+                    <View>
+                      <Text className="text-black font-pmedium">
+                        {transaction.title}
+                      </Text>
+                      <Text className="text-[#348F9F]  text-sm">
+                        {transaction.description}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text
+                    className={
+                      transaction.type === "INCOME"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }
+                  >
+                    {transaction.type === "INCOME" ? "$" : "- $"}
+                    {transaction.amount}
+                  </Text>
+                </View>
+              }
+            </View>
           ))}
       </View>
     </GestureHandlerRootView>
-  );
-};
-
-const TransactionItem = ({ transaction, onRemove }) => {
-  const swipeTranslateX = useSharedValue(0);
-  const pressed = useSharedValue(false);
-  const itemHeight = useSharedValue(ITEM_HEIGHT);
-  const marginVertical = useSharedValue(7);
-
-  const pan = Gesture.Pan()
-    .onBegin(() => {
-      pressed.value = true;
-    })
-    .onUpdate((event) => {
-      if (event.translationX < 0) {
-        swipeTranslateX.value = event.translationX;
-      }
-    })
-    .onFinalize(() => {
-      const isShouldDismiss = swipeTranslateX.value < -SCREEN_WIDTH * 0.3;
-      if (isShouldDismiss) {
-        itemHeight.value = withTiming(0);
-        marginVertical.value = withTiming(0);
-        swipeTranslateX.value = withTiming(
-          -SCREEN_WIDTH,
-          undefined,
-          (isDone) => {
-            if (isDone) {
-              runOnJS(onRemove)(transaction);
-            }
-          }
-        );
-      } else {
-        swipeTranslateX.value = withSpring(0);
-      }
-      pressed.value = false;
-    });
-
-  const transformStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: swipeTranslateX.value },
-      { scale: withTiming(pressed.value ? 1.15 : 1) },
-    ],
-  }));
-
-  const deleteIconOpacity = useAnimatedStyle(() => ({
-    opacity: swipeTranslateX.value < 0 ? 1 : 0,
-  }));
-
-  const itemHeightStyle = useAnimatedStyle(() => ({
-    height: itemHeight.value,
-    marginVertical: marginVertical.value,
-  }));
-
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        useTransactionsStore.setState({ transactionId: transaction.id });
-        router.push(`/(transactions)/${transaction.id}`);
-      }}
-      style={{ width: "100%" }}
-    >
-      <GestureDetector gesture={pan}>
-        <Animated.View style={itemHeightStyle}>
-          <Animated.View style={[styles.iconContainer, deleteIconOpacity]}>
-            <MaterialIcons name="delete" size={25} color="#FF165D" />
-          </Animated.View>
-          <Animated.View
-            style={[styles.transactionContainer, transformStyle]}
-            className="items-center"
-          >
-            <View style={styles.transactionContent}>
-              <View className="bg-white/40 rounded-xl p-1">
-                <Image
-                  source={{ uri: transaction.category.icon }}
-                  style={styles.transactionIcon}
-                />
-              </View>
-              <View style={styles.transactionDetails} className="ml-2">
-                <Text style={styles.transactionTitle}>{transaction.title}</Text>
-                <Text style={styles.transactionDescription}>
-                  {transaction.description}
-                </Text>
-              </View>
-            </View>
-            <Text
-              style={[
-                styles.transactionAmount,
-                transaction.type === "INCOME"
-                  ? styles.incomeAmount
-                  : styles.expenseAmount,
-              ]}
-            >
-              {transaction.type === "INCOME" ? "+ " : "- "}${transaction.amount}
-            </Text>
-          </Animated.View>
-        </Animated.View>
-      </GestureDetector>
-    </TouchableOpacity>
   );
 };
 

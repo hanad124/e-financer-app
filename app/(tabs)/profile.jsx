@@ -136,55 +136,59 @@ const Profile = () => {
             style={{
               width: "100%",
               height: 170,
-              position: "absolute",
+              position: "relative",
               top: 0,
-              left: "50%",
+              // left: "50%",
               borderRadius: 15,
-              transform: [{ translateX: -158 }],
+              // transform: [{ translateX: -163 }],
             }}
           />
 
           <View className="flex items-center justify-center mt-24">
-            <TouchableOpacity
-              onPress={pickImage}
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                backgroundColor: "#D3D8DB",
-                borderWidth: 1,
-                borderColor: "#D3D8DB",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: 4,
-              }}
-            >
-              {image ? (
-                <Image
-                  source={{ uri: image }}
-                  style={{ width: 100, height: 100, borderRadius: 50 }}
-                />
-              ) : (
-                <Image
-                  source={{
-                    uri:
-                      user?.data?.avatar ||
-                      "https://img.freepik.com/free-icon/user_318-644324.jpg?w=360",
-                  }}
-                  style={{ width: 100, height: 100, borderRadius: 50 }}
-                />
-              )}
-            </TouchableOpacity>
-            <Text className="text-xl font-pmedium mt-2">{userData?.name}</Text>
-            <Text className="text-sm font-pregular text-slate-500">
-              {userData?.email}
-            </Text>
+            <View className="relative top-[-100%] flex flex-col justify-center items-center">
+              <TouchableOpacity
+                onPress={pickImage}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                  backgroundColor: "#D3D8DB",
+                  borderWidth: 1,
+                  borderColor: "#D3D8DB",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: 4,
+                }}
+              >
+                {image ? (
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                  />
+                ) : (
+                  <Image
+                    source={{
+                      uri:
+                        user?.data?.avatar ||
+                        "https://img.freepik.com/free-icon/user_318-644324.jpg?w=360",
+                    }}
+                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                  />
+                )}
+              </TouchableOpacity>
+              <Text className="text-xl font-pmedium mt-2">
+                {userData?.name}
+              </Text>
+              <Text className="text-sm font-pregular text-slate-500">
+                {userData?.email}
+              </Text>
+            </View>
           </View>
 
           {/*
           Profile form
            */}
-          <View className="mt-10 ">
+          <View className="mt-10 relative top-[-20%] ">
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (

@@ -1,19 +1,20 @@
+// src/store/auth.js
 import { create } from "zustand";
 import { getUserInfo } from "../apicalls/auth";
 import { getToken } from "../utils/storage";
 
 export const useAuthStore = create((set) => ({
   user: null,
+  isAuthenticated: false,
   setUser: (user) => set({ user }),
-  fetchUser: () => {},
+  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
 
   getUserInfo: async () => {
     try {
-      // check if token is present
       const token = await getToken();
       if (!token) return;
       const user = await getUserInfo();
-      set({ user });
+      set({ user, isAuthenticated: true });
     } catch (error) {
       console.error("API call error::::::", error);
     }
@@ -21,11 +22,13 @@ export const useAuthStore = create((set) => ({
 }));
 
 const initializeStore = async () => {
-  const user = await getUserInfo();
-  useAuthStore.setState({ user });
-
-  // fetch user info
-  useAuthStore.getState().getUserInfo();
+  const token = await getToken();
+  if (token) {
+    const user = await getUserInfo();
+    useAuthStore.setState({ user, isAuthenticated: true });
+  } else {
+    useAuthStore.setState({ isAuthenticated: false });
+  }
 };
 
 initializeStore();

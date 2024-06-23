@@ -36,6 +36,8 @@ export const useTransactionsStore = create((set) => ({
 }));
 
 const initializeStore = async () => {
+  const res = await getTransactions();
+  useTransactionsStore.setState({ transactions: res?.data });
   useTransactionsStore.getState().getTransactions();
 };
 

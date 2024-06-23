@@ -45,3 +45,14 @@ export const updateProfile = async (payload) => {
     return error.response;
   }
 };
+
+// /verify-email-link
+export const verifyEmailLink = async (payload) => {
+  try {
+    const res = await axiosInstance.post("/auth/verify-email-link", payload);
+    return res;
+  } catch (error) {
+    console.error("API call error", error);
+    return error.response;
+  }
+};

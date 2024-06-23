@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,14 +7,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, router } from "expo-router";
-import { useForm, Controller, set } from "react-hook-form";
+import { Link, useRouter, useNavigation } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
-import { Eye, EyeOff, Loader } from "lucide-react-native";
+import { Eye, EyeOff } from "lucide-react-native";
 import { login } from "../../apicalls/auth";
 import { getToken, saveToken, saveUser } from "../../utils/storage";
+import { useAuthStore } from "../../store/auth";
+import useAuthRedirect from "../../hooks/useAuthRedirect";
+import { router } from "expo-router";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -24,6 +27,17 @@ const signInSchema = z.object({
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { setIsAuthenticated, isAuthenticated } = useAuthStore();
+  // const router = useRouter();
+
+  // useAuthRedirect();
+
+  useLayoutEffect(() => {
+    // if (router.pathname === "/sign-in" && isAuthenticated) {
+    //   router.push("/home");
+    //   return null;
+    // }
+  });
 
   const {
     control,
@@ -34,20 +48,6 @@ const SignIn = () => {
     resolver: zodResolver(signInSchema),
   });
 
-  // Check if user is already authenticated
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await getToken();
-      console.log("token", token);
-      // if (token) {
-      //   // Redirect to home screen or dashboard if user is already authenticated
-      //   router.push("/home");
-      // }
-      // router.push("/sign-in");
-    };
-    checkAuth();
-  }, []);
-
   const onSubmit = async (data) => {
     setLoading(true);
     try {
@@ -56,6 +56,7 @@ const SignIn = () => {
         setLoading(false);
         await saveToken(res.data.user.token);
         await saveUser(res.data.user);
+        setIsAuthenticated(true);
         router.push("/home");
         reset();
       } else {
@@ -64,12 +65,18 @@ const SignIn = () => {
       }
     } catch (error) {
       console.error("API call error", error);
+      setLoading(false);
     }
   };
 
+  // if (isAuthenticated) {
+  //   router.push("/home");
+  //   return null;
+  // }
+
   return (
     <SafeAreaView>
-      <ScrollView className="">
+      <ScrollView>
         <View className="w-full justify-center min-h-[90vh] px-4 my-6 mt-10">
           <Text className="text-3xl text-black font-bold text-center">
             Welcome Back
@@ -81,9 +88,7 @@ const SignIn = () => {
             </Link>
           </Text>
           <View className="my-16">
-            <Text className="text-base text-slate-600 font-pmedium ml-">
-              Email
-            </Text>
+            <Text className="text-base text-slate-600 font-pmedium">Email</Text>
             <Controller
               control={control}
               name="email"
@@ -136,18 +141,17 @@ const SignIn = () => {
             )}
 
             <Link
-              href={"/forgot-password"}
+              href={"(auth)/reset-password"}
               className="text-blue-500 font-semibold text-right mt-4 block"
             >
-              Forgot password?
+              <Text>Forgot password?</Text>
             </Link>
 
-            <View className="">
+            <View>
               <CustomButton
                 text="Log in"
                 handlePress={handleSubmit(onSubmit)}
-                containerStyles={`w-full mt-6 flex items-center gap-2 justify-center
-                } `}
+                containerStyles={`w-full mt-6 flex items-center gap-2 justify-center`}
                 isLoading={loading}
                 loadinState={"logging in..."}
               />

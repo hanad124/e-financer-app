@@ -24,6 +24,7 @@ import { RadioButton } from "react-native-paper";
 
 import { useCategoriesStore } from "../../store/categories";
 import { updateCategory } from "../../apicalls/categories";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 // category schema [name, icon?]
 const schema = z.object({
@@ -38,6 +39,7 @@ const schema = z.object({
 const create = () => {
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [overLeyLoading, setOverLeyLoading] = useState(false);
   const [searchIcon, setSearchIcon] = useState({
     id: "",
     url: "",
@@ -66,6 +68,7 @@ const create = () => {
     useCategoriesStore.getState().getCategoryIcons();
 
     const fetchCategory = async () => {
+      setOverLeyLoading(true);
       const category = await useCategoriesStore
         .getState()
 
@@ -76,6 +79,7 @@ const create = () => {
         id: category?.category?.iconId,
         url: category?.category?.icons?.icon,
       });
+      setOverLeyLoading(false);
     };
     fetchCategory();
   }, []);
@@ -114,171 +118,174 @@ const create = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white pt-5">
-      <ScrollView className="bg-white">
-        <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
-          <View className="flex flex-row items-center justify-between  my-2 mb-6">
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              className="flex flex-row items-center"
-            >
-              <ArrowLeft size={20} color={"black"} />
-              <Text className="text-lg font-pmedium text-gray-800 ml-2">
-                Back
-              </Text>
-            </TouchableOpacity>
-          </View>
+    <>
+      <LoadingOverlay loading={overLeyLoading} />
+      <SafeAreaView className="bg-white pt-5">
+        <ScrollView className="bg-white">
+          <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
+            <View className="flex flex-row items-center justify-between  my-2 mb-6">
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                className="flex flex-row items-center"
+              >
+                <ArrowLeft size={20} color={"black"} />
+                <Text className="text-lg font-pmedium text-gray-800 ml-2">
+                  Back
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-          <Text className="text-lg font-pmedium text-gray-800 my-2">
-            Create Category
-          </Text>
-          <View className="mt-5">
-            <Text className="text-black">Name</Text>
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Category Name"
-                />
+            <Text className="text-lg font-pmedium text-gray-800 my-2">
+              Create Category
+            </Text>
+            <View className="mt-5">
+              <Text className="text-black">Name</Text>
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Category Name"
+                  />
+                )}
+                name="name"
+                defaultValue=""
+              />
+              {errors.name && (
+                <Text style={{ color: "red" }}>{errors.name.message}</Text>
               )}
-              name="name"
-              defaultValue=""
-            />
-            {errors.name && (
-              <Text style={{ color: "red" }}>{errors.name.message}</Text>
-            )}
-          </View>
+            </View>
 
-          {/* 
+            {/* 
             search icons
              */}
-          <View className="mt-5">
-            <Text className="text-black">Search Icon</Text>
-            <TextInput
-              style={{
-                padding: 10,
-              }}
-              className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-              onChangeText={(text) => searchIconHandler(text)}
-              value={searchIcon}
-              placeholder="Search Icon"
-            />
-          </View>
+            <View className="mt-5">
+              <Text className="text-black">Search Icon</Text>
+              <TextInput
+                style={{
+                  padding: 10,
+                }}
+                className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                onChangeText={(text) => searchIconHandler(text)}
+                value={searchIcon}
+                placeholder="Search Icon"
+              />
+            </View>
 
-          {/* 
+            {/* 
             icons section
              */}
-          <View className="mt-5">
-            <Text className="text-black">Select Icon</Text>
-            <View className="flex flex-wrap mt-2">
-              <RadioButton.Group
-                onValueChange={(value) => setSelectedIcon(value)}
-                value={selectedIcon?.url}
-              >
-                <View className="flex flex-row flex-wrap w-full space-x-2 min-w-full">
-                  {filteredIcons.length > 0
-                    ? filteredIcons?.map((icon) => (
-                        <TouchableOpacity
-                          key={icon?.id}
-                          onPress={() =>
-                            setSelectedIcon({
-                              id: icon?.id,
-                              url: icon?.icon,
-                            })
-                          }
-                          className=""
-                        >
-                          <View
-                            style={[
-                              {
-                                borderRadius: 8,
-                                padding: 8,
-                                margin: 4,
-                              },
-                            ]}
-                            className={`flex flex-col items-center p-4 rounded-lg ${
-                              selectedIcon?.id === icon?.id
-                                ? "bg-primary"
-                                : "bg-primary/5"
-                            }`}
+            <View className="mt-5">
+              <Text className="text-black">Select Icon</Text>
+              <View className="flex flex-wrap mt-2">
+                <RadioButton.Group
+                  onValueChange={(value) => setSelectedIcon(value)}
+                  value={selectedIcon?.url}
+                >
+                  <View className="flex flex-row flex-wrap w-full space-x-2 min-w-full">
+                    {filteredIcons.length > 0
+                      ? filteredIcons?.map((icon) => (
+                          <TouchableOpacity
+                            key={icon?.id}
+                            onPress={() =>
+                              setSelectedIcon({
+                                id: icon?.id,
+                                url: icon?.icon,
+                              })
+                            }
+                            className=""
                           >
-                            <Image
-                              source={{ uri: icon?.icon }}
-                              style={{
-                                width: 35,
-                                height: 35,
-                              }}
-                              tintColor={
-                                selectedIcon?.url === icon?.icon
-                                  ? "white"
-                                  : "#6957E7"
-                              }
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      ))
-                    : icons?.map((icon) => (
-                        <TouchableOpacity
-                          key={icon?.id}
-                          onPress={() =>
-                            setSelectedIcon({
-                              id: icon?.id,
-                              url: icon?.icon,
-                            })
-                          }
-                          className=""
-                        >
-                          <View
-                            style={[
-                              {
-                                borderRadius: 8,
-                                padding: 8,
-                                margin: 4,
-                              },
-                            ]}
-                            className={`flex flex-col items-center p-4 rounded-lg ${
-                              selectedIcon?.id === icon?.id
-                                ? "bg-primary"
-                                : "bg-primary/5"
-                            }`}
+                            <View
+                              style={[
+                                {
+                                  borderRadius: 8,
+                                  padding: 8,
+                                  margin: 4,
+                                },
+                              ]}
+                              className={`flex flex-col items-center p-4 rounded-lg ${
+                                selectedIcon?.id === icon?.id
+                                  ? "bg-primary"
+                                  : "bg-primary/5"
+                              }`}
+                            >
+                              <Image
+                                source={{ uri: icon?.icon }}
+                                style={{
+                                  width: 35,
+                                  height: 35,
+                                }}
+                                tintColor={
+                                  selectedIcon?.url === icon?.icon
+                                    ? "white"
+                                    : "#6957E7"
+                                }
+                              />
+                            </View>
+                          </TouchableOpacity>
+                        ))
+                      : icons?.map((icon) => (
+                          <TouchableOpacity
+                            key={icon?.id}
+                            onPress={() =>
+                              setSelectedIcon({
+                                id: icon?.id,
+                                url: icon?.icon,
+                              })
+                            }
+                            className=""
                           >
-                            <Image
-                              source={{ uri: icon?.icon }}
-                              style={{
-                                width: 35,
-                                height: 35,
-                              }}
-                              tintColor={
-                                selectedIcon?.url === icon?.icon
-                                  ? "white"
-                                  : "#6957E7"
-                              }
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      ))}
-                </View>
-              </RadioButton.Group>
+                            <View
+                              style={[
+                                {
+                                  borderRadius: 8,
+                                  padding: 8,
+                                  margin: 4,
+                                },
+                              ]}
+                              className={`flex flex-col items-center p-4 rounded-lg ${
+                                selectedIcon?.id === icon?.id
+                                  ? "bg-primary"
+                                  : "bg-primary/5"
+                              }`}
+                            >
+                              <Image
+                                source={{ uri: icon?.icon }}
+                                style={{
+                                  width: 35,
+                                  height: 35,
+                                }}
+                                tintColor={
+                                  selectedIcon?.url === icon?.icon
+                                    ? "white"
+                                    : "#6957E7"
+                                }
+                              />
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                  </View>
+                </RadioButton.Group>
+              </View>
             </View>
-          </View>
 
-          {/* submit button */}
-          <CustomButton
-            text="Update Category"
-            handlePress={() => {
-              handleSubmit(onSubmit)();
-            }}
-            isLoading={loading}
-            className="mt-5"
-            loadinState={"Updating Category..."}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            {/* submit button */}
+            <CustomButton
+              text="Update Category"
+              handlePress={() => {
+                handleSubmit(onSubmit)();
+              }}
+              isLoading={loading}
+              className="mt-5"
+              loadinState={"Updating Category..."}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 
