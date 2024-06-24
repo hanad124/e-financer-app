@@ -38,8 +38,11 @@ const CustomButton = ({
       style={{
         ...styles.buttonContainer,
         ...containerStyles,
-        ...{ opacity: isLoading ? 0.5 : 1, marginTop: 24 },
-        ...{ opacity: disabled ? 0.5 : 1 },
+
+        ...{
+          opacity: isLoading || disabled ? 0.5 : 1,
+          marginTop: 24,
+        },
       }}
       onPress={handlePress}
       disabled={isLoading || disabled}

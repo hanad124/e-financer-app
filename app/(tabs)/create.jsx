@@ -22,6 +22,7 @@ import { number, z } from "zod";
 import CustomButton from "../../components/CustomButton";
 import { useCategoriesStore } from "../../store/categories";
 import { useTransactionsStore } from "../../store/transactions";
+import { useGoalsStore } from "../../store/goals";
 import { RadioButton } from "react-native-paper";
 // import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -101,6 +102,7 @@ const Create = () => {
 
   useEffect(() => {
     useCategoriesStore.getState().getCategories();
+    useGoalsStore.getState().getGoals();
   }, []);
 
   useEffect(() => {

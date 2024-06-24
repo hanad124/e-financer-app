@@ -15,7 +15,7 @@ import { useNavigation, router } from "expo-router";
 import { LogOut } from "lucide-react-native";
 
 const Avatar = () => {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuthStore();
   // const userData = user?.data;
   const [greeting, setGreeting] = useState("");
   const [userData, setUserData] = useState("");

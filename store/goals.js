@@ -36,9 +36,7 @@ export const useGoalsStore = create((set, get) => ({
 }));
 
 const initializeStore = () => {
-  const store = useGoalsStore.getState();
-  store.getGoals();
-  return store;
+  useGoalsStore.getState().getGoals();
 };
 
 initializeStore();

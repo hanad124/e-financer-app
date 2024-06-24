@@ -53,6 +53,12 @@ const RootLayout = () => {
           }}
         />
         <Stack.Screen
+          name="(auth)/verify-email"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="(tabs)"
           options={{
             headerShown: false,

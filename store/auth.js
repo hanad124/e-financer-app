@@ -24,7 +24,7 @@ export const useAuthStore = create((set) => ({
 const initializeStore = async () => {
   const token = await getToken();
   if (token) {
-    const user = await getUserInfo();
+    const user = useAuthStore.getState().getUserInfo();
     useAuthStore.setState({ user, isAuthenticated: true });
   } else {
     useAuthStore.setState({ isAuthenticated: false });

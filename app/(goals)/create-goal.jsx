@@ -359,7 +359,6 @@ const CreateGoal = () => {
             isLoading={loading}
             containerStyles="mb-10"
             loadinState={"Creating Goal"}
-            className="my-24"
           />
         </View>
       </ScrollView>

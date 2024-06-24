@@ -17,20 +17,20 @@ import CustomButton from "../../components/CustomButton";
 
 import Logo from "../../assets/Logo.png";
 
-import { sendPasswordResetLink } from "../../apicalls/auth";
+import { verifyEmailLink } from "../../apicalls/auth";
 
 // schema
-const resetPasswordSchema = z.object({
+const verifyEmailSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
-const ResetPassword = () => {
+const VerifyEmail = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(verifyEmailSchema),
   });
 
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ const ResetPassword = () => {
       setLoading(true);
       setError("");
       setSuccess("");
-      const res = await sendPasswordResetLink(data);
+      const res = await verifyEmailLink(data);
       if (res?.data?.success) {
         alert(`${res?.data.message}`);
         setSuccess(`${res?.data.message}`);
@@ -90,10 +90,10 @@ const ResetPassword = () => {
             </Text>
           </View>
           <Text className="text-3xl text-black font-bold text-center">
-            Reset password
+            Verify Your Email
           </Text>
           <Text className="text text-gray-400 mt-4 text-center ">
-            Enter your email address to reset your password
+            Enter your email address to receive a link to verify your email
           </Text>
           <View className="my-16">
             <Text className="text-base text-slate-600 font-pmedium">Email</Text>
@@ -124,7 +124,7 @@ const ResetPassword = () => {
             <View>
               <CustomButton
                 text={`${
-                  time === 0 ? "Resend email" : `Resend in ${time} seconds`
+                  time === 0 ? "Send email" : `Resend in ${time} seconds`
                 }`}
                 disabled={time !== 0}
                 handlePress={handleSubmit(onSubmit)}
@@ -142,4 +142,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default VerifyEmail;

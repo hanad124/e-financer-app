@@ -52,7 +52,8 @@ const SignIn = () => {
     setLoading(true);
     try {
       const res = await login(data);
-      if (res) {
+      console.log("login res", res?.data);
+      if (res?.data?.success) {
         setLoading(false);
         await saveToken(res.data.user.token);
         await saveUser(res.data.user);
@@ -139,13 +140,20 @@ const SignIn = () => {
             {errors.password && (
               <Text className="text-red-500">{errors.password.message}</Text>
             )}
-
-            <Link
-              href={"(auth)/reset-password"}
-              className="text-blue-500 font-semibold text-right mt-4 block"
-            >
-              <Text>Forgot password?</Text>
-            </Link>
+            <View className="flex flex-row items-center justify-between">
+              <Link
+                href={"(auth)/verify-email"}
+                className="text-blue-500 font-semibold text-right mt-4 block"
+              >
+                <Text>Verify your email </Text>
+              </Link>
+              <Link
+                href={"(auth)/reset-password"}
+                className="text-blue-500 font-semibold text-right mt-4 block"
+              >
+                <Text>Forgot password?</Text>
+              </Link>
+            </View>
 
             <View>
               <CustomButton

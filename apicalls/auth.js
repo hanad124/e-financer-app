@@ -56,3 +56,17 @@ export const verifyEmailLink = async (payload) => {
     return error.response;
   }
 };
+
+// send-password-reset-link
+export const sendPasswordResetLink = async (payload) => {
+  try {
+    const res = await axiosInstance.post(
+      "/auth/send-password-reset-link",
+      payload
+    );
+    return res;
+  } catch (error) {
+    console.error("API call error", error);
+    return error.response;
+  }
+};

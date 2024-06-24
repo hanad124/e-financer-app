@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -20,8 +20,12 @@ const Goals = () => {
   const [filter, setFilter] = useState("ongoing"); // State for filter
   const animatedValues = useRef([]).current;
 
-  useEffect(() => {
-    getGoals();
+  useLayoutEffect(() => {
+    useGoalsStore.getState().getGoals();
+  }, []);
+
+  useEffect(() => { 
+    useGoalsStore.getState().getGoals();
   }, []);
 
   useEffect(() => {

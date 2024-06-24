@@ -111,17 +111,48 @@ const GroupedBars = () => {
   };
 
   const calculateBarData = () => {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const data = days.map((day) => ({
-      label: day,
-      INCOME: 0,
-      EXPENSE: 0,
-    }));
+    let labels;
+    let data;
+    const now = dayjs();
 
-    filteredTransactions?.forEach((transaction) => {
-      const day = dayjs(transaction.createdAt).day();
-      data[day][transaction.type] += transaction.amount;
-    });
+    if (selectedFilter === "Month" || selectedFilter === "Year") {
+      labels = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      data = labels.map((label, index) => ({
+        label,
+        INCOME: 0,
+        EXPENSE: 0,
+      }));
+
+      filteredTransactions?.forEach((transaction) => {
+        const month = dayjs(transaction.createdAt).month();
+        data[month][transaction.type] += transaction.amount;
+      });
+    } else {
+      labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      data = labels.map((label, index) => ({
+        label,
+        INCOME: 0,
+        EXPENSE: 0,
+      }));
+
+      filteredTransactions?.forEach((transaction) => {
+        const day = dayjs(transaction.createdAt).day();
+        data[day][transaction.type] += transaction.amount;
+      });
+    }
 
     const barData = data.flatMap((d) => [
       {
