@@ -234,7 +234,7 @@ const create = () => {
               handleSubmit(onSubmit)();
             }}
             isLoading={loading}
-            className="mt-5"
+            containerStyles="mt-5"
             loadinState={"Creating Category..."}
           />
         </View>

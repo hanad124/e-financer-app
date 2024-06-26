@@ -188,7 +188,7 @@ const Profile = () => {
           {/*
           Profile form
            */}
-          <View className="mt-10 relative top-[-20%] ">
+          <View className="mt-2 relative top-[-20%] ">
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -249,6 +249,8 @@ const Profile = () => {
               loadinState="Saving..."
             />
           </View>
+
+          {/* export data */}
         </View>
       </ScrollView>
     </SafeAreaView>

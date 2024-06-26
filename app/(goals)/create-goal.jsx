@@ -347,19 +347,21 @@ const CreateGoal = () => {
           </View>
 
           {/* submit button */}
-          <CustomButton
-            text="Create Goal"
-            handlePress={() => {
-              handleSubmit(onSubmit)();
+          <View className="my-5" style={{ marginBottom: ".5rem" }}>
+            <CustomButton
+              text="Create Goal"
+              handlePress={() => {
+                handleSubmit(onSubmit)();
 
-              if (errors.targetDate) {
-                Alert.alert("Target Date is required");
-              }
-            }}
-            isLoading={loading}
-            containerStyles="mb-10"
-            loadinState={"Creating Goal"}
-          />
+                if (errors.targetDate) {
+                  Alert.alert("Target Date is required");
+                }
+              }}
+              isLoading={loading}
+              containerStyles="mb-10"
+              loadinState={"Creating Goal"}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

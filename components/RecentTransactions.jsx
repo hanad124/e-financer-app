@@ -57,7 +57,7 @@ const RecentTransactions = () => {
         {/* </Link> */}
       </View>
       <View className="flex flex-col justify-center items-center w-full  ">
-        {transactions.transactions
+        {transactions?.transactions
           ?.slice(0, 11)
           .reverse()
           .map((transaction) => (

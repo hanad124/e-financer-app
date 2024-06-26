@@ -46,12 +46,12 @@ const SignIn = () => {
     try {
       const res = await signUp(data);
       if (res.data.success) {
-        ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
+        alert(`${res.data.message}`, ToastAndroid.SHORT);
         router.push("/sign-in");
         setLoading(false);
         reset();
       } else {
-        ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
+        alert(`${res.data.message}`, ToastAndroid.SHORT);
         setLoading(false);
       }
     } catch (error) {

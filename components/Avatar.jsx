@@ -36,7 +36,9 @@ const Avatar = () => {
   }, []);
 
   // get user data from AsyncStorage
-  useEffect(() => {}, []);
+  useEffect(() => {
+    useAuthStore.getState().getUserInfo();
+  }, []);
 
   return (
     <View style={styles.container}>
