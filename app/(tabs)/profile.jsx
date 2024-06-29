@@ -18,10 +18,12 @@ import CustomButton from "../../components/CustomButton";
 import { useAuthStore } from "../../store/auth";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUser } from "../../utils/storage";
+import { useNavigation } from "expo-router";
 
 import { updateProfile } from "../../apicalls/auth";
 
 import BannerImage from "../../assets/images/banner-img.png";
+import { ArrowLeft } from "lucide-react-native";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -38,6 +40,8 @@ const Profile = () => {
   const user = useAuthStore((state) => state.user); // Assuming this gets the logged-in user's data
   const [image, setImage] = useState(user?.data?.avatar);
 
+  const navigation = useNavigation();
+
   useEffect(() => {
     (async () => {
       const galleryStatus =
@@ -45,6 +49,8 @@ const Profile = () => {
       setHasGalleryPermission(galleryStatus.status === "granted");
     })();
   }, []);
+
+  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB size limit
 
   const pickImage = async () => {
     if (hasGalleryPermission) {
@@ -124,9 +130,31 @@ const Profile = () => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView className="">
+    <SafeAreaView className="bg-white">
+      <ScrollView className="bg-white">
         <View className="w-full  min-h-[90vh] px-4 my-6 mt-10 bg-white">
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginLeft: 20,
+              marginBottom: 20,
+            }}
+          >
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <ArrowLeft className="text-black " size={24} />
+            </TouchableOpacity>
+            <Text
+              style={{
+                color: "black",
+                // fontFamily: "pmedium",
+                fontSize: 24,
+                marginLeft: 80,
+              }}
+            >
+              Profile
+            </Text>
+          </View>
           {/* 
           profile banner with user avatar and name
            */}
@@ -188,7 +216,7 @@ const Profile = () => {
           {/*
           Profile form
            */}
-          <View className="mt-2 relative top-[-20%] ">
+          <View className="mt-2 relative top-[-15%] ">
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (

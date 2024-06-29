@@ -11,6 +11,8 @@ import {
 } from "react-native";
 
 import call from "react-native-phone-call";
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -74,6 +76,8 @@ const UpdateTransaction = () => {
     },
   ];
   const categoriesData = categories?.categories;
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [overLeyLoading, setOverlayLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -97,7 +101,7 @@ const UpdateTransaction = () => {
       type: selectedTransactionType,
       category: selectedCategory,
       accountType: selectedAccountType,
-      number: 0,
+      // number: 0,
     },
   });
 
@@ -111,14 +115,15 @@ const UpdateTransaction = () => {
         const res = await getTransactionById(transactionId);
         const transaction = res.data?.transaction;
 
-        console.log("transaction data:", transaction);
-
         setSelectedTransactionType(transaction?.type);
         setValue("title", transaction?.title);
         setValue("amount", Number(transaction?.amount));
         setValue("description", transaction?.description);
 
         setSelectedCategory(transaction?.category?.id);
+        setImage(transaction?.receipt);
+
+        console.log("transaction receipt", transaction.receipt);
         setOverlayLoading(false);
       }
     };
@@ -147,8 +152,43 @@ const UpdateTransaction = () => {
     // display exact error message in the alert
   }, [errors]);
 
+  useEffect(() => {
+    (async () => {
+      const galleryStatus =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      setHasCameraPermission(galleryStatus.status === "granted");
+    })();
+  }, []);
+
+  // take picture from camera
+  const takePicture = async () => {
+    if (hasCameraPermission) {
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      console.log("result", result);
+
+      if (!result.cancelled) {
+        const base64Image = await FileSystem.readAsStringAsync(
+          result?.assets[0]?.uri,
+          {
+            encoding: "base64",
+          }
+        );
+        const imageData = `data:image/jpeg;base64,${base64Image}`;
+
+        setImage(imageData);
+      }
+    }
+  };
+
   const onSubmit = async (data) => {
     console.log("data", data);
+    image && (data.receipt = image);
 
     setLoading(true);
     try {
@@ -195,14 +235,12 @@ const UpdateTransaction = () => {
     }
   };
 
-  console.log("selected category", selectedCategory);
-
   return (
     <>
       <LoadingOverlay loading={overLeyLoading} />
       <SafeAreaView>
-        <ScrollView className="bg-white pt-5">
-          <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
+        <ScrollView className="bg-red-500 pt-5">
+          <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-red-500">
             <View className="flex flex-row items-center justify-between  my-2 mb-6">
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
@@ -407,6 +445,30 @@ const UpdateTransaction = () => {
                   )}
                   name="description"
                 />
+                {selectedTransactionType === "EXPENSE" && (
+                  <View className="mt-4">
+                    <Text className="text-sm font-pregular text-gray-800">
+                      Attach Receipt
+                    </Text>
+                    <TouchableOpacity
+                      onPress={takePicture}
+                      className="flex flex-row border border-slate-400 py-3 rounded-lg items-center justify-center mt-2"
+                    >
+                      <Text className="text-gray-800 ">Take a picture</Text>
+                    </TouchableOpacity>
+                    {image && (
+                      <Image
+                        source={{ uri: image }}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          marginTop: 15,
+                        }}
+                        className="rounded-lg"
+                      />
+                    )}
+                  </View>
+                )}
 
                 <View className="mt-5">
                   <Text className="text-sm font-pmedium text-gray-800">

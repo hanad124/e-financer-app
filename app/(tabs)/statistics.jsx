@@ -110,6 +110,97 @@ const GroupedBars = () => {
     setFilteredTransactions(filtered);
   };
 
+  // const calculateBarData = () => {
+  //   let labels;
+  //   let data;
+  //   const now = dayjs();
+
+  //   if (selectedFilter === "Month" || selectedFilter === "Year") {
+  //     labels = [
+  //       "Jan",
+  //       "Feb",
+  //       "Mar",
+  //       "Apr",
+  //       "May",
+  //       "Jun",
+  //       "Jul",
+  //       "Aug",
+  //       "Sep",
+  //       "Oct",
+  //       "Nov",
+  //       "Dec",
+  //     ];
+  //     data = labels.map((label, index) => ({
+  //       label,
+  //       INCOME: 0,
+  //       EXPENSE: 0,
+  //     }));
+
+  //     filteredTransactions?.forEach((transaction) => {
+  //       const month = dayjs(transaction.createdAt).month();
+  //       data[month][transaction.type] += transaction.amount;
+  //     });
+  //   } else {
+  //     labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  //     data = labels.map((label, index) => ({
+  //       label,
+  //       INCOME: 0,
+  //       EXPENSE: 0,
+  //     }));
+
+  //     filteredTransactions?.forEach((transaction) => {
+  //       const day = dayjs(transaction.createdAt).day();
+  //       data[day][transaction.type] += transaction.amount;
+  //     });
+  //   }
+
+  //   const barData = data.flatMap((d) => [
+  //     {
+  //       value: d.INCOME,
+  //       label: d.label,
+  //       frontColor: "#D3D8DB", // Green for INCOME
+  //       topLabelComponent: () =>
+  //         d.INCOME > 0 ? (
+  //           <Text
+  //             style={{
+  //               color: "#D3D8DB",
+  //               fontSize: 12,
+  //               marginBottom: -4,
+  //               marginRight: -20,
+  //               width: 50,
+  //               height: 20,
+  //             }}
+  //           >
+  //             ${d.INCOME}
+  //           </Text>
+  //         ) : null,
+  //     },
+  //     {
+  //       value: d.EXPENSE,
+  //       label: d.label,
+  //       frontColor: "#6957E7", // Red for EXPENSE
+  //       topLabelComponent: () =>
+  //         d.EXPENSE > 0 ? (
+  //           <Text
+  //             style={{
+  //               color: "#6957E7",
+  //               fontSize: 12,
+  //               marginBottom: -4,
+  //               marginRight: -15,
+
+  //               width: 50,
+  //               height: 20,
+  //             }}
+  //           >
+  //             ${d.EXPENSE}
+  //           </Text>
+  //         ) : null,
+  //     },
+  //   ]);
+
+  //   return barData;
+  // };
+
   const calculateBarData = () => {
     let labels;
     let data;
@@ -117,18 +208,18 @@ const GroupedBars = () => {
 
     if (selectedFilter === "Month" || selectedFilter === "Year") {
       labels = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Jan '23",
+        "Feb '23",
+        "Mar '23",
+        "Apr '23",
+        "May '23",
+        "Jun '23",
+        "Jul '23",
+        "Aug '23",
+        "Sep '23",
+        "Oct '23",
+        "Nov '23",
+        "Dec '23",
       ];
       data = labels.map((label, index) => ({
         label,
@@ -187,7 +278,6 @@ const GroupedBars = () => {
                 fontSize: 12,
                 marginBottom: -4,
                 marginRight: -15,
-
                 width: 50,
                 height: 20,
               }}
@@ -200,11 +290,10 @@ const GroupedBars = () => {
 
     return barData;
   };
-
   return (
     <SafeAreaView>
       <ScrollView className=" bg-white">
-        <View style={{ marginTop: 50 }}>
+        <View style={{ marginTop: 20 }}>
           <View
             style={{
               flexDirection: "row",
@@ -315,7 +404,8 @@ const GroupedBars = () => {
               <BarChart
                 key={selectedFilter} // Force re-render on filter change
                 data={calculateBarData()}
-                barWidth={24}
+                barWidth={26}
+                height={250}
                 spacing={14}
                 roundedTop
                 roundedBottom
@@ -326,12 +416,12 @@ const GroupedBars = () => {
                 xAxisLabelTextStyle={{ fontSize: 10, rotate: 45 }}
                 yAxis={false}
                 noOfSections={3}
-                maxValue={750}
+                maxValue={450}
                 width={360}
               />
             </View>
           </View>
-
+          {/* // Spending details */}
           <View className="m-4">
             <Text className="text-black font-pmedium text-lg mt-2">
               Spending details

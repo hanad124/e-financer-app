@@ -13,6 +13,8 @@ import {
 import { router, useNavigation } from "expo-router";
 
 import call from "react-native-phone-call";
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -74,6 +76,8 @@ const Create = () => {
   ];
 
   const categoriesData = categories.categories;
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTransactionType, setSelectedTransactionType] =
@@ -101,6 +105,14 @@ const Create = () => {
   });
 
   useEffect(() => {
+    (async () => {
+      const galleryStatus =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      setHasCameraPermission(galleryStatus.status === "granted");
+    })();
+  }, []);
+
+  useEffect(() => {
     useCategoriesStore.getState().getCategories();
     useGoalsStore.getState().getGoals();
   }, []);
@@ -122,8 +134,36 @@ const Create = () => {
     // display exact error message in the alert
   }, [errors]);
 
+  // take picture from camera
+  const takePicture = async () => {
+    if (hasCameraPermission) {
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      console.log("result", result);
+
+      if (!result.cancelled) {
+        const base64Image = await FileSystem.readAsStringAsync(
+          result?.assets[0]?.uri,
+          {
+            encoding: "base64",
+          }
+        );
+        const imageData = `data:image/jpeg;base64,${base64Image}`;
+
+        setImage(imageData);
+      }
+    }
+  };
+
   const onSubmit = async (data) => {
     console.log("data", data);
+
+    image && (data.receipt = image);
 
     setLoading(true);
     try {
@@ -376,7 +416,31 @@ const Create = () => {
                 )}
                 name="description"
               />
-
+              {/* 
+              take picture of the transaction
+               */}
+              <View className="mt-4">
+                <Text className="text-sm font-pregular text-gray-800">
+                  Attach Receipt
+                </Text>
+                <TouchableOpacity
+                  onPress={takePicture}
+                  className="flex flex-row border border-slate-400 py-3 rounded-lg items-center justify-center mt-2"
+                >
+                  <Text className="text-gray-800 ">Take a picture</Text>
+                </TouchableOpacity>
+                {image && (
+                  <Image
+                    source={{ uri: image }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      marginTop: 15,
+                    }}
+                    className="rounded-lg"
+                  />
+                )}
+              </View>
               <View className="mt-5">
                 <Text className="text-sm font-pmedium text-gray-800">
                   Choose category
