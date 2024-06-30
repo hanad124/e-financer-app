@@ -22,3 +22,28 @@ e-financer is an application that helps you track your expenses and income easil
 - **JWT** for authentication
 - **zustand** for state management
 - **Prisma** for ORM
+
+## Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/hanad124/react-native-expense-tracker-app.git
+```
+
+2. Install dependencies
+
+```bash
+cd react-native-expense-tracker-app
+npm install
+```
+
+3. Run the app
+
+```bash
+npx expo start
+```
+
+## Author
+[Hanad Mohamed](https://github.com/hanad124/)
+
