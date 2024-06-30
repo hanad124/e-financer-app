@@ -9,16 +9,24 @@ import {
   StyleSheet,
   Image,
   Animated,
+  FlatList,
 } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { useTransactionsStore } from "../../store/transactions";
 import dayjs from "dayjs";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, SlidersHorizontal } from "lucide-react-native";
 import { useNavigation } from "expo-router";
+import { Dropdown } from "react-native-element-dropdown";
 
 import * as FileSystem from "expo-file-system";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
+
+const data = [
+  { label: "All", value: "All" },
+  { label: "Income", value: "INCOME" },
+  { label: "Expense", value: "EXPENSE" },
+];
 
 const GroupedBars = () => {
   const { transactions } = useTransactionsStore();
@@ -26,6 +34,23 @@ const GroupedBars = () => {
   const [selectedFilter, setSelectedFilter] = useState("Week");
   const [totalExpensePerWeek, setTotalExpensePerWeek] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [selectedType, setSelectedType] = useState("All");
+
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+
+  const renderLabel = () => {
+    if (value || isFocus) {
+      return (
+        <Text style={[styles.label, isFocus && { color: "blue" }]}>
+          Filter by type
+        </Text>
+      );
+    }
+    return null;
+  };
+
   const animatedValue = useRef(new Animated.Value(0)).current;
   const isFirstRender = useRef(true);
 
@@ -266,6 +291,18 @@ const GroupedBars = () => {
       console.error("Error exporting transactions:", error);
     }
   };
+
+  // filter by type [INCOME, EXPENSE] as dropdown
+  const filterByType = (type) => {
+    const filtered = transactions.transactions.filter(
+      (transaction) => transaction.type === type
+    );
+    if (type === "All") {
+      setFilteredTransactions(transactions.transactions);
+    }
+    setFilteredTransactions(filtered);
+  };
+
   return (
     <SafeAreaView className="bg-white">
       <ScrollView className=" bg-white">
@@ -407,6 +444,39 @@ const GroupedBars = () => {
                 <Text className="text-[#348F9F] text-sm">Export</Text>
               </TouchableOpacity>
             </View>
+            {/* 
+           dropdown for filter by type [INCOME, EXPENSE]
+          */}
+            <View className="">
+              <View className="mt-2">{renderLabel()}</View>
+              <View className="border border-primary rounded-md mt-2 p-3">
+                <Dropdown
+                  style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={data}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? "Select item" : "..."}
+                  searchPlaceholder="Search..."
+                  value={value}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
+                  onChange={(item) => {
+                    setValue(item.value);
+                    setIsFocus(false);
+
+                    // filter transactions by type
+                    filterByType(item.value);
+                  }}
+                />
+              </View>
+            </View>
+
             <View className="flex flex-col justify-center items-center w-full  ">
               {filteredTransactions.length > 0 ? (
                 filteredTransactions
