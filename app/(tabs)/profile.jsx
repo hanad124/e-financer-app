@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller, set } from "react-hook-form";
 import { z } from "zod";
 import * as FileSystem from "expo-file-system";
+import { printToFileAsync } from "expo-print";
+import { shareAsync } from "expo-sharing";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
@@ -78,6 +80,40 @@ const Profile = () => {
   };
 
   const userData = user?.data;
+
+  // export data
+  const exportData = async () => {
+    // Convert userData to HTML format for PDF generation
+    const dataHtml = `
+      <html>
+        <body>
+          <pre>${JSON.stringify(userData, null, 2)}</pre>
+        </body>
+      </html>
+    `;
+
+    try {
+      // Generate the PDF from the HTML content
+      const { uri: pdfUri } = await printToFileAsync({
+        html: dataHtml,
+        width: 612,
+        height: 792,
+        base64: false,
+      });
+
+      // Move the generated PDF to the document directory
+      const pdfDocumentUri = FileSystem.documentDirectory + "profile.pdf";
+      await FileSystem.moveAsync({
+        from: pdfUri,
+        to: pdfDocumentUri,
+      });
+
+      // Share the PDF file
+      await shareAsync(pdfDocumentUri);
+    } catch (error) {
+      console.error("Error exporting data:", error);
+    }
+  };
 
   const {
     control,
@@ -279,6 +315,11 @@ const Profile = () => {
           </View>
 
           {/* export data */}
+          <CustomButton
+            text="Export Data"
+            handlePress={exportData}
+            containerStyles="mt-10"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

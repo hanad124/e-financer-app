@@ -16,6 +16,10 @@ import dayjs from "dayjs";
 import { ArrowLeft } from "lucide-react-native";
 import { useNavigation } from "expo-router";
 
+import * as FileSystem from "expo-file-system";
+import { printToFileAsync } from "expo-print";
+import { shareAsync } from "expo-sharing";
+
 const GroupedBars = () => {
   const { transactions } = useTransactionsStore();
   const [filteredTransactions, setFilteredTransactions] = useState([]);
@@ -110,97 +114,6 @@ const GroupedBars = () => {
     setFilteredTransactions(filtered);
   };
 
-  // const calculateBarData = () => {
-  //   let labels;
-  //   let data;
-  //   const now = dayjs();
-
-  //   if (selectedFilter === "Month" || selectedFilter === "Year") {
-  //     labels = [
-  //       "Jan",
-  //       "Feb",
-  //       "Mar",
-  //       "Apr",
-  //       "May",
-  //       "Jun",
-  //       "Jul",
-  //       "Aug",
-  //       "Sep",
-  //       "Oct",
-  //       "Nov",
-  //       "Dec",
-  //     ];
-  //     data = labels.map((label, index) => ({
-  //       label,
-  //       INCOME: 0,
-  //       EXPENSE: 0,
-  //     }));
-
-  //     filteredTransactions?.forEach((transaction) => {
-  //       const month = dayjs(transaction.createdAt).month();
-  //       data[month][transaction.type] += transaction.amount;
-  //     });
-  //   } else {
-  //     labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  //     data = labels.map((label, index) => ({
-  //       label,
-  //       INCOME: 0,
-  //       EXPENSE: 0,
-  //     }));
-
-  //     filteredTransactions?.forEach((transaction) => {
-  //       const day = dayjs(transaction.createdAt).day();
-  //       data[day][transaction.type] += transaction.amount;
-  //     });
-  //   }
-
-  //   const barData = data.flatMap((d) => [
-  //     {
-  //       value: d.INCOME,
-  //       label: d.label,
-  //       frontColor: "#D3D8DB", // Green for INCOME
-  //       topLabelComponent: () =>
-  //         d.INCOME > 0 ? (
-  //           <Text
-  //             style={{
-  //               color: "#D3D8DB",
-  //               fontSize: 12,
-  //               marginBottom: -4,
-  //               marginRight: -20,
-  //               width: 50,
-  //               height: 20,
-  //             }}
-  //           >
-  //             ${d.INCOME}
-  //           </Text>
-  //         ) : null,
-  //     },
-  //     {
-  //       value: d.EXPENSE,
-  //       label: d.label,
-  //       frontColor: "#6957E7", // Red for EXPENSE
-  //       topLabelComponent: () =>
-  //         d.EXPENSE > 0 ? (
-  //           <Text
-  //             style={{
-  //               color: "#6957E7",
-  //               fontSize: 12,
-  //               marginBottom: -4,
-  //               marginRight: -15,
-
-  //               width: 50,
-  //               height: 20,
-  //             }}
-  //           >
-  //             ${d.EXPENSE}
-  //           </Text>
-  //         ) : null,
-  //     },
-  //   ]);
-
-  //   return barData;
-  // };
-
   const calculateBarData = () => {
     let labels;
     let data;
@@ -290,8 +203,71 @@ const GroupedBars = () => {
 
     return barData;
   };
+
+  const exportTransactions = async () => {
+    console.log("Exporting transactions", transactions?.transactions);
+
+    const table = transactions?.transactions
+      ?.map(
+        (transaction) =>
+          `<tr><td>${transaction.title}</td><td>${
+            transaction.description
+          }</td><td>${transaction.amount}</td><td>${
+            transaction.type
+          }</td><td>${dayjs(transaction.createdAt).format(
+            "DD MMM YYYY"
+          )}</td></tr>`
+      )
+      .join("");
+
+    const html = `
+    <html>
+      <head>
+        <style>
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background-color: #f2f2f2;
+          }
+        </style>
+      </head>
+      <body>
+        <table>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Date</th>
+          </tr>
+          ${table}
+        </table>
+      </body>
+    </html>
+    `;
+
+    try {
+      const { uri: pdfUri } = await printToFileAsync({
+        html: html,
+        width: 612,
+        height: 792,
+        base64: false,
+      });
+
+      await shareAsync(pdfUri);
+    } catch (error) {
+      console.error("Error exporting transactions:", error);
+    }
+  };
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white">
       <ScrollView className=" bg-white">
         <View style={{ marginTop: 20 }}>
           <View
@@ -423,50 +399,66 @@ const GroupedBars = () => {
           </View>
           {/* // Spending details */}
           <View className="m-4">
-            <Text className="text-black font-pmedium text-lg mt-2">
-              Spending details
-            </Text>
+            <View className="flex flex-row justify-between items-center">
+              <Text className="text-black font-pmedium text-lg mt-2">
+                Spending details
+              </Text>
+              <TouchableOpacity onPress={exportTransactions}>
+                <Text className="text-[#348F9F] text-sm">Export</Text>
+              </TouchableOpacity>
+            </View>
             <View className="flex flex-col justify-center items-center w-full  ">
-              {transactions.transactions
-                ?.slice(0, 11)
-                .reverse()
-                .map((transaction) => (
-                  <View key={transaction?.id}>
-                    {
-                      <View
-                        className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
-                        key={transaction?.id}
-                      >
-                        <View className="flex flex-row gap-2 items-center">
-                          <View className="bg-white/60 p-1 rounded-lg">
-                            <Image
-                              source={{ uri: transaction.category?.icon }}
-                              style={{ width: 30, height: 30 }}
-                            />
+              {filteredTransactions.length > 0 ? (
+                filteredTransactions
+                  ?.slice(0, 11)
+                  .reverse()
+                  .map((transaction) => (
+                    <View key={transaction?.id}>
+                      {
+                        <View
+                          className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
+                          key={transaction?.id}
+                        >
+                          <View className="flex flex-row gap-2 items-center">
+                            <View className="bg-white/60 p-1 rounded-lg">
+                              <Image
+                                source={{ uri: transaction.category?.icon }}
+                                style={{ width: 30, height: 30 }}
+                              />
+                            </View>
+                            <View>
+                              <Text className="text-black font-pmedium">
+                                {transaction.title}
+                              </Text>
+                              <Text className="text-[#348F9F]  text-sm">
+                                {transaction.description}
+                              </Text>
+                            </View>
                           </View>
-                          <View>
-                            <Text className="text-black font-pmedium">
-                              {transaction.title}
+                          <View className="flex flex-col ">
+                            <Text
+                              className={
+                                transaction.type === "INCOME"
+                                  ? "text-green-500"
+                                  : "text-red-500"
+                              }
+                            >
+                              {transaction.type === "INCOME" ? "$" : "- $"}
+                              {transaction.amount}
                             </Text>
-                            <Text className="text-[#348F9F]  text-sm">
-                              {transaction.description}
+                            <Text className="text-[#348F9F] text-sm">
+                              {dayjs(transaction.createdAt).format("DD MMM")}
                             </Text>
                           </View>
                         </View>
-                        <Text
-                          className={
-                            transaction.type === "INCOME"
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }
-                        >
-                          {transaction.type === "INCOME" ? "$" : "- $"}
-                          {transaction.amount}
-                        </Text>
-                      </View>
-                    }
-                  </View>
-                ))}
+                      }
+                    </View>
+                  ))
+              ) : (
+                <Text className="text-slate-400  text-lg py-10">
+                  No transactions yet 🙌
+                </Text>
+              )}
             </View>
           </View>
         </View>
