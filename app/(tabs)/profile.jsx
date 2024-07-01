@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as FileSystem from "expo-file-system";
 import { useForm, Controller, set } from "react-hook-form";
 import { z } from "zod";
 

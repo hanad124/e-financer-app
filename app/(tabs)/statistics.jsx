@@ -14,13 +14,15 @@ import {
 import { BarChart } from "react-native-gifted-charts";
 import { useTransactionsStore } from "../../store/transactions";
 import dayjs from "dayjs";
-import { ArrowLeft, SlidersHorizontal } from "lucide-react-native";
+import { ArrowLeft, SlidersHorizontal, Download } from "lucide-react-native";
 import { useNavigation } from "expo-router";
 import { Dropdown } from "react-native-element-dropdown";
 
 import * as FileSystem from "expo-file-system";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
+
+import Logo from "../../assets/Logo.png";
 
 const data = [
   { label: "All", value: "All" },
@@ -31,11 +33,11 @@ const data = [
 const GroupedBars = () => {
   const { transactions } = useTransactionsStore();
   const [filteredTransactions, setFilteredTransactions] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState("Week");
+  const [selectedFilter, setSelectedFilter] = useState("Today");
+  const [selectedType, setSelectedType] = useState("All");
   const [totalExpensePerWeek, setTotalExpensePerWeek] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [selectedType, setSelectedType] = useState("All");
+  const [spendingDetails, setSpendingDetails] = useState([]);
 
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -65,6 +67,8 @@ const GroupedBars = () => {
         prevProgress + 10 > 100 ? 100 : prevProgress + 10
       );
     }, 1000);
+
+    setSpendingDetails(transactions.transactions);
     return () => clearInterval(interval);
   }, []);
 
@@ -144,20 +148,20 @@ const GroupedBars = () => {
     let data;
     const now = dayjs();
 
-    if (selectedFilter === "Month" || selectedFilter === "Year") {
+    if (selectedFilter === "Month") {
       labels = [
-        "Jan '23",
-        "Feb '23",
-        "Mar '23",
-        "Apr '23",
-        "May '23",
-        "Jun '23",
-        "Jul '23",
-        "Aug '23",
-        "Sep '23",
-        "Oct '23",
-        "Nov '23",
-        "Dec '23",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
       ];
       data = labels.map((label, index) => ({
         label,
@@ -187,7 +191,7 @@ const GroupedBars = () => {
       {
         value: d.INCOME,
         label: d.label,
-        frontColor: "#D3D8DB", // Green for INCOME
+        frontColor: "#D3D8DB",
         topLabelComponent: () =>
           d.INCOME > 0 ? (
             <Text
@@ -207,7 +211,7 @@ const GroupedBars = () => {
       {
         value: d.EXPENSE,
         label: d.label,
-        frontColor: "#6957E7", // Red for EXPENSE
+        frontColor: "#6957E7",
         topLabelComponent: () =>
           d.EXPENSE > 0 ? (
             <Text
@@ -229,10 +233,52 @@ const GroupedBars = () => {
     return barData;
   };
 
-  const exportTransactions = async () => {
-    console.log("Exporting transactions", transactions?.transactions);
+  // filter by type [INCOME, EXPENSE] as dropdown
+  const filterByType = () => {
+    const filtered = transactions.transactions.filter(
+      (transaction) => transaction.type === selectedType
+    );
+    if (selectedType === "INCOME") {
+      setSpendingDetails(filtered);
+    } else if (selectedType === "EXPENSE") {
+      setSpendingDetails(filtered);
+    } else {
+      setSpendingDetails(transactions.transactions);
+    }
+  };
 
-    const table = transactions?.transactions
+  useEffect(() => {
+    filterByType();
+  }, [selectedType]);
+
+  const exportTransactions = async () => {
+    // const logoBase64 = await fetch(Logo)
+    //   .then((response) => response.blob())
+    //   .then(
+    //     (blob) =>
+    //       new Promise((resolve, reject) => {
+    //         const reader = new FileReader();
+    //         reader.onloadend = () => resolve(reader.result);
+    //         reader.onerror = reject;
+    //         reader.readAsDataURL(blob);
+    //       })
+    //   );
+    // <img src="${Logo}" alt="Logo" style="width: 50px; height: 50px;"/>
+
+    const header = `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #6957E7; color: white;">
+        <div style="display: flex; gap: 15px; align-items: center;">
+          <h1>e-Financer</h1>
+        </div>  
+        <h1>${
+          selectedType.charAt(0).toUpperCase() +
+          selectedType.slice(1).toLowerCase()
+        } Transactions</h1>
+        <p><strong>Date:</strong> ${dayjs().format("DD MMM YYYY")}</p>
+      </div>
+    `;
+
+    const table = spendingDetails
       ?.map(
         (transaction) =>
           `<tr><td>${transaction.title}</td><td>${
@@ -245,37 +291,55 @@ const GroupedBars = () => {
       )
       .join("");
 
+    //  calculate total amount
+    const totalAmount = spendingDetails.reduce(
+      (acc, transaction) => acc + transaction.amount,
+      0
+    );
+
     const html = `
-    <html>
-      <head>
-        <style>
-          table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-          th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-          }
-          th {
-            background-color: #f2f2f2;
-          }
-        </style>
-      </head>
-      <body>
-        <table>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Type</th>
-            <th>Date</th>
-          </tr>
-          ${table}
-        </table>
-      </body>
-    </html>
+      <html>
+        <head>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid black;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+          </style>
+        </head>
+        <body>
+          ${header}
+          <table>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Date</th>
+            </tr>
+            ${table}
+          </table>
+          <div style="display: flex; justify-content: center;>
+          <div style="display: flex; justify-content: flex-end; padding: 20px;
+          background-color: #6957E7; color: white;
+          padding: 20px;
+          border-radius: 10px;
+          width: 300px;
+          
+          ">
+          <h2>Total: $${totalAmount}</h2>
+          </div>
+          </div>
+        </body>
+      </html>
     `;
 
     try {
@@ -290,17 +354,6 @@ const GroupedBars = () => {
     } catch (error) {
       console.error("Error exporting transactions:", error);
     }
-  };
-
-  // filter by type [INCOME, EXPENSE] as dropdown
-  const filterByType = (type) => {
-    const filtered = transactions.transactions.filter(
-      (transaction) => transaction.type === type
-    );
-    if (type === "All") {
-      setFilteredTransactions(transactions.transactions);
-    }
-    setFilteredTransactions(filtered);
   };
 
   return (
@@ -415,10 +468,9 @@ const GroupedBars = () => {
           >
             <View style={styles.chartContainer}>
               <BarChart
-                key={selectedFilter} // Force re-render on filter change
+                key={selectedFilter}
                 data={calculateBarData()}
                 barWidth={26}
-                height={250}
                 spacing={14}
                 roundedTop
                 roundedBottom
@@ -441,7 +493,10 @@ const GroupedBars = () => {
                 Spending details
               </Text>
               <TouchableOpacity onPress={exportTransactions}>
-                <Text className="text-[#348F9F] text-sm">Export</Text>
+                <View className="py-2 px-4 rounded-md bg-primary flex flex-row justify-center items-center ">
+                  <Download className="text-[#fff] mr-2" size={16} />
+                  <Text className="text-[#fff] text-sm">Export</Text>
+                </View>
               </TouchableOpacity>
             </View>
             {/* 
@@ -461,7 +516,7 @@ const GroupedBars = () => {
                   maxHeight={300}
                   labelField="label"
                   valueField="value"
-                  placeholder={!isFocus ? "Select item" : "..."}
+                  placeholder={!isFocus ? "Select type" : "..."}
                   searchPlaceholder="Search..."
                   value={value}
                   onFocus={() => setIsFocus(true)}
@@ -471,15 +526,15 @@ const GroupedBars = () => {
                     setIsFocus(false);
 
                     // filter transactions by type
-                    filterByType(item.value);
+                    setSelectedType(item.value);
                   }}
                 />
               </View>
             </View>
 
-            <View className="flex flex-col justify-center items-center w-full  ">
-              {filteredTransactions?.length > 0 ? (
-                filteredTransactions
+            <View className="flex flex-col justify-center items-center w-full mt-6  ">
+              {spendingDetails?.length > 0 ? (
+                spendingDetails
                   ?.slice(0, 11)
                   .reverse()
                   .map((transaction) => (
@@ -558,7 +613,8 @@ const styles = StyleSheet.create({
     height: 250,
     justifyContent: "center",
     alignItems: "center",
-    // paddingBottom: 10,
+    paddingBottom: 10,
+    overflow: "hidden",
   },
 });
 

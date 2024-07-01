@@ -23,7 +23,7 @@ const SplashScreen = () => {
       <Text
         style={{ color: "white", fontSize: 19, fontWeight: 600, marginTop: 4 }}
       >
-        E-FINANCER
+        e-Financer
       </Text>
     </View>
   );

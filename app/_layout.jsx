@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
 import React, { useEffect, useContext, useLayoutEffect } from "react";
 import { Slot, Stack, useRouter, usePathname } from "expo-router";
+import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, AuthContext } from "../context/authContext";
 
 import Logo from "../assets/Logo.png";
+import CustomDrawer from "../components/Drawer";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,10 +49,6 @@ const AuthWrapper = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log("isAuthenticated", isAuthenticated);
-  console.log("isLoading", isLoading);
-  console.log("pathname", pathname);
-
   useEffect(() => {
     const routeHandler = async () => {
       if (!isLoading) {
@@ -59,9 +57,6 @@ const AuthWrapper = () => {
           (isAuthenticated && pathname === "/sign-in")
         ) {
           router.push("/home");
-        }
-        if (!isAuthenticated && pathname.startsWith("/auth")) {
-          router.push("/sign-in");
           return null;
         }
         if (isAuthenticated && pathname === "/") {
@@ -70,6 +65,7 @@ const AuthWrapper = () => {
         }
         if (!isAuthenticated && pathname === "/home") {
           router.push("/sign-in");
+          return null;
         } else {
           return;
         }
@@ -98,55 +94,57 @@ const AuthWrapper = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       {isAuthenticated ? (
-        <Stack
-          initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen
-            name="index"
-            options={{
+        <>
+          <Stack
+            initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
+            screenOptions={{
               headerShown: false,
             }}
-          />
-          <Stack.Screen
-            name="transactions/index"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="transactions/[id]"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(goals)/create-goal"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="categories/index"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="categories/[id]"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="categories/create"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
+          >
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="transactions/index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="transactions/[id]"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(goals)/create-goal"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="categories/index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="categories/[id]"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="categories/create"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </>
       ) : (
         <Stack
           initialRouteName={isAuthenticated ? "/home" : "/sign-in"}

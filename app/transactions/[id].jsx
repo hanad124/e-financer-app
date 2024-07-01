@@ -239,8 +239,8 @@ const UpdateTransaction = () => {
     <>
       <LoadingOverlay loading={overLeyLoading} />
       <SafeAreaView>
-        <ScrollView className="bg-red-500 pt-5">
-          <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-red-500">
+        <ScrollView className="bg-white pt-5">
+          <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
             <View className="flex flex-row items-center justify-between  my-2 mb-6">
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
