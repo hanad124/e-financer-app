@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useContext } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, useRouter, useNavigation } from "expo-router";
+import { Link, usePathname, router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,9 +15,7 @@ import CustomButton from "../../components/CustomButton";
 import { Eye, EyeOff } from "lucide-react-native";
 import { login } from "../../apicalls/auth";
 import { getToken, saveToken, saveUser } from "../../utils/storage";
-import { useAuthStore } from "../../store/auth";
-import useAuthRedirect from "../../hooks/useAuthRedirect";
-import { router } from "expo-router";
+import { AuthContext } from "../../context/authContext";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -27,17 +25,21 @@ const signInSchema = z.object({
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setIsAuthenticated, isAuthenticated } = useAuthStore();
-  // const router = useRouter();
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  // useAuthRedirect();
+  const pathname = usePathname();
 
   useLayoutEffect(() => {
-    // if (router.pathname === "/sign-in" && isAuthenticated) {
-    //   router.push("/home");
-    //   return null;
-    // }
-  });
+    if (!isLoading) {
+      if (
+        (isAuthenticated && pathname.startsWith("/auth")) ||
+        pathname === "/" ||
+        pathname === "/sign-in"
+      ) {
+        router.push("/home");
+      }
+    }
+  }, [isLoading, isAuthenticated, pathname]);
 
   const {
     control,
@@ -70,10 +72,10 @@ const SignIn = () => {
     }
   };
 
-  // if (isAuthenticated) {
-  //   router.push("/home");
-  //   return null;
-  // }
+  if (isAuthenticated) {
+    router.push("/home");
+    return null;
+  }
 
   return (
     <SafeAreaView>
