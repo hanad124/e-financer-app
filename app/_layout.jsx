@@ -97,86 +97,89 @@ const AuthWrapper = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack
-        initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        {isAuthenticated ? (
-          <>
-            <Stack.Screen
-              name="index"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="transactions/index"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="transactions/[id]"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="(goals)/create-goal"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="categories/index"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="categories/[id]"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="categories/create"
-              options={{
-                headerShown: false,
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen
-              name="auth/login"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="auth/register"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="auth/reset-password"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="auth/verify-email"
-              options={{
-                headerShown: false,
-              }}
-            />
-          </>
-        )}
-      </Stack>
+      {isAuthenticated ? (
+        <Stack
+          initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen
+            name="index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="transactions/index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="transactions/[id]"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(goals)/create-goal"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="categories/index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="categories/[id]"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="categories/create"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+      ) : (
+        <Stack
+          initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen
+            name="auth/login"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="auth/register"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="auth/reset-password"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="auth/verify-email"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+      )}
     </GestureHandlerRootView>
   );
 };
