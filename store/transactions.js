@@ -7,6 +7,8 @@ import {
   deleteTransaction,
 } from "../apicalls/transactions";
 
+import { getToken } from "../utils/storage";
+
 export const useTransactionsStore = create((set) => ({
   transactions: [],
   transaction: {},
@@ -18,27 +20,19 @@ export const useTransactionsStore = create((set) => ({
     const res = await getTransactionById(id);
     set({ transaction: res?.data });
   },
-  // createTransaction: async (payload) => {
-  //   const res = await createTransaction(payload);
-  //   set({ transactions: [...transactions, res.data] });
-  // },
-  // updateTransaction: async (payload) => {
-  //   const res = await updateTransaction(payload);
-  //   set({ transactions: [...transactions, res.data] });
-  // },
-  // deleteTransaction: async (payload) => {
-  //   const res = await deleteTransaction(payload);
-  //   set({ transactions: [...transactions, res.data] });
-  // },
 
   transactionId: "",
   setTransactionId: (id) => set({ transactionId: id }),
 }));
 
 const initializeStore = async () => {
-  const res = await getTransactions();
-  useTransactionsStore.setState({ transactions: res?.data });
-  useTransactionsStore.getState().getTransactions();
+  const token = await getToken();
+  if (token) {
+    const transactions = useTransactionsStore.getState().getTransactions();
+    useTransactionsStore.setState({ transactions });
+  } else {
+    return null;
+  }
 };
 
 initializeStore();

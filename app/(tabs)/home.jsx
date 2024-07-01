@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Avatar from "../../components/Avatar";
@@ -8,6 +8,7 @@ import TopSpendings from "../../components/TopSpendings";
 import RecentTransactions from "../../components/RecentTransactions";
 
 const Home = () => {
+
   return (
     <SafeAreaView className="bg-white">
       <ScrollView className="">

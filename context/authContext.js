@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getToken } from "../utils/storage";
-import { getUserInfo } from "../apicalls/auth";
 
 export const AuthContext = createContext();
 
@@ -15,8 +14,8 @@ export const AuthProvider = ({ children }) => {
         const token = await getToken();
         console.log("token", token);
         if (token) {
-          const user = await getUserInfo();
-          setUser(user);
+          // const user = await getUserInfo();
+          // setUser(user);
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);

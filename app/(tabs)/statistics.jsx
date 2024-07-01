@@ -478,7 +478,7 @@ const GroupedBars = () => {
             </View>
 
             <View className="flex flex-col justify-center items-center w-full  ">
-              {filteredTransactions.length > 0 ? (
+              {filteredTransactions?.length > 0 ? (
                 filteredTransactions
                   ?.slice(0, 11)
                   .reverse()

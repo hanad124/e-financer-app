@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
-import React, { useEffect, useContext } from "react";
+import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
+import React, { useEffect, useContext, useLayoutEffect } from "react";
 import { Slot, Stack, useRouter, usePathname } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, AuthContext } from "../context/authContext";
+
+import Logo from "../assets/Logo.png";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,26 +52,57 @@ const AuthWrapper = () => {
   console.log("pathname", pathname);
 
   useEffect(() => {
-    if (!isLoading) {
-      if (
-        (isAuthenticated && pathname.startsWith("/auth")) ||
-        pathname === "/"
-      ) {
-        router.push("/home"); // Redirect to home page or any protected page if authenticated
+    const routeHandler = async () => {
+      if (!isLoading) {
+        if (
+          (isAuthenticated && pathname.startsWith("/auth")) ||
+          (isAuthenticated && pathname === "/sign-in")
+        ) {
+          router.push("/home");
+        }
+        if (!isAuthenticated && pathname.startsWith("/auth")) {
+          router.push("/sign-in");
+          return null;
+        }
+        if (isAuthenticated && pathname === "/") {
+          router.push("/home");
+          return null;
+        }
+        if (!isAuthenticated && pathname === "/home") {
+          router.push("/sign-in");
+        } else {
+          return;
+        }
       }
-      if (!isAuthenticated && pathname.startsWith("/auth")) {
-        router.push("/sign-in"); // Redirect to login page if not authenticated
-      }
-    }
-  }, [isAuthenticated, isLoading, router]);
+    };
+
+    routeHandler();
+
+    return () => {};
+  }, [isLoading, isAuthenticated, pathname]);
 
   if (isLoading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <View className="bg-primary h-screen flex items-center justify-center">
+        <View className="flex flex-col items-center gap-y-4">
+          <View className="flex flex-col itec gap-y-2">
+            <Image source={Logo} className="w-20 h-20" />
+            <Text className="text-white text-2xl font-bold">e-Financer</Text>
+          </View>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      </View>
+    );
   }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack>
+      <Stack
+        initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
         {isAuthenticated ? (
           <>
             <Stack.Screen

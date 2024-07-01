@@ -28,6 +28,7 @@ const initializeStore = async () => {
     useAuthStore.setState({ user, isAuthenticated: true });
   } else {
     useAuthStore.setState({ isAuthenticated: false });
+    return null;
   }
 };
 

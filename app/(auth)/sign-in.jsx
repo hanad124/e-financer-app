@@ -25,21 +25,27 @@ const signInSchema = z.object({
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { isAuthenticated, isLoading } = useContext(AuthContext);
+  const { isAuthenticated, setIsAuthenticated, isLoading } =
+    useContext(AuthContext);
+
+  console.log("isAuthenticated", isAuthenticated);
 
   const pathname = usePathname();
 
-  useLayoutEffect(() => {
-    if (!isLoading) {
-      if (
-        (isAuthenticated && pathname.startsWith("/auth")) ||
-        pathname === "/" ||
-        pathname === "/sign-in"
-      ) {
-        router.push("/home");
-      }
-    }
-  }, [isLoading, isAuthenticated, pathname]);
+  // useLayoutEffect(() => {
+  //   if (!isLoading) {
+  //     if (
+  //       (isAuthenticated && pathname.startsWith("/auth")) ||
+  //       (isAuthenticated && pathname === "/") ||
+  //       (isAuthenticated && pathname === "/sign-in")
+  //     ) {
+  //       router.push("/home");
+  //     }
+  //     if (!isAuthenticated && pathname.startsWith("/auth")) {
+  //       router.push("/sign-in");
+  //     }
+  //   }
+  // }, [isLoading, isAuthenticated, pathname]);
 
   const {
     control,

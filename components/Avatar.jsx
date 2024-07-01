@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,7 @@ import {
 import { useAuthStore } from "../store/auth";
 import { removeToken } from "../utils/storage";
 import { useNavigation, router } from "expo-router";
-// import { getUser } from "../utils/storage";
-
+import { AuthContext } from "../context/authContext";
 import { LogOut } from "lucide-react-native";
 
 const Avatar = () => {
@@ -19,6 +18,8 @@ const Avatar = () => {
   // const userData = user?.data;
   const [greeting, setGreeting] = useState("");
   const [userData, setUserData] = useState("");
+
+  const { setIsAuthenticated, isLoading } = useContext(AuthContext);
 
   console.log("userData", userData);
 
@@ -60,6 +61,7 @@ const Avatar = () => {
         onPress={() => {
           removeToken();
           // ToastAndroid.show("Logged out!", ToastAndroid.SHORT);
+          setIsAuthenticated(false);
           router.push("/sign-in");
         }}
       >
