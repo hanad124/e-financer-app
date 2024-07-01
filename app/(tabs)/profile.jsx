@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ToastAndroid,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as FileSystem from "expo-file-system";
 import { useForm, Controller, set } from "react-hook-form";
@@ -18,12 +18,13 @@ import CustomButton from "../../components/CustomButton";
 import { useAuthStore } from "../../store/auth";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUser } from "../../utils/storage";
-import { useNavigation } from "expo-router";
+import { useNavigation, router } from "expo-router";
+import { AuthContext } from "../../context/authContext";
 
 import { updateProfile } from "../../apicalls/auth";
 
 import BannerImage from "../../assets/images/banner-img.png";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, LogOut } from "lucide-react-native";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -36,6 +37,7 @@ const ProfileSchema = z.object({
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
+  const { setIsAuthenticated } = useContext(AuthContext);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const user = useAuthStore((state) => state.user); // Assuming this gets the logged-in user's data
   const [image, setImage] = useState(user?.data?.avatar);
@@ -166,7 +168,16 @@ const Profile = () => {
                 Profile
               </Text>
             </View>
-            <Text>Logout</Text>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsAuthenticated(false);
+                  router.push("/sign-in");
+                }}
+              >
+                <LogOut className="text-black" size={19} />
+              </TouchableOpacity>
+            </View>
           </View>
           {/* 
           profile banner with user avatar and name
