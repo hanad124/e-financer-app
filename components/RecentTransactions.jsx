@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -25,13 +25,16 @@ import Animated, {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTransactionsStore } from "../store/transactions";
 import { deleteTransaction as DeleteTransactionApi } from "../apicalls/transactions";
+import { MotiView } from "moti";
+import { Skeleton } from "moti/skeleton";
+import { AuthContext } from "../context/authContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_HEIGHT = 70;
 const WIDTH_CARD = SCREEN_WIDTH * 0.85;
 
 const RecentTransactions = () => {
-  const { transactions, deleteTransaction } = useTransactionsStore();
+  const { transactions, isLoading } = useTransactionsStore();
   const [transactionList, setTransactionList] = useState(
     transactions?.transactions ?? []
   );
@@ -68,21 +71,53 @@ const RecentTransactions = () => {
                   key={transaction?.id}
                 >
                   <View className="flex flex-row gap-2 items-center">
+                    {/* <Skeleton
+                      animate={isLoading}
+                      show={isLoading}
+                      colorMode="light"
+                      duration={500}
+                      style={{ width: 30, height: 30 }}
+                    >
+                    </Skeleton> */}
                     <View className="bg-white/60 p-1 rounded-lg">
                       <Image
                         source={{ uri: transaction.category?.icon }}
                         style={{ width: 30, height: 30 }}
                       />
                     </View>
-                    <View>
-                      <Text className="text-black font-pmedium">
-                        {transaction.title}
+                    <View className="flex flex-col gap-2">
+                      {/* <Skeleton
+                        animate={isLoading}
+                        duration={500}
+                        style={{ width: 100, height: 20 }}
+                        colorMode="light"
+                        show={isLoading}
+                      >
+                      </Skeleton> */}
+                      <Text className="text-sm font-pmedium">
+                        {transaction.category?.name}
                       </Text>
-                      <Text className="text-[#348F9F]  text-sm">
+                      {/* <Skeleton
+                        animate={isLoading}
+                        duration={500}
+                        style={{ width: 10, height: 20, marginTop: 2 }}
+                        colorMode="light"
+                        show={isLoading}
+                      >
+                      </Skeleton> */}
+                      <Text className="text-[#348F9F] min-w-[50rem] text-sm">
                         {transaction.description}
                       </Text>
                     </View>
                   </View>
+                  {/* <Skeleton
+                    animate={isLoading}
+                    duration={500}
+                    style={{ width: 100, height: 20 }}
+                    colorMode="light"
+                    show={isLoading}
+                  >
+                  </Skeleton> */}
                   <Text
                     className={
                       transaction.type === "INCOME"

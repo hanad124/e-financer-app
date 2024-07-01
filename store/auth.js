@@ -8,13 +8,17 @@ export const useAuthStore = create((set) => ({
   isAuthenticated: false,
   setUser: (user) => set({ user }),
   setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+  isLoading: false,
+  setLoading: (value) => set({ isLoading: value }),
 
   getUserInfo: async () => {
     try {
+      set({ isLoading: true });
       const token = await getToken();
       if (!token) return;
       const user = await getUserInfo();
       set({ user, isAuthenticated: true });
+      set({ isLoading: false });
     } catch (error) {
       console.error("API call error::::::", error);
     }

@@ -12,9 +12,17 @@ import { getToken } from "../utils/storage";
 export const useTransactionsStore = create((set) => ({
   transactions: [],
   transaction: {},
+  isLoading: false,
+  setIsLoading: (value) => set({ isLoading: value }),
   getTransactions: async () => {
-    const res = await getTransactions();
-    set({ transactions: res?.data });
+    try {
+      set({ isLoading: true });
+      const res = await getTransactions();
+      set({ transactions: res?.data });
+      set({ isLoading: false });
+    } catch (error) {
+      console.error("API call error::::::", error);
+    }
   },
   getTransactionById: async (id) => {
     const res = await getTransactionById(id);

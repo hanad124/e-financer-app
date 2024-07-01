@@ -30,7 +30,7 @@ import * as ImagePicker from "expo-image-picker";
 // Profile schema
 const ProfileSchema = z.object({
   name: z.string().nonempty("Name is required"),
-  email: z.string().email("Invalid email").nonempty("Email is required"),
+  email: z.string().email("Invalid email").optional(),
   description: z.string().optional(),
 });
 
@@ -82,6 +82,7 @@ const Profile = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
     setValue,
   } = useForm({
@@ -95,6 +96,12 @@ const Profile = () => {
 
   useEffect(() => {
     console.log("userData", userData);
+
+    reset({
+      name: userData?.name,
+      email: userData?.email,
+      description: userData?.description,
+    });
 
     setValue("name", userData?.name);
     setValue("email", userData?.email);
@@ -121,6 +128,9 @@ const Profile = () => {
         useAuthStore.getState().getUserInfo();
         alert(`${response?.data?.message}`);
         setLoading(false);
+      } else {
+        alert(`${response?.data?.message}`);
+        setLoading(false);
       }
     } catch (error) {
       console.log("error", error);
@@ -133,27 +143,30 @@ const Profile = () => {
     <SafeAreaView className="bg-white">
       <ScrollView className="bg-white">
         <View className="w-full  min-h-[90vh] px-4 my-6 mt-10 bg-white">
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginLeft: 20,
-              marginBottom: 20,
-            }}
-          >
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ArrowLeft className="text-black " size={24} />
-            </TouchableOpacity>
-            <Text
+          <View className="w-full flex flex-row justify-between items-center mb-10">
+            <View
               style={{
-                color: "black",
-                // fontFamily: "pmedium",
-                fontSize: 24,
-                marginLeft: 80,
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
+                // marginBottom: 20,
               }}
             >
-              Profile
-            </Text>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <ArrowLeft className="text-black " size={19} />
+              </TouchableOpacity>
+              <Text
+                style={{
+                  color: "black",
+                  // fontFamily: "pmedium",
+                  fontSize: 19,
+                  marginLeft: 10,
+                }}
+              >
+                Profile
+              </Text>
+            </View>
+            <Text>Logout</Text>
           </View>
           {/* 
           profile banner with user avatar and name
@@ -163,7 +176,7 @@ const Profile = () => {
             source={BannerImage}
             style={{
               width: "100%",
-              height: 170,
+              height: 150,
               position: "relative",
               top: 0,
               // left: "50%",
@@ -173,7 +186,7 @@ const Profile = () => {
           />
 
           <View className="flex items-center justify-center mt-24">
-            <View className="relative top-[-100%] flex flex-col justify-center items-center">
+            <View className="relative top-[-100%] flex flex-col justify-center left-[-14%] items-start">
               <TouchableOpacity
                 onPress={pickImage}
                 style={{
@@ -191,7 +204,13 @@ const Profile = () => {
                 {image ? (
                   <Image
                     source={{ uri: image }}
-                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 50,
+                      borderColor: "#6af7ae",
+                      borderWidth: 4,
+                    }}
                   />
                 ) : (
                   <Image
@@ -200,7 +219,13 @@ const Profile = () => {
                         user?.data?.avatar ||
                         "https://img.freepik.com/free-icon/user_318-644324.jpg?w=360",
                     }}
-                    style={{ width: 100, height: 100, borderRadius: 50 }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 50,
+                      borderColor: "#6af7ae",
+                      borderWidth: 4,
+                    }}
                   />
                 )}
               </TouchableOpacity>
@@ -217,57 +242,68 @@ const Profile = () => {
           Profile form
            */}
           <View className="mt-2 relative top-[-15%] ">
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  // style={styles.input}
-                  className=" border-[1px] border-slate-400 px-4 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Name"
-                />
+            <View>
+              <Text className=" text-black">Name</Text>
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    // style={styles.input}
+                    className=" border-[1px] border-slate-400 px-4 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Name"
+                  />
+                )}
+                name="name"
+              />
+              {errors.name && (
+                <Text className="text-red-500">{errors.name.message}</Text>
               )}
-              name="name"
-            />
-            {errors.name && (
-              <Text className="text-red-500">{errors.name.message}</Text>
-            )}
+            </View>
 
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  className="border-[1px] border-slate-400 px-4 rounded-lg shadow py-[9px] w-full mt-6 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Email"
-                />
+            <View className="mt-6 ">
+              <Text className=" text-black">email</Text>
+              <Controller
+                control={control}
+                disabled
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="border-[1px] border-slate-400 px-4 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Email"
+                  />
+                )}
+                name="email"
+              />
+              {errors.email && (
+                <Text className="text-red-500">{errors.email.message}</Text>
               )}
-              name="email"
-            />
-            {errors.email && (
-              <Text className="text-red-500">{errors.email.message}</Text>
-            )}
-
-            <Controller
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  className="border-[1px] border-slate-400 px-4 rounded-lg shadow py-[9px] w-full mt-6 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Description"
-                />
+            </View>
+            <View className="mt-6 ">
+              <Text className=" text-black">Description</Text>
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    className="border-[1px] border-slate-400 px-4 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Description"
+                  />
+                )}
+                name="description"
+              />
+              {errors.description && (
+                <Text className="text-red-500">
+                  {errors.description.message}
+                </Text>
               )}
-              name="description"
-            />
-            {errors.description && (
-              <Text className="text-red-500">{errors.description.message}</Text>
-            )}
+            </View>
 
             <CustomButton
               text="Save"

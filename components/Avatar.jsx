@@ -12,16 +12,17 @@ import { removeToken } from "../utils/storage";
 import { useNavigation, router } from "expo-router";
 import { AuthContext } from "../context/authContext";
 import { LogOut } from "lucide-react-native";
+import { Skeleton } from "moti/skeleton";
 
 const Avatar = () => {
-  const { user } = useAuthStore();
+  const { user, isLoading } = useAuthStore();
   // const userData = user?.data;
   const [greeting, setGreeting] = useState("");
   const [userData, setUserData] = useState("");
 
-  const { setIsAuthenticated, isLoading } = useContext(AuthContext);
+  const { setIsAuthenticated } = useContext(AuthContext);
 
-  console.log("userData", userData);
+  console.log("isLoading", isLoading);
 
   const navigation = useNavigation();
 
@@ -49,7 +50,16 @@ const Avatar = () => {
             router.push("/profile");
           }}
         >
-          <Image source={{ uri: user?.data?.avatar }} style={styles.avatar} />
+          <Skeleton
+            animate={isLoading}
+            show={isLoading}
+            radius={"round"}
+            colorMode="light"
+            duration={500}
+            style={styles.avatar}
+          >
+            <Image source={{ uri: user?.data?.avatar }} style={styles.avatar} />
+          </Skeleton>
         </TouchableOpacity>
         <View style={styles.textContainer}>
           <Text style={styles.name}>Hello {user?.data?.name}</Text>
