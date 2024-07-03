@@ -26,7 +26,6 @@ import { RadioButton } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import {
-  createTransaction,
   getTransactionById,
   updateTransaction,
 } from "../../apicalls/transactions";

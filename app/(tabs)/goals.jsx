@@ -24,7 +24,7 @@ const Goals = () => {
     useGoalsStore.getState().getGoals();
   }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     useGoalsStore.getState().getGoals();
   }, []);
 
@@ -50,7 +50,17 @@ const Goals = () => {
     if (filter === "ongoing") {
       return goal.savedAmount < goal.amount;
     } else if (filter === "completed") {
-      return goal.savedAmount >= goal.amount;
+      // return goal.savedAmount >= goal.amount;
+
+      // remove the completed goals that thier acheivedData is greate then 24 hours ago until  the acheivedDate
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      return (
+        goal.savedAmount >= goal.amount &&
+        new Date(goal.achievedDate) > yesterday
+      );
     }
     return true;
   });

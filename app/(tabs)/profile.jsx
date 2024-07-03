@@ -203,13 +203,13 @@ const Profile = () => {
                 style={{
                   width: 100,
                   height: 100,
-                  borderRadius: 50,
                   backgroundColor: "#D3D8DB",
+                  borderRadius: 50,
                   borderWidth: 1,
                   borderColor: "#D3D8DB",
+                  padding: 4,
                   justifyContent: "center",
                   alignItems: "center",
-                  padding: 4,
                 }}
               >
                 {image ? (

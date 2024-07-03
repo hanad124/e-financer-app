@@ -39,6 +39,7 @@ import { Plus } from "lucide-react-native";
 const TransactionSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   amount: z.number().min(1, "Amount must be greater than 0"),
+  // amount: z.number().min(1, "Amount must be greater than 0"),
   number: z.number().min("Number is required"),
   type: z.string().min(1, "Type is required"),
   category: z.string().min(1, "Category is required"),
@@ -171,12 +172,8 @@ const Create = () => {
 
       if (res.status === 200) {
         setLoading(false);
-        reset();
 
-        ToastAndroid.show(
-          `${res.data.message || "Transaction created successfully!"}`,
-          ToastAndroid.SHORT
-        );
+        alert(`${res.data.message || "Transaction created successfully!"}`);
 
         if (selectedTransactionType === "EXPENSE") {
           if (selectedAccountType === "MERCHANT") {
@@ -199,9 +196,17 @@ const Create = () => {
           }
         }
         await useTransactionsStore.getState().getTransactions();
+        reset();
+        setValue("amount", null);
+        setSelectedCategory("");
+        setSelectedTransactionType("");
         // setValue("amount", 0);
       } else {
-        ToastAndroid.show(`${res.data.message}`, ToastAndroid.SHORT);
+        alert(`${res.data.message}`);
+        reset();
+        setValue("amount", null);
+        setSelectedCategory("");
+        setSelectedTransactionType("");
 
         setLoading(false);
       }
@@ -419,28 +424,30 @@ const Create = () => {
               {/* 
               take picture of the transaction
                */}
-              <View className="mt-4">
-                <Text className="text-sm font-pregular text-gray-800">
-                  Attach Receipt
-                </Text>
-                <TouchableOpacity
-                  onPress={takePicture}
-                  className="flex flex-row border border-slate-400 py-3 rounded-lg items-center justify-center mt-2"
-                >
-                  <Text className="text-gray-800 ">Take a picture</Text>
-                </TouchableOpacity>
-                {image && (
-                  <Image
-                    source={{ uri: image }}
-                    style={{
-                      width: 100,
-                      height: 100,
-                      marginTop: 15,
-                    }}
-                    className="rounded-lg"
-                  />
-                )}
-              </View>
+              {selectedTransactionType === "EXPENSE" && (
+                <View className="mt-4">
+                  <Text className="text-sm font-pregular text-gray-800">
+                    Attach Receipt
+                  </Text>
+                  <TouchableOpacity
+                    onPress={takePicture}
+                    className="flex flex-row border border-slate-400 py-3 rounded-lg items-center justify-center mt-2"
+                  >
+                    <Text className="text-gray-800 ">Take a picture</Text>
+                  </TouchableOpacity>
+                  {image && (
+                    <Image
+                      source={{ uri: image }}
+                      style={{
+                        width: 100,
+                        height: 100,
+                        marginTop: 15,
+                      }}
+                      className="rounded-lg"
+                    />
+                  )}
+                </View>
+              )}
               <View className="mt-5">
                 <Text className="text-sm font-pmedium text-gray-800">
                   Choose category

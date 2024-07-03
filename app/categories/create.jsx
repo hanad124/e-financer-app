@@ -117,7 +117,7 @@ const create = () => {
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
-                  placeholder="Goal Name"
+                  placeholder="Category name"
                 />
               )}
               name="name"

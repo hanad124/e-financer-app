@@ -32,7 +32,7 @@ const TopSpendings = () => {
       <View className="flex flex-row mt-2">
         {categoriesData
           ?.sort((a, b) => b.totalExpense - a.totalExpense)
-          .slice(0, 6)
+          .slice(0, 4)
           ?.reverse()
           .map((category) => {
             return (

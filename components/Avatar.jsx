@@ -91,7 +91,10 @@ const styles = StyleSheet.create({
   avatar: {
     width: 50,
     height: 50,
-    borderRadius: 50, // Circular avatar
+    borderColor: "#6957E7",
+    borderWidth: 2,
+    borderRadius: 50,
+    padding: 4,
   },
   textContainer: {
     marginLeft: 10, // Spacing between avatar and text
