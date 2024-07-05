@@ -14,8 +14,13 @@ import {
 import { BarChart } from "react-native-gifted-charts";
 import { useTransactionsStore } from "../../store/transactions";
 import dayjs from "dayjs";
-import { ArrowLeft, SlidersHorizontal, Download } from "lucide-react-native";
-import { useNavigation } from "expo-router";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  SlidersHorizontal,
+  Download,
+} from "lucide-react-native";
+import { useNavigation, router } from "expo-router";
 import { Dropdown } from "react-native-element-dropdown";
 
 import * as FileSystem from "expo-file-system";
@@ -360,27 +365,16 @@ const GroupedBars = () => {
     <SafeAreaView className="bg-white">
       <ScrollView className=" bg-white">
         <View style={{ marginTop: 20 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginLeft: 20,
-            }}
-          >
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ArrowLeft className="text-black " size={24} />
+          <View className="flex flex-row items-center mt-4 mx-4 ">
+            <TouchableOpacity onPress={() => router.back()}>
+              <ChevronLeft className="h-5 w-5 text-black" />
             </TouchableOpacity>
-            <Text
-              style={{
-                color: "black",
-                // fontFamily: "pmedium",
-                fontSize: 24,
-                marginLeft: 80,
-              }}
-            >
-              Statistics
-            </Text>
+            <View className="ml-24">
+              <Text className="text-black   font-pregular">Statistics</Text>
+            </View>
+            <View></View>
           </View>
+
           {/* Total Expense per week banner */}
           <View
             style={{
