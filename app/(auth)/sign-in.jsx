@@ -32,21 +32,6 @@ const SignIn = () => {
 
   const pathname = usePathname();
 
-  // useLayoutEffect(() => {
-  //   if (!isLoading) {
-  //     if (
-  //       (isAuthenticated && pathname.startsWith("/auth")) ||
-  //       (isAuthenticated && pathname === "/") ||
-  //       (isAuthenticated && pathname === "/sign-in")
-  //     ) {
-  //       router.push("/home");
-  //     }
-  //     if (!isAuthenticated && pathname.startsWith("/auth")) {
-  //       router.push("/sign-in");
-  //     }
-  //   }
-  // }, [isLoading, isAuthenticated, pathname]);
-
   const {
     control,
     handleSubmit,

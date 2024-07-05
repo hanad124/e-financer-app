@@ -12,6 +12,7 @@ import { getToken } from "../utils/storage";
 export const useTransactionsStore = create((set) => ({
   transactions: [],
   transaction: {},
+  transcactionDetails: {},
   isLoading: false,
   setIsLoading: (value) => set({ isLoading: value }),
   getTransactions: async () => {

@@ -8,8 +8,7 @@ import {
   ToastAndroid,
   TouchableOpacity,
 } from "react-native";
-import { Link, router } from "expo-router"; // Assuming Expo Router supports navigation links
-
+import { Link, router } from "expo-router";
 import {
   Gesture,
   GestureDetector,
@@ -34,7 +33,8 @@ const ITEM_HEIGHT = 70;
 const WIDTH_CARD = SCREEN_WIDTH * 0.85;
 
 const RecentTransactions = () => {
-  const { transactions, isLoading } = useTransactionsStore();
+  const { transactions, isLoading, transactionDetails } =
+    useTransactionsStore();
   const [transactionList, setTransactionList] = useState(
     transactions?.transactions ?? []
   );
@@ -70,8 +70,20 @@ const RecentTransactions = () => {
                   className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
                   key={transaction?.id}
                 >
-                  <View className="flex flex-row gap-2 items-center">
-                    {/* <Skeleton
+                  <TouchableOpacity
+                    onPress={() => {
+                      router.push(
+                        `/transactions/single-transction/${transaction?.id}`
+                      );
+
+                      useTransactionsStore.setState({
+                        transactionDetails: transaction,
+                      });
+                    }}
+                    className=" flex-1"
+                  >
+                    <View className="flex flex-row gap-2 items-center">
+                      {/* <Skeleton
                       animate={isLoading}
                       show={isLoading}
                       colorMode="light"
@@ -79,14 +91,14 @@ const RecentTransactions = () => {
                       style={{ width: 30, height: 30 }}
                     >
                     </Skeleton> */}
-                    <View className="bg-white/60 p-1 rounded-lg">
-                      <Image
-                        source={{ uri: transaction.category?.icon }}
-                        style={{ width: 30, height: 30 }}
-                      />
-                    </View>
-                    <View className="flex flex-col gap-2">
-                      {/* <Skeleton
+                      <View className="bg-white/60 p-1 rounded-lg">
+                        <Image
+                          source={{ uri: transaction.category?.icon }}
+                          style={{ width: 30, height: 30 }}
+                        />
+                      </View>
+                      <View className="flex flex-col gap-2">
+                        {/* <Skeleton
                         animate={isLoading}
                         duration={500}
                         style={{ width: 100, height: 20 }}
@@ -94,10 +106,10 @@ const RecentTransactions = () => {
                         show={isLoading}
                       >
                       </Skeleton> */}
-                      <Text className="text-sm font-pmedium">
-                        {transaction.category?.name}
-                      </Text>
-                      {/* <Skeleton
+                        <Text className="text-sm font-pmedium">
+                          {transaction.category?.name}
+                        </Text>
+                        {/* <Skeleton
                         animate={isLoading}
                         duration={500}
                         style={{ width: 10, height: 20, marginTop: 2 }}
@@ -105,11 +117,12 @@ const RecentTransactions = () => {
                         show={isLoading}
                       >
                       </Skeleton> */}
-                      <Text className="text-[#348F9F] min-w-[50rem] text-sm">
-                        {transaction.description}
-                      </Text>
+                        <Text className="text-[#348F9F] min-w-[50rem] text-sm">
+                          {transaction.description}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   {/* <Skeleton
                     animate={isLoading}
                     duration={500}

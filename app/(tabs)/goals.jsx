@@ -120,7 +120,7 @@ const Goals = () => {
           </View>
 
           {/* goals */}
-          <View className="flex flex-col items-center justify-center mx-4">
+          <View className="flex flex-col items-center justify-center">
             <View className="flex flex-col items-center justify-center mt-5 w-full">
               {filteredGoals?.map((goal, index) => {
                 const progressPercentage =

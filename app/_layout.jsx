@@ -120,6 +120,12 @@ const AuthWrapper = () => {
               }}
             />
             <Stack.Screen
+              name="transactions/single-transction/[id]"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="(goals)/create-goal"
               options={{
                 headerShown: false,
