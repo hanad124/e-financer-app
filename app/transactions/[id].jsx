@@ -74,6 +74,8 @@ const UpdateTransaction = () => {
       name: "EVCPlus",
     },
   ];
+
+  const { transaction } = useTransactionsStore();
   const categoriesData = categories?.categories;
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
@@ -83,6 +85,8 @@ const UpdateTransaction = () => {
   const [selectedTransactionType, setSelectedTransactionType] =
     useState("EXPENSE");
   const [selectedAccountType, setSelectedAccountType] = useState("EVCPLUS");
+
+  console.log("single transaction::::::", transaction);
 
   const {
     control,
@@ -106,33 +110,21 @@ const UpdateTransaction = () => {
 
   // set default values
   useEffect(() => {
-    const fetchData = async () => {
-      const transactionId = useTransactionsStore.getState().transactionId;
+    if (transaction) {
+      setOverlayLoading(true);
 
-      if (transactionId) {
-        setOverlayLoading(true);
-        const res = await getTransactionById(transactionId);
-        const transaction = res.data?.transaction;
+      setSelectedTransactionType(transaction?.type);
+      setValue("title", transaction?.title);
+      setValue("amount", Number(transaction?.amount));
+      setValue("description", transaction?.description);
 
-        setSelectedTransactionType(transaction?.type);
-        setValue("title", transaction?.title);
-        setValue("amount", Number(transaction?.amount));
-        setValue("description", transaction?.description);
+      setSelectedCategory(transaction?.category?.id);
+      setImage(transaction?.receipt);
 
-        setSelectedCategory(transaction?.category?.id);
-        setImage(transaction?.receipt);
-
-        console.log("transaction receipt", transaction.receipt);
-        setOverlayLoading(false);
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      // useTransactionsStore.setState({ transactionId: "" });
-    };
-  }, []);
+      console.log("transaction receipt", transaction.receipt);
+      setOverlayLoading(false);
+    }
+  }, [transaction]);
 
   useEffect(() => {
     setValue("type", selectedTransactionType);

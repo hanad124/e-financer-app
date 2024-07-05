@@ -147,6 +147,9 @@ const index = () => {
                             onPress={() => {
                               router.push("/transactions/[id]");
                               setTransactionId(transaction.id);
+                              useTransactionsStore.setState({
+                                transaction: transaction,
+                              });
                             }}
                             className="p-2 bg-primary rounded-lg"
                           >
