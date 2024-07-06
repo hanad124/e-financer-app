@@ -365,14 +365,18 @@ const GroupedBars = () => {
     <SafeAreaView className="bg-white">
       <ScrollView className=" bg-white">
         <View style={{ marginTop: 20 }}>
-          <View className="flex flex-row items-center mt-4 mx-4 ">
+          <View className="flex flex-row items-center mt-4 mx-4 justify-between">
             <TouchableOpacity onPress={() => router.back()}>
               <ChevronLeft className="h-5 w-5 text-black" />
             </TouchableOpacity>
-            <View className="ml-24">
+            <View className="">
               <Text className="text-black   font-pregular">Statistics</Text>
             </View>
-            <View></View>
+            <View>
+              <TouchableOpacity onPress={exportTransactions}>
+                <Download className="text-black mr-2" size={20} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Total Expense per week banner */}
@@ -486,12 +490,6 @@ const GroupedBars = () => {
               <Text className="text-black font-pmedium text-lg mt-2">
                 Spending details
               </Text>
-              <TouchableOpacity onPress={exportTransactions}>
-                <View className="py-2 px-4 rounded-md bg-primary flex flex-row justify-center items-center ">
-                  <Download className="text-[#fff] mr-2" size={16} />
-                  <Text className="text-[#fff] text-sm">Export</Text>
-                </View>
-              </TouchableOpacity>
             </View>
             {/* 
            dropdown for filter by type [INCOME, EXPENSE]

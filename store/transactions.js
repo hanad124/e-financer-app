@@ -30,6 +30,41 @@ export const useTransactionsStore = create((set) => ({
     set({ transaction: res?.data });
   },
 
+  createTransaction: async (payload) => {
+    try {
+      const res = await createTransaction(payload);
+      set({ transactions: [...set.transactions, res?.data] });
+    } catch (error) {
+      console.error("API call error::::::", error);
+    }
+  },
+
+  updateTransaction: async (id, payload) => {
+    try {
+      const res = await updateTransaction(id, payload);
+      set({
+        transactions: set.transactions.map((transaction) =>
+          transaction.id === id ? res?.data : transaction
+        ),
+      });
+    } catch (error) {
+      console.error("API call error::::::", error);
+    }
+  },
+
+  deleteTransaction: async (id) => {
+    try {
+      const res = await deleteTransaction(id);
+      set({
+        transactions: set.transactions.filter(
+          (transaction) => transaction.id !== id
+        ),
+      });
+    } catch (error) {
+      console.error("API call error::::::", error);
+    }
+  },
+
   transactionId: "",
   setTransactionId: (id) => set({ transactionId: id }),
 }));

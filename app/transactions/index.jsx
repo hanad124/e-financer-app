@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTransactionsStore } from "../../store/transactions";
 import {
-  deleteTransaction,
+  // deleteTransaction,
   getTransactions,
 } from "../../apicalls/transactions";
 import LoadingOverlay from "../../components/LoadingOverlay";
@@ -32,7 +32,8 @@ const index = () => {
 
   const navigation = useNavigation();
 
-  const { transactions, setTransactionId } = useTransactionsStore();
+  const { transactions, setTransactionId, deleteTransaction } =
+    useTransactionsStore();
 
   console.log("transactions", transactions?.transactions);
 
