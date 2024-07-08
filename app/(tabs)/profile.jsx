@@ -319,9 +319,9 @@ const Profile = () => {
             <CustomButton
               text="Save"
               handlePress={handleSubmit(onSubmit)}
-              containerStyles="mt-10"
               isLoading={loading}
               loadinState="Saving..."
+              containerStyles="mt-10"
             />
           </View>
         </View>

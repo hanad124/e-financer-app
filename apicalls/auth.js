@@ -70,3 +70,15 @@ export const sendPasswordResetLink = async (payload) => {
     return error.response;
   }
 };
+
+// savePushToken
+export const savePushToken = async (payload) => {
+  console.log("------payload----", payload);
+  try {
+    const res = await axiosInstance.post("/auth/save-push-token", payload);
+    return res;
+  } catch (error) {
+    console.error("API call error", error);
+    return error.response;
+  }
+};

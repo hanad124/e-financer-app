@@ -20,7 +20,11 @@
         "foregroundImage": "./assets/Logo.png",
         "backgroundColor": "#6957E7"
       },
-      "permissions": ["INTERNET", "ACCESS_NETWORK_STATE"]
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/Logo.png"
@@ -33,6 +37,15 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f638a1c1-0e6c-42b9-b544-b9456a3f996a"
+      }
+    },
+    "owner": "faaruuq"
   }
 }

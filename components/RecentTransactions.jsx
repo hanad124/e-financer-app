@@ -132,11 +132,12 @@ const RecentTransactions = () => {
                   >
                   </Skeleton> */}
                   <Text
-                    className={
-                      transaction.type === "INCOME"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }
+                    className={` font-pmedium text-lg
+                     ${
+                       transaction.type === "INCOME"
+                         ? "text-green-500"
+                         : "text-red-500"
+                     }`}
                   >
                     {transaction.type === "INCOME" ? "$" : "- $"}
                     {transaction.amount}

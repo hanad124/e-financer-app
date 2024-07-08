@@ -1,11 +1,17 @@
 import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
-import React, { useEffect, useContext, useLayoutEffect } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { Slot, Stack, useRouter, usePathname } from "expo-router";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
+import Constants from "expo-constants";
+import * as Device from "expo-device";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, AuthContext } from "../context/authContext";
+
+import { savePushToken } from "../apicalls/auth";
 
 import Logo from "../assets/Logo.png";
 import CustomDrawer from "../components/Drawer";
@@ -45,6 +51,7 @@ const RootLayout = () => {
 };
 
 const AuthWrapper = () => {
+  const [pushToken, setPushToken] = useState(null);
   const { isAuthenticated, isLoading } = useContext(AuthContext);
   const router = useRouter();
   const pathname = usePathname();
@@ -74,8 +81,74 @@ const AuthWrapper = () => {
 
     routeHandler();
 
-    return () => {};
-  }, [isLoading, isAuthenticated, pathname]);
+    async function registerForPushNotificationsAsync() {
+      let token;
+      if (Device.isDevice) {
+        const { status: existingStatus } =
+          await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
+
+          finalStatus = status;
+        }
+        if (finalStatus !== "granted") {
+          alert("Failed to get push token for push notification!");
+          return;
+        }
+        // token = (await Notifications.getExpoPushTokenAsync()).data;
+        const projectId =
+          Constants?.expoConfig?.extra?.eas?.projectId ??
+          Constants?.easConfig?.projectId;
+
+        if (!projectId) {
+          alert("Please set your project ID in app.json");
+        }
+
+        token = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
+
+        setPushToken(token);
+        console.log("push token", token);
+      } else {
+        alert("Must use physical device for Push Notifications");
+      }
+
+      if (Platform.OS === "android") {
+        Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#FF231F7C",
+        });
+      }
+
+      return token;
+    }
+
+    registerForPushNotificationsAsync();
+
+    // save push token
+    if (pushToken) {
+      console.log("====pushToken====", pushToken);
+      savePushToken({
+        expoPushToken: pushToken,
+      });
+    }
+
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log("notification", notification);
+      }
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [isLoading, isAuthenticated, pathname, pushToken]);
 
   if (isLoading) {
     return (

@@ -37,11 +37,11 @@ const CustomButton = ({
     <TouchableOpacity
       style={{
         ...styles.buttonContainer,
-        ...containerStyles,
 
         ...{
           opacity: isLoading || disabled ? 0.5 : 1,
           marginTop: 24,
+          ...containerStyles,
         },
       }}
       onPress={handlePress}

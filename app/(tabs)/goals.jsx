@@ -10,23 +10,20 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeft, CirclePlus } from "lucide-react-native";
 import { router } from "expo-router";
-import { useNavigation } from "@react-navigation/native"; // assuming you are using react-navigation
+import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGoalsStore } from "../../store/goals";
+import { getGoals } from "../../apicalls/goals";
 
 const Goals = () => {
   const navigation = useNavigation();
-  const { goals, getGoals } = useGoalsStore();
+  const { goals } = useGoalsStore();
   const [filter, setFilter] = useState("ongoing"); // State for filter
   const animatedValues = useRef([]).current;
 
-  useLayoutEffect(() => {
-    useGoalsStore.getState().getGoals();
-  }, []);
-
   useEffect(() => {
     useGoalsStore.getState().getGoals();
-  }, []);
+  }, [goals]);
 
   useEffect(() => {
     if (goals?.goals) {
@@ -64,6 +61,16 @@ const Goals = () => {
     }
     return true;
   });
+
+  // handle getGoals
+  const HandleGetGoals = async () => {
+    try {
+      const res = await getGoals();
+      console.log("==== goals response ====", res);
+    } catch (error) {
+      console.error("API call error:::::", error);
+    }
+  };
 
   return (
     <SafeAreaView>
@@ -118,6 +125,13 @@ const Goals = () => {
               </Text>
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity
+            onPress={HandleGetGoals}
+            className="w-[10rem] h-[3rem] flex justify-center items-center my-10 bg-primary p-4 "
+          >
+            <Text className="text-white">Get Goals</Text>
+          </TouchableOpacity>
 
           {/* goals */}
           <View className="flex flex-col items-center justify-center">

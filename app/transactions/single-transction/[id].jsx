@@ -32,7 +32,7 @@ const TransactionDetail = () => {
               <ChevronLeft className="h-5 w-5 text-white" />
             </TouchableOpacity>
             <View className="ml-20">
-              <Text className="text-white  font-pregular">
+              <Text className="text-white text-[16px] font-pregular">
                 Transaction Details
               </Text>
             </View>

@@ -380,7 +380,7 @@ const GroupedBars = () => {
           </View>
 
           {/* Total Expense per week banner */}
-          <View
+          {/* <View
             style={{
               backgroundColor: "#6957E7",
               padding: 8,
@@ -393,7 +393,6 @@ const GroupedBars = () => {
             <Text
               style={{
                 color: "white",
-                // fontFamily: "pmedium",
                 fontSize: 19,
                 textAlign: "center",
               }}
@@ -403,7 +402,6 @@ const GroupedBars = () => {
             <Text
               style={{
                 color: "white",
-                // fontFamily: "pregular",
                 fontSize: 15,
                 textAlign: "center",
                 marginTop: 8,
@@ -412,9 +410,6 @@ const GroupedBars = () => {
               $ {totalExpensePerWeek} / {totalExpenses} per Week
             </Text>
 
-            {/* 
-            progress bar
-             */}
             <View
               style={{
                 backgroundColor: "#D3D8DB",
@@ -434,7 +429,7 @@ const GroupedBars = () => {
                 }}
               />
             </View>
-          </View>
+          </View> */}
           <View style={styles.filtersContainer}>
             {["Today", "Week", "Month", "Year"].map((filter) => (
               <TouchableOpacity
@@ -445,7 +440,7 @@ const GroupedBars = () => {
                     selectedFilter === filter ? "#6957E7" : "#EEF9FC",
                   paddingVertical: 8,
                   paddingHorizontal: 16,
-                  borderRadius: 20,
+                  borderRadius: 9,
                   margin: 8,
                 }}
               >
@@ -599,7 +594,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexWrap: "wrap",
     marginBottom: 20,
-    marginTop: 10,
+    marginTop: 24,
   },
   chartContainer: {
     height: 250,
