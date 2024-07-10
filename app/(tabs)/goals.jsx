@@ -8,7 +8,7 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, CirclePlus } from "lucide-react-native";
+import { ChevronLeft, CirclePlus } from "lucide-react-native";
 import { router } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -77,25 +77,14 @@ const Goals = () => {
       <ScrollView className="bg-white h-screen">
         <View className="mt-10">
           {/* header */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginLeft: 20,
-            }}
-          >
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ArrowLeft className="text-black" size={24} />
+          <View className="flex flex-row items-center mb-5 mx-6 justify-between">
+            <TouchableOpacity onPress={() => router.back()}>
+              <ChevronLeft className="h-5 w-5 text-black" />
             </TouchableOpacity>
-            <Text
-              style={{
-                color: "black",
-                fontSize: 24,
-                marginLeft: 80,
-              }}
-            >
-              Goals
-            </Text>
+            <View className="">
+              <Text className="text-black  font-pregular text-[18px] -ml-10">Goals</Text>
+            </View>
+            <View></View>
           </View>
 
           {/* filter buttons */}
