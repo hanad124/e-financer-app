@@ -532,7 +532,7 @@ const GroupedBars = () => {
                           key={transaction?.id}
                         >
                           <View className="flex flex-row gap-2 items-center">
-                            <View className="bg-white/60 p-1 rounded-lg">
+                            <View className="bg-primary/10 p-2 rounded-lg">
                               <Image
                                 source={{ uri: transaction.category?.icon }}
                                 style={{ width: 30, height: 30 }}

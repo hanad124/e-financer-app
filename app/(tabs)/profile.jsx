@@ -24,7 +24,7 @@ import { AuthContext } from "../../context/authContext";
 import { updateProfile } from "../../apicalls/auth";
 
 import BannerImage from "../../assets/images/banner-img.png";
-import { ArrowLeft, LogOut } from "lucide-react-native";
+import { ChevronLeft, LogOut } from "lucide-react-native";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -145,28 +145,12 @@ const Profile = () => {
     <SafeAreaView className="bg-white">
       <ScrollView className="bg-white">
         <View className="w-full  min-h-[90vh] px-4 my-6 mt-10 bg-white">
-          <View className="w-full flex flex-row justify-between items-center mb-10">
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginLeft: 20,
-                // marginBottom: 20,
-              }}
-            >
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <ArrowLeft className="text-black " size={19} />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  color: "black",
-                  // fontFamily: "pmedium",
-                  fontSize: 19,
-                  marginLeft: 10,
-                }}
-              >
-                Profile
-              </Text>
+          <View className="flex flex-row items-center mb-10 justify-between">
+            <TouchableOpacity onPress={() => router.back()}>
+              <ChevronLeft className="h-5 w-5 text-black" />
+            </TouchableOpacity>
+            <View className="">
+              <Text className="text-black  font-pregular">Profile</Text>
             </View>
             <View>
               <TouchableOpacity
@@ -179,6 +163,7 @@ const Profile = () => {
               </TouchableOpacity>
             </View>
           </View>
+
           {/* 
           profile banner with user avatar and name
            */}

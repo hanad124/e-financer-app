@@ -18,7 +18,7 @@ import { getGoals } from "../../apicalls/goals";
 const Goals = () => {
   const navigation = useNavigation();
   const { goals } = useGoalsStore();
-  const [filter, setFilter] = useState("ongoing"); // State for filter
+  const [filter, setFilter] = useState("ongoing");
   const animatedValues = useRef([]).current;
 
   useEffect(() => {
@@ -125,13 +125,6 @@ const Goals = () => {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            onPress={HandleGetGoals}
-            className="w-[10rem] h-[3rem] flex justify-center items-center my-10 bg-primary p-4 "
-          >
-            <Text className="text-white">Get Goals</Text>
-          </TouchableOpacity>
 
           {/* goals */}
           <View className="flex flex-col items-center justify-center">

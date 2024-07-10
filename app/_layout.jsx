@@ -81,73 +81,73 @@ const AuthWrapper = () => {
 
     routeHandler();
 
-    async function registerForPushNotificationsAsync() {
-      let token;
-      if (Device.isDevice) {
-        const { status: existingStatus } =
-          await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== "granted") {
-          const { status } = await Notifications.requestPermissionsAsync();
+    // async function registerForPushNotificationsAsync() {
+    //   let token;
+    //   if (Device.isDevice) {
+    //     const { status: existingStatus } =
+    //       await Notifications.getPermissionsAsync();
+    //     let finalStatus = existingStatus;
+    //     if (existingStatus !== "granted") {
+    //       const { status } = await Notifications.requestPermissionsAsync();
 
-          finalStatus = status;
-        }
-        if (finalStatus !== "granted") {
-          alert("Failed to get push token for push notification!");
-          return;
-        }
-        // token = (await Notifications.getExpoPushTokenAsync()).data;
-        const projectId =
-          Constants?.expoConfig?.extra?.eas?.projectId ??
-          Constants?.easConfig?.projectId;
+    //       finalStatus = status;
+    //     }
+    //     if (finalStatus !== "granted") {
+    //       alert("Failed to get push token for push notification!");
+    //       return;
+    //     }
+    //     // token = (await Notifications.getExpoPushTokenAsync()).data;
+    //     const projectId =
+    //       Constants?.expoConfig?.extra?.eas?.projectId ??
+    //       Constants?.easConfig?.projectId;
 
-        if (!projectId) {
-          alert("Please set your project ID in app.json");
-        }
+    //     if (!projectId) {
+    //       alert("Please set your project ID in app.json");
+    //     }
 
-        token = (
-          await Notifications.getExpoPushTokenAsync({
-            projectId,
-          })
-        ).data;
+    //     token = (
+    //       await Notifications.getExpoPushTokenAsync({
+    //         projectId,
+    //       })
+    //     ).data;
 
-        setPushToken(token);
-        console.log("push token", token);
-      } else {
-        alert("Must use physical device for Push Notifications");
-      }
+    //     setPushToken(token);
+    //     console.log("push token", token);
+    //   } else {
+    //     alert("Must use physical device for Push Notifications");
+    //   }
 
-      if (Platform.OS === "android") {
-        Notifications.setNotificationChannelAsync("default", {
-          name: "default",
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: "#FF231F7C",
-        });
-      }
+    //   if (Platform.OS === "android") {
+    //     Notifications.setNotificationChannelAsync("default", {
+    //       name: "default",
+    //       importance: Notifications.AndroidImportance.MAX,
+    //       vibrationPattern: [0, 250, 250, 250],
+    //       lightColor: "#FF231F7C",
+    //     });
+    //   }
 
-      return token;
-    }
+    //   return token;
+    // }
 
-    registerForPushNotificationsAsync();
+    // registerForPushNotificationsAsync();
 
-    // save push token
-    if (pushToken) {
-      console.log("====pushToken====", pushToken);
-      savePushToken({
-        expoPushToken: pushToken,
-      });
-    }
+    // // save push token
+    // if (pushToken) {
+    //   console.log("====pushToken====", pushToken);
+    //   savePushToken({
+    //     expoPushToken: pushToken,
+    //   });
+    // }
 
-    const subscription = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        console.log("notification", notification);
-      }
-    );
+    // const subscription = Notifications.addNotificationReceivedListener(
+    //   (notification) => {
+    //     console.log("notification", notification);
+    //   }
+    // );
 
-    return () => {
-      subscription.remove();
-    };
+    // return () => {
+    //   subscription.remove();
+    // };
   }, [isLoading, isAuthenticated, pathname, pushToken]);
 
   if (isLoading) {
