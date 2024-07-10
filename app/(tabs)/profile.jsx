@@ -150,7 +150,7 @@ const Profile = () => {
               <ChevronLeft className="h-5 w-5 text-black" />
             </TouchableOpacity>
             <View className="">
-              <Text className="text-black  font-pregular">Profile</Text>
+              <Text className="text-black text-[17px] -ml-5 font-pregular">Profile</Text>
             </View>
             <View>
               <TouchableOpacity

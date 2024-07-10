@@ -12,13 +12,14 @@ import { getToken } from "../utils/storage";
 
 export const useCategoriesStore = create((set) => ({
   categories: [],
+  category: {},
   icons: [],
   totalIncome: 0,
   totalExpense: 0,
   getCategories: async () => {
     const token = await getToken();
     if (token === null) {
-      console.log("null token")
+      console.log("null token");
       return;
     }
     const res = await getCategories();

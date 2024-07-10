@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import CustomButton from "../../components/CustomButton";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, ChevronLeft } from "lucide-react-native";
 import { RadioButton } from "react-native-paper";
 
 import { useCategoriesStore } from "../../store/categories";
@@ -36,7 +36,7 @@ const schema = z.object({
   icon: z.string().optional(),
 });
 
-const create = () => {
+const EditCategory = () => {
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [loading, setLoading] = useState(false);
   const [overLeyLoading, setOverLeyLoading] = useState(false);
@@ -46,7 +46,9 @@ const create = () => {
   });
   const [filteredIcons, setFilteredIcons] = useState([]);
 
-  const { categoryId } = useCategoriesStore();
+  const { categoryId, category } = useCategoriesStore();
+
+  console.log("single category::", category);
 
   const navigation = useNavigation();
 
@@ -64,27 +66,13 @@ const create = () => {
 
   //   defualt values
   useEffect(() => {
-    useCategoriesStore.getState().getCategories();
-    useCategoriesStore.getState().getCategoryIcons();
-
-    const fetchCategory = async () => {
-      setOverLeyLoading(true);
-      const category = await useCategoriesStore
-        .getState()
-
-        .getCategoryById(categoryId);
-      console.log("categoryBYID::", category?.category?.iconId);
-      setValue("name", category?.category?.name);
-      setSelectedIcon({
-        id: category?.category?.iconId,
-        url: category?.category?.icons?.icon,
-      });
-      setOverLeyLoading(false);
-    };
-    fetchCategory();
-  }, []);
-
-  console.log("selected icon", selectedIcon);
+    setValue("name", category?.name);
+    setSelectedIcon({
+      id: category?.icons?.id,
+      url: category?.icons?.icon,
+    });
+    setOverLeyLoading(false);
+  }, [category]);
 
   const onSubmit = async (data) => {
     data.icon = selectedIcon?.id;
@@ -128,8 +116,8 @@ const create = () => {
                 onPress={() => navigation.goBack()}
                 className="flex flex-row items-center"
               >
-                <ArrowLeft size={20} color={"black"} />
-                <Text className="text-lg font-pmedium text-gray-800 ml-2">
+                <ChevronLeft size={18} color={"black"} />
+                <Text className="text-[16px] text-gray-800 ml-2">
                   Back
                 </Text>
               </TouchableOpacity>
@@ -289,4 +277,4 @@ const create = () => {
   );
 };
 
-export default create;
+export default EditCategory;

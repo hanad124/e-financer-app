@@ -51,7 +51,7 @@ const RecentTransactions = () => {
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => router.push("/transactions")}>
-          <Text className="text-lg font-pmedium">Recent Transactions</Text>
+          <Text className="text-[16px] font-pregular">Recent Transactions</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push("/transactions")}>
           {/* <Link href={`/transactions`} style={{ textDecoration: "none" }}> */}
@@ -91,13 +91,13 @@ const RecentTransactions = () => {
                       style={{ width: 30, height: 30 }}
                     >
                     </Skeleton> */}
-                      <View className="bg-white/60 p-1 rounded-lg">
+                      <View className="bg-primary/10 p-2 rounded-lg">
                         <Image
                           source={{ uri: transaction.category?.icon }}
                           style={{ width: 30, height: 30 }}
                         />
                       </View>
-                      <View className="flex flex-col gap-2">
+                      <View className="flex flex-col gap-1">
                         {/* <Skeleton
                         animate={isLoading}
                         duration={500}
@@ -117,7 +117,7 @@ const RecentTransactions = () => {
                         show={isLoading}
                       >
                       </Skeleton> */}
-                        <Text className="text-[#348F9F] min-w-[50rem] text-sm">
+                        <Text className="text-[#348F9F] text-sm">
                           {transaction.description}
                         </Text>
                       </View>
@@ -132,7 +132,7 @@ const RecentTransactions = () => {
                   >
                   </Skeleton> */}
                   <Text
-                    className={` font-pmedium text-lg
+                    className={` font-pmedium
                      ${
                        transaction.type === "INCOME"
                          ? "text-green-500"

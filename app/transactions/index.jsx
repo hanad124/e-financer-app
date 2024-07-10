@@ -146,7 +146,7 @@ const index = () => {
                         <View className="flex flex-row gap-2">
                           <TouchableOpacity
                             onPress={() => {
-                              router.push("/transactions/[id]");
+                              router.push(`/transactions/${transaction.id}`);
                               setTransactionId(transaction.id);
                               useTransactionsStore.setState({
                                 transaction: transaction,

@@ -23,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-import { ArrowLeft } from "lucide-react-native";
+import {  ChevronLeft } from "lucide-react-native";
 
 import { createGoal } from "../../apicalls/goals";
 import { useGoalsStore } from "../../store/goals";
@@ -128,19 +128,12 @@ const CreateGoal = () => {
                 gap: 10,
               }}
             >
-              <ArrowLeft className="text-black " size={18} />
+              <ChevronLeft className="text-black " size={18} />
+              
               <Text
                 style={{
                   color: "black",
-                  fontSize: 18,
-                }}
-              >
-                Back
-              </Text>
-              <Text
-                style={{
-                  color: "black",
-                  fontSize: 18,
+                  fontSize: 15,
                   textAlign: "center",
                 }}
                 className="text-center ml-10 font-pmedium"
@@ -362,6 +355,8 @@ const CreateGoal = () => {
               loadinState={"Creating Goal"}
             />
           </View>
+
+          <View className="mt-16"></View>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -13,7 +13,7 @@ const TopSpendings = () => {
     <View>
       <View className="flex flex-row justify-between items-center">
         <TouchableOpacity onPress={() => router.push("/categories")}>
-          <Text className="text-lg font-pmedium">Top Spendings</Text>
+          <Text className="text-[16px] font-pregular">Top Spendings</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => router.push("/categories")}

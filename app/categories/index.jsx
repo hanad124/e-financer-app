@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useCategoriesStore } from "../../store/categories";
 
-import { ArrowLeft, Trash2, Pencil, Plus } from "lucide-react-native";
+import { ChevronLeft, Trash2, Pencil, Plus } from "lucide-react-native";
 import { deleteCategory } from "../../apicalls/categories";
 import LoadingOverlay from "../../components/LoadingOverlay";
 
@@ -74,8 +74,8 @@ const index = () => {
             onPress={() => navigation.goBack()}
             className="flex flex-row items-center"
           >
-            <ArrowLeft size={20} color={"black"} />
-            <Text className="text-lg font-pmedium text-gray-800 ml-2">
+            <ChevronLeft size={18} color={"black"} />
+            <Text className="text-[16px] text-gray-800 ml-2">
               Back
             </Text>
           </TouchableOpacity>
@@ -131,8 +131,11 @@ const index = () => {
                       <View className="flex flex-row gap-2">
                         <TouchableOpacity
                           onPress={() => {
-                            router.push("/categories/[id]");
+                            router.push(`/categories/${category.id}`);
                             setCategoryId(category.id);
+                            useCategoriesStore.setState({
+                              category: category,
+                            });
                           }}
                           className="p-2 bg-primary rounded-lg"
                         >
@@ -176,8 +179,11 @@ const index = () => {
                       <View className="flex flex-row gap-2">
                         <TouchableOpacity
                           onPress={() => {
-                            router.push("/categories/[id]");
+                            router.push(`/categories/${category.id}`);
                             setCategoryId(category.id);
+                            useCategoriesStore.setState({
+                              category: category,
+                            });
                           }}
                           className="p-2 bg-primary rounded-lg"
                         >

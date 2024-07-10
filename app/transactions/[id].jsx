@@ -86,7 +86,6 @@ const UpdateTransaction = () => {
     useState("EXPENSE");
   const [selectedAccountType, setSelectedAccountType] = useState("EVCPLUS");
 
-  console.log("single transaction::::::", transaction);
 
   const {
     control,
