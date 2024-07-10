@@ -6,14 +6,15 @@ import {
   TouchableOpacity,
   Animated,
   Image,
+  Alert,
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft, CirclePlus } from "lucide-react-native";
+import { ChevronLeft, CirclePlus, Trash } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGoalsStore } from "../../store/goals";
-import { getGoals } from "../../apicalls/goals";
+import { deleteGoal } from "../../apicalls/goals";
 
 const Goals = () => {
   const navigation = useNavigation();
@@ -63,13 +64,33 @@ const Goals = () => {
   });
 
   // handle getGoals
-  const HandleGetGoals = async () => {
-    try {
-      const res = await getGoals();
-      console.log("==== goals response ====", res);
-    } catch (error) {
-      console.error("API call error:::::", error);
-    }
+  const handleDeleteGoal = (id) => {
+    //  confirm
+    Alert.alert(
+      "Delete Goal",
+      "Are you sure you want to delete this goal?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => {
+            // delete goal
+            deleteGoal(id).then(() => {
+              console.log("Goal deleted successfully");
+
+              // remove goals from goals and filter goals
+              // setFilter(filteredGoals?.filter((goal) => goal.id !== id));
+            });
+          },
+
+          // remove goals from goals and filter goals
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -82,7 +103,9 @@ const Goals = () => {
               <ChevronLeft className="h-5 w-5 text-black" />
             </TouchableOpacity>
             <View className="">
-              <Text className="text-black  font-pregular -ml-10">Goals</Text>
+              <Text className="text-black text-[16px]  font-pregular -ml-10">
+                Goals
+              </Text>
             </View>
             <View></View>
           </View>
@@ -116,16 +139,37 @@ const Goals = () => {
           </View>
 
           {/* goals */}
-          <View className="flex flex-col items-center justify-center">
+          <View className="flex flex-col  justify-center">
+            {filter === "ongoing" && filteredGoals?.length === 0 ? (
+              <View className="flex justify-start mx-16 pt-5">
+                <Text className="text-black font-pregular my-10 text-center text-[13px]">
+                  No ongoing goals found. Start saving to create new ones!
+                </Text>
+              </View>
+            ) : filter === "ongoing" && filteredGoals?.length > 0 ? (
+              <View className="flex justify-start mx-8 pt-5">
+                <Text className="text-black font-pregular text-[15px]">
+                  Ongoing goals
+                </Text>
+              </View>
+            ) : null}
+            {filter === "completed" && filteredGoals?.length === 0 ? (
+              <View className="flex justify-start mx-16 pt-5">
+                <Text className="text-black font-pregular my-10 text-center text-[13px]">
+                  Only 24hr completed goals will be appear here
+                </Text>
+              </View>
+            ) : filter === "completed" && filteredGoals?.length > 0 ? (
+              <View className="flex justify-start mx-8 pt-5">
+                <Text className="text-black font-pregular text-[15px]">
+                  Completed goals
+                </Text>
+              </View>
+            ) : null}
             <View className="flex flex-col items-center justify-center mt-5 w-full">
               {filteredGoals?.map((goal, index) => {
                 const progressPercentage =
                   (goal?.savedAmount / goal?.amount) * 100;
-                const progressWidth = animatedValues[index]?.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: ["0%", "100%"],
-                });
-
                 return (
                   <View
                     key={goal.id}
@@ -145,9 +189,17 @@ const Goals = () => {
                       style={{
                         borderRadius: 15,
                         paddingHorizontal: 30,
-                        paddingVertical: 25,
+                        paddingVertical: 35,
                       }}
                     >
+                      <TouchableOpacity
+                        className="bg-white/50  absolute flex justify-center items-center right-8 rounded-full p-[4px] top-2"
+                        onPress={() => {
+                          handleDeleteGoal(goal?.id);
+                        }}
+                      >
+                        <Trash size={16} color={"red"} />
+                      </TouchableOpacity>
                       <View
                         style={{
                           flexDirection: "row",

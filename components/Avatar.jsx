@@ -75,7 +75,7 @@ const Avatar = () => {
           router.push("/sign-in");
         }}
       >
-        <LogOut size={24} color={"black"} />
+        <LogOut size={19} color={"black"} />
       </TouchableOpacity>
     </View>
   );

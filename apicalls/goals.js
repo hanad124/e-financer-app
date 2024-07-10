@@ -27,9 +27,9 @@ export const updateGoal = async (goal) => {
   }
 };
 
-export const deleteGoal = async (goal) => {
+export const deleteGoal = async (id) => {
   try {
-    const res = await axiosInstance.delete(`/goals/${goal.id}`);
+    const res = await axiosInstance.delete(`/goals/${id}`);
     return res;
   } catch (error) {
     console.error(error);
