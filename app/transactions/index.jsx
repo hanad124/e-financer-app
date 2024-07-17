@@ -23,7 +23,7 @@ import {
 } from "../../apicalls/transactions";
 import LoadingOverlay from "../../components/LoadingOverlay";
 
-import { ArrowLeft, Trash2, Pencil, Plus } from "lucide-react-native";
+import { ChevronLeft, Trash2, Pencil, Plus } from "lucide-react-native";
 
 const index = () => {
   const [search, setSearch] = useState("");
@@ -78,21 +78,22 @@ const index = () => {
       },
     ]);
   };
+
   return (
     <>
       <LoadingOverlay loading={loading} />
       <SafeAreaView className="bg-white pt-5">
         <ScrollView className="bg-white">
           <View className="w-full  min-h-[90vh] px-4 my-6 mt-0  bg-white">
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              className="flex flex-row items-center"
-            >
-              <ArrowLeft size={20} color={"black"} />
-              <Text className="text-lg font-pmedium text-gray-800 ml-2">
-                Back
-              </Text>
-            </TouchableOpacity>
+            <View className="flex flex-row items-center justify-between  my-2 mb-6">
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                className="flex flex-row items-center"
+              >
+                <ChevronLeft size={18} color={"black"} />
+                <Text className="text-[16px] text-gray-800 ml-2">Back</Text>
+              </TouchableOpacity>
+            </View>
 
             <View className="flex flex-row items-center justify-between">
               <Text className="text-lg font-pmedium text-gray-800 ml-2 my-4">

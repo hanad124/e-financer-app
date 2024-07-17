@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import CustomButton from "../../components/CustomButton";
-import { ArrowLeft } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import { RadioButton } from "react-native-paper";
 
 import { useCategoriesStore } from "../../store/categories";
@@ -97,10 +97,8 @@ const create = () => {
               onPress={() => navigation.goBack()}
               className="flex flex-row items-center"
             >
-              <ArrowLeft size={20} color={"black"} />
-              <Text className="text-lg font-pmedium text-gray-800 ml-2">
-                Back
-              </Text>
+              <ChevronLeft size={18} color={"black"} />
+              <Text className="text-[16px] text-gray-800 ml-2">Back</Text>
             </TouchableOpacity>
           </View>
 

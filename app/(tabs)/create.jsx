@@ -31,7 +31,7 @@ import { RadioButton } from "react-native-paper";
 import { createTransaction } from "../../apicalls/transactions";
 
 import ExpenseIcon from "../../assets/icons/expense-icon.png";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, ChevronLeft } from "lucide-react-native";
 import IncomeIcon from "../../assets/icons/income-icon.png";
 import PlusIcon from "../../assets/icons/category-plus-icon.png";
 import { Plus } from "lucide-react-native";
@@ -236,10 +236,8 @@ const Create = () => {
               onPress={() => navigation.goBack()}
               className="flex flex-row items-center"
             >
-              <ArrowLeft size={20} color={"black"} />
-              <Text className="text-lg font-pmedium text-gray-800 ml-2">
-                Back
-              </Text>
+              <ChevronLeft size={18} color={"black"} />
+              <Text className="text-[16px] text-gray-800 ml-2">Back</Text>
             </TouchableOpacity>
           </View>
           <View className="">
