@@ -23,11 +23,9 @@ import {
 import { useNavigation, router } from "expo-router";
 import { Dropdown } from "react-native-element-dropdown";
 
-import * as FileSystem from "expo-file-system";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 
-import Logo from "../../assets/Logo.png";
 
 const data = [
   { label: "All", value: "All" },
@@ -118,7 +116,7 @@ const GroupedBars = () => {
 
   const filterTransactions = (filter) => {
     const now = dayjs();
-    let filtered = transactions.transactions;
+    let filtered = transactions?.transactions;
 
     switch (filter) {
       case "Today":
@@ -257,21 +255,12 @@ const GroupedBars = () => {
   }, [selectedType]);
 
   const exportTransactions = async () => {
-    // const logoBase64 = await fetch(Logo)
-    //   .then((response) => response.blob())
-    //   .then(
-    //     (blob) =>
-    //       new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.onloadend = () => resolve(reader.result);
-    //         reader.onerror = reject;
-    //         reader.readAsDataURL(blob);
-    //       })
-    //   );
-    // <img src="${Logo}" alt="Logo" style="width: 50px; height: 50px;"/>
+ 
 
     const header = `
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #6957E7; color: white;">
+      <div style="display: flex; justify-content: space-between; align-items: center;
+       padding: 20px; 
+      background-color: #6957E7; color: white;">
         <div style="display: flex; gap: 15px; align-items: center;">
           <h1>e-Financer</h1>
         </div>  
@@ -482,8 +471,8 @@ const GroupedBars = () => {
           {/* // Spending details */}
           <View className="m-4">
             <View className="flex flex-row justify-between items-center">
-              <Text className="text-black font-pmedium text-lg mt-2">
-                Spending details
+              <Text className="text-black font-pmedium  mt-2">
+                Top Spending
               </Text>
             </View>
             {/* 

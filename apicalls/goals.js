@@ -35,3 +35,16 @@ export const deleteGoal = async (id) => {
     console.error(error);
   }
 };
+
+// send-push-notification
+export const sendPushNotification = async (id, payload) => {
+  try {
+    const res = await axiosInstance.post(
+      `/goals/send-push-notification`,
+      payload
+    );
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+};

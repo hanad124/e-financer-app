@@ -29,11 +29,11 @@ const Avatar = () => {
   useEffect(() => {
     const currentHour = new Date().getHours();
     if (currentHour < 12) {
-      setGreeting("Good morning");
+      setGreeting("Good morning ☀️");
     } else if (currentHour < 18) {
-      setGreeting("Good afternoon");
+      setGreeting("Good afternoon 🌞");
     } else {
-      setGreeting("Good evening");
+      setGreeting("Good evening 🌜");
     }
   }, []);
 
@@ -62,7 +62,7 @@ const Avatar = () => {
           </Skeleton>
         </TouchableOpacity>
         <View style={styles.textContainer}>
-          <Text style={styles.name}>Hello {user?.data?.name}</Text>
+          <Text style={styles.name}>Hello, {user?.data?.name}</Text>
           <Text style={styles.email}>{greeting}</Text>
         </View>
       </View>
@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   name: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 17,
+    fontWeight: "500",
   },
   email: {
     fontSize: 14,

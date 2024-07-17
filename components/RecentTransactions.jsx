@@ -107,7 +107,7 @@ const RecentTransactions = () => {
                       >
                       </Skeleton> */}
                         <Text className="text-sm font-pmedium">
-                          {transaction.category?.name}
+                          {transaction?.title}
                         </Text>
                         {/* <Skeleton
                         animate={isLoading}

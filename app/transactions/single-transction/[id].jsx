@@ -11,9 +11,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { router } from "expo-router";
+import dayjs from "dayjs";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeft, Download } from "lucide-react-native";
+
+;
 
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import { useTransactionsStore } from "../../../store/transactions";
@@ -21,7 +24,7 @@ import { useTransactionsStore } from "../../../store/transactions";
 const TransactionDetail = () => {
   const { transactionDetails } = useTransactionsStore();
 
-  console.log("transactionDetails:", transactionDetails);
+
   return (
     <>
       <LoadingOverlay />
@@ -208,16 +211,7 @@ const TransactionDetail = () => {
                 </View>
               )}
 
-              {/* Download Button */}
-              <View className="flex justify-center items-center my-10 w-full px-14">
-                <TouchableOpacity className="px-4 py-2 border border-primary rounded-full w-full flex flex-row justify-center items-center hover:bg-primary hover:text-white">
-                  {/* <Download
-                    className="mr-2 text-primary text-lg"
-                    style={{ height: "0.2rem", width: "0.2rem" }} 
-                  /> */}
-                  <Text className="text-primary">Download Receipt</Text>
-                </TouchableOpacity>
-              </View>
+              
             </View>
           </View>
         </ScrollView>

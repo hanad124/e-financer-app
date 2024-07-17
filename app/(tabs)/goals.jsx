@@ -9,21 +9,122 @@ import {
   Alert,
 } from "react-native";
 import { router } from "expo-router";
+
+import Constants from "expo-constants";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeft, CirclePlus, Trash } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGoalsStore } from "../../store/goals";
-import { deleteGoal } from "../../apicalls/goals";
+import { deleteGoal, sendPushNotification } from "../../apicalls/goals";
+import { savePushToken } from "../../apicalls/auth";
 
 const Goals = () => {
   const navigation = useNavigation();
   const { goals } = useGoalsStore();
   const [filter, setFilter] = useState("ongoing");
   const animatedValues = useRef([]).current;
+  const [pushToken, setPushToken] = useState(null);
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+  const responseListener = React.useRef();
+  const notificationListener = React.useRef();
 
   useEffect(() => {
+    async function registerForPushNotificationsAsync() {
+      let token;
+      if (Device.isDevice) {
+        const { status: existingStatus } =
+          await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
+
+          finalStatus = status;
+        }
+        if (finalStatus !== "granted") {
+          alert("Failed to get push token for push notification!");
+          return;
+        }
+        // token = (await Notifications.getExpoPushTokenAsync()).data;
+        const projectId =
+          Constants?.expoConfig?.extra?.eas?.projectId ??
+          Constants?.easConfig?.projectId;
+
+        if (!projectId) {
+          alert("Please set your project ID in app.json");
+        }
+
+        token = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
+
+        setPushToken(token);
+      } else {
+        alert("Must use physical device for Push Notifications");
+      }
+
+      if (Platform.OS === "android") {
+        Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#FF231F7C",
+        });
+      }
+
+      return token;
+    }
+
+    registerForPushNotificationsAsync();
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const {
+          notification: {
+            request: {
+              content: {
+                data: { screen },
+              },
+            },
+          },
+        } = response;
+
+        // When the user taps on the notification, this line checks if they //are suppose to be taken to a particular screen
+        if (screen) {
+          router.push(screen);
+        }
+      });
+
+    // save push token
+    if (pushToken) {
+      // console.log("====pushToken====", pushToken);
+      savePushToken({
+        expoPushToken: pushToken,
+      });
+    }
+
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log("=== subscription notification ===", notification);
+      }
+    );
+
     useGoalsStore.getState().getGoals();
+    return () => {
+      subscription.remove();
+    };
   }, [goals]);
 
   useEffect(() => {
@@ -93,6 +194,16 @@ const Goals = () => {
     );
   };
 
+  // sendPushNotification
+  const handleSendPushNotifi = async () => {
+    try {
+      await sendPushNotification();
+    } catch (error) {
+      console.error("Error sending push notification", error);
+      Alert.alert("Error", "Failed to send push notification");
+    }
+  };
+
   return (
     <SafeAreaView>
       <ScrollView className="bg-white h-screen">
@@ -156,7 +267,7 @@ const Goals = () => {
             {filter === "completed" && filteredGoals?.length === 0 ? (
               <View className="flex justify-start mx-16 pt-5">
                 <Text className="text-black font-pregular my-10 text-center text-[13px]">
-                  Only 24hr completed goals will be appear here
+                  Only goals completed within the last 24hrs will appear here.
                 </Text>
               </View>
             ) : filter === "completed" && filteredGoals?.length > 0 ? (

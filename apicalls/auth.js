@@ -73,7 +73,6 @@ export const sendPasswordResetLink = async (payload) => {
 
 // savePushToken
 export const savePushToken = async (payload) => {
-  console.log("------payload----", payload);
   try {
     const res = await axiosInstance.post("/auth/save-push-token", payload);
     return res;

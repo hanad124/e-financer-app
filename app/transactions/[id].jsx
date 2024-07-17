@@ -25,10 +25,7 @@ import { useTransactionsStore } from "../../store/transactions";
 import { RadioButton } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import {
-  getTransactionById,
-  updateTransaction,
-} from "../../apicalls/transactions";
+import { updateTransaction } from "../../apicalls/transactions";
 
 import ExpenseIcon from "../../assets/icons/expense-icon.png";
 import IncomeIcon from "../../assets/icons/income-icon.png";
@@ -86,7 +83,6 @@ const UpdateTransaction = () => {
     useState("EXPENSE");
   const [selectedAccountType, setSelectedAccountType] = useState("EVCPLUS");
 
-
   const {
     control,
     handleSubmit,
@@ -106,7 +102,19 @@ const UpdateTransaction = () => {
       // number: 0,
     },
   });
-
+  // reset form
+  const resetForm = () => {
+    reset({
+      title: "",
+      amount: 0,
+      type: selectedTransactionType,
+      category: selectedCategory,
+      accountType: selectedAccountType,
+      description: "",
+      receipt: null,
+    });
+    setImage(null);
+  };
   // set default values
   useEffect(() => {
     if (transaction) {
@@ -123,7 +131,7 @@ const UpdateTransaction = () => {
       console.log("transaction receipt", transaction.receipt);
       setOverlayLoading(false);
     }
-  }, [transaction]);
+  }, [transaction, setValue]);
 
   useEffect(() => {
     setValue("type", selectedTransactionType);
@@ -189,7 +197,7 @@ const UpdateTransaction = () => {
 
       if (res.status === 200) {
         setLoading(false);
-        reset();
+        resetForm();
         ToastAndroid.show(
           `${res.data.message || "Transaction updated successfully!"}`,
           ToastAndroid.SHORT
@@ -352,7 +360,7 @@ const UpdateTransaction = () => {
               <Text className="text-sm font-pregular text-gray-800">
                 Amount
               </Text>
-              <Controller
+              {/* <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
@@ -374,6 +382,26 @@ const UpdateTransaction = () => {
                 )}
                 name="amount"
                 rules={{ required: "Amount is required" }}
+              /> */}
+
+              <Controller
+                control={control}
+                name="amount"
+                rules={{ required: "Amount is required" }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    keyboardType="numeric"
+                    style={{ padding: 10 }}
+                    className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                    onBlur={onBlur}
+                    onChangeText={(text) => {
+                      const numberValue = parseFloat(text) || 0; // Handle non-numeric input
+                      onChange(numberValue);
+                    }}
+                    value={String(value)} // Ensure value is correctly handled
+                    placeholder="Amount"
+                  />
+                )}
               />
               {errors.amount && (
                 <Text className="text-red-500">{errors.amount.message}</Text>
