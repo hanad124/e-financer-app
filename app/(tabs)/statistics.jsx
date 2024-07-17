@@ -26,7 +26,6 @@ import { Dropdown } from "react-native-element-dropdown";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 
-
 const data = [
   { label: "All", value: "All" },
   { label: "Income", value: "INCOME" },
@@ -146,6 +145,133 @@ const GroupedBars = () => {
     setFilteredTransactions(filtered);
   };
 
+  // const calculateBarData = () => {
+  //   let labels;
+  //   let data;
+  //   const now = dayjs();
+
+  //   if (selectedFilter === "Month") {
+  //     labels = [
+  //       "Jan",
+  //       "Feb",
+  //       "Mar",
+  //       "Apr",
+  //       "May",
+  //       "Jun",
+  //       "Jul",
+  //       "Aug",
+  //       "Sep",
+  //       "Oct",
+  //       "Nov",
+  //       "Dec",
+  //     ];
+  //     data = labels.map((label, index) => ({
+  //       label,
+  //       INCOME: 0,
+  //       EXPENSE: 0,
+  //     }));
+
+  //     filteredTransactions?.forEach((transaction) => {
+  //       const month = dayjs(transaction.createdAt).month();
+  //       const test = (data[month][transaction.type] += transaction.amount);
+  //       console.log("MONTH::", test);
+  //     });
+  //   } else if (selectedFilter === "Year") {
+  //     labels = [
+  //       "2024",
+  //       "2023",
+  //       "2022",
+  //       "2021",
+  //       "2020",
+  //       "2019",
+  //       "2018",
+  //       "2017",
+  //       "2016",
+  //       "2015",
+  //       "2014",
+  //       "2013",
+  //       "2012",
+  //       "2011",
+  //       "2010",
+  //       "2009",
+  //       "2008",
+  //       "2007",
+  //     ];
+  //     data = labels.map((label, index) => ({
+  //       label,
+  //       INCOME: 0,
+  //       EXPENSE: 0,
+  //     }));
+
+  //     filteredTransactions?.forEach((transaction) => {
+  //       const year = dayjs(transaction?.createdAt).year();
+  //       console.log("YEAR:::", year);
+  //       data[year][transaction?.type] += transaction?.amount;
+  //     });
+  //   } else {
+  //     labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  //     data = labels.map((label, index) => ({
+  //       label,
+  //       INCOME: 0,
+  //       EXPENSE: 0,
+  //     }));
+
+  //     filteredTransactions?.forEach((transaction) => {
+  //       const day = dayjs(transaction.createdAt).day();
+  //       data[day][transaction.type] += transaction.amount;
+  //     });
+  //   }
+
+  //   const barData = data.flatMap((d) => [
+  //     {
+  //       value: d.INCOME,
+  //       label: d.label,
+  //       frontColor: "#D3D8DB",
+  //       topLabelComponent: () =>
+  //         d.INCOME > 0 ? (
+  //           <Text
+  //             style={{
+  //               color: "#D3D8DB",
+  //               fontSize: 12,
+  //               marginBottom: -4,
+  //               marginRight: -20,
+  //               width: 50,
+  //               height: 20,
+  //             }}
+  //           >
+  //             ${d.INCOME}
+  //           </Text>
+  //         ) : null,
+  //     },
+  //     {
+  //       value: d.EXPENSE,
+  //       label: d.label,
+  //       frontColor: "#6957E7",
+  //       topLabelComponent: () =>
+  //         d.EXPENSE > 0 ? (
+  //           <Text
+  //             style={{
+  //               color: "#6957E7",
+  //               fontSize: 12,
+  //               marginBottom: -4,
+  //               marginRight: -15,
+  //               width: 50,
+  //               height: 20,
+  //             }}
+  //           >
+  //             ${d.EXPENSE}
+  //           </Text>
+  //         ) : null,
+  //     },
+  //   ]);
+
+  //   return barData;
+  // };
+
+  // labels = ["2000", "2001", "2002", "2003", "2004", "2005"];
+
+  // filter by type [INCOME, EXPENSE] as dropdown
+
   const calculateBarData = () => {
     let labels;
     let data;
@@ -175,6 +301,47 @@ const GroupedBars = () => {
       filteredTransactions?.forEach((transaction) => {
         const month = dayjs(transaction.createdAt).month();
         data[month][transaction.type] += transaction.amount;
+      });
+    } else if (selectedFilter === "Year") {
+      labels = [
+        "2024",
+        "2023",
+        "2022",
+        "2021",
+        "2020",
+        "2019",
+        "2018",
+        "2017",
+        "2016",
+        "2015",
+        "2014",
+        "2013",
+        "2012",
+        "2011",
+        "2010",
+        "2009",
+        "2008",
+        "2007",
+        "2006",
+        "2005",
+        "2004",
+        "2003",
+        "2002",
+        "2001",
+        "2000",
+      ];
+      data = labels.map((label, index) => ({
+        label,
+        INCOME: 0,
+        EXPENSE: 0,
+      }));
+
+      filteredTransactions?.forEach((transaction) => {
+        const year = dayjs(transaction?.createdAt).year();
+        const yearIndex = labels.indexOf(year.toString());
+        if (yearIndex !== -1) {
+          data[yearIndex][transaction?.type] += transaction?.amount;
+        }
       });
     } else {
       labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -236,7 +403,6 @@ const GroupedBars = () => {
     return barData;
   };
 
-  // filter by type [INCOME, EXPENSE] as dropdown
   const filterByType = () => {
     const filtered = transactions.transactions.filter(
       (transaction) => transaction.type === selectedType
@@ -255,8 +421,6 @@ const GroupedBars = () => {
   }, [selectedType]);
 
   const exportTransactions = async () => {
- 
-
     const header = `
       <div style="display: flex; justify-content: space-between; align-items: center;
        padding: 20px; 
@@ -449,23 +613,25 @@ const GroupedBars = () => {
             className="shadow-md border-[1px] border-slate-200"
           >
             <View style={styles.chartContainer}>
-              <BarChart
-                key={selectedFilter}
-                data={calculateBarData()}
-                barWidth={26}
-                spacing={14}
-                roundedTop
-                roundedBottom
-                hideRules
-                xAxisThickness={0}
-                yAxisThickness={0}
-                hideYAxisText
-                xAxisLabelTextStyle={{ fontSize: 10, rotate: 45 }}
-                yAxis={false}
-                noOfSections={3}
-                maxValue={450}
-                width={360}
-              />
+              <ScrollView>
+                <BarChart
+                  key={selectedFilter}
+                  data={calculateBarData()}
+                  barWidth={26}
+                  spacing={14}
+                  roundedTop
+                  roundedBottom
+                  hideRules
+                  xAxisThickness={0}
+                  yAxisThickness={0}
+                  hideYAxisText
+                  xAxisLabelTextStyle={{ fontSize: 10, rotate: 45 }}
+                  yAxis={false}
+                  noOfSections={3}
+                  maxValue={450}
+                  width={360} // Adjust this width if needed, depending on the amount of data
+                />
+              </ScrollView>
             </View>
           </View>
           {/* // Spending details */}
@@ -586,6 +752,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   chartContainer: {
+    flex: 1,
     height: 250,
     justifyContent: "center",
     alignItems: "center",
