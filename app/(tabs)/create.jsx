@@ -105,6 +105,20 @@ const Create = () => {
     },
   });
 
+  // reset form
+  const resetForm = () => {
+    reset({
+      title: "",
+      amount: 0,
+      type: selectedTransactionType,
+      category: selectedCategory,
+      accountType: selectedAccountType,
+      description: "",
+      receipt: null,
+    });
+    setImage(null);
+  };
+
   useEffect(() => {
     (async () => {
       const galleryStatus =
@@ -196,15 +210,13 @@ const Create = () => {
           }
         }
         await useTransactionsStore.getState().getTransactions();
-        reset();
-        setValue("amount", null);
+        resetForm();
         setSelectedCategory("");
         setSelectedTransactionType("");
         // setValue("amount", 0);
       } else {
         alert(`${res.data.message}`);
-        reset();
-        setValue("amount", null);
+        resetForm();
         setSelectedCategory("");
         setSelectedTransactionType("");
 
@@ -340,26 +352,22 @@ const Create = () => {
             <Text className="text-sm font-pregular text-gray-800">Amount</Text>
             <Controller
               control={control}
+              name="amount"
+              rules={{ required: "Amount is required" }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   keyboardType="numeric"
-                  style={{
-                    padding: 10,
-                  }}
+                  style={{ padding: 10 }}
                   className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
                   onBlur={onBlur}
                   onChangeText={(text) => {
-                    // check if the value is a number
-                    // change the value to a number
-                    const numberValue = parseFloat(text);
+                    const numberValue = parseFloat(text) || 0; // Handle non-numeric input
                     onChange(numberValue);
                   }}
-                  value={value}
+                  value={String(value)} // Ensure value is correctly handled
                   placeholder="Amount"
                 />
               )}
-              name="amount"
-              rules={{ required: "Amount is required" }}
             />
             {errors.amount && (
               <Text className="text-red-500">{errors.amount.message}</Text>

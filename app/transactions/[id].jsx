@@ -102,6 +102,7 @@ const UpdateTransaction = () => {
       // number: 0,
     },
   });
+  
   // reset form
   const resetForm = () => {
     reset({
