@@ -5,6 +5,7 @@ import {
   TextInput,
   Image,
   StyleSheet,
+  Alert,
   ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
@@ -16,6 +17,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import { useAuthStore } from "../../store/auth";
+import { removeToken } from "../../utils/storage";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getUser } from "../../utils/storage";
 import { useNavigation, router } from "expo-router";
@@ -150,13 +152,34 @@ const Profile = () => {
               <ChevronLeft className="h-5 w-5 text-black" />
             </TouchableOpacity>
             <View className="">
-              <Text className="text-black text-[17px] -ml-5 font-pregular">Profile</Text>
+              <Text className="text-black text-[17px] -ml-5 font-pregular">
+                Profile
+              </Text>
             </View>
             <View>
               <TouchableOpacity
                 onPress={() => {
-                  setIsAuthenticated(false);
-                  router.push("/sign-in");
+                  Alert.alert(
+                    "Logout",
+                    "Are you sure you want to logout?",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Logout",
+                        onPress: () => {
+                          removeToken();
+                          setIsAuthenticated(false);
+                          setTimeout(() => {
+                            router.push("/auth/sign-in");
+                          }, 0);
+                        },
+                      },
+                    ],
+                    { cancelable: false }
+                  );
                 }}
               >
                 <LogOut className="text-black" size={19} />

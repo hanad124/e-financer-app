@@ -5,7 +5,7 @@ export const getTransactions = async () => {
     const res = await axiosInstance.get("/transactions");
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    console.error("----- API call error ----", error);
     return error.response;
   }
 };

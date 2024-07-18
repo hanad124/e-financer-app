@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ToastAndroid,
+  Alert,
 } from "react-native";
 import { useAuthStore } from "../store/auth";
 import { removeToken } from "../utils/storage";
@@ -42,6 +43,34 @@ const Avatar = () => {
     useAuthStore.getState().getUserInfo();
   }, []);
 
+  // const handleLogout = async () => {
+  //   try {
+  //     Alert.alert(
+  //       "Logout",
+  //       "Are you sure you want to logout?",
+  //       [
+  //         {
+  //           text: "Cancel",
+  //           style: "cancel",
+  //         },
+  //         {
+  //           text: "Logout",
+  //           onPress: () => {
+  //             removeToken();
+  //             setIsAuthenticated(false);
+  //             router.push("/auth/sign-in");
+  //           },
+
+  //           // remove goals from goals and filter goals
+  //         },
+  //       ],
+  //       { cancelable: false }
+  //     );
+  //   } catch (error) {
+  //     console.error("Error logging out:", error);
+  //   }
+  // };
+
   return (
     <View style={styles.container}>
       <View className="flex flex-row items-center gap-4">
@@ -66,13 +95,56 @@ const Avatar = () => {
           <Text style={styles.email}>{greeting}</Text>
         </View>
       </View>
+      {/* 
+      <TouchableOpacity
+        onPress={() => {
+          Alert.alert(
+            "Logout",
+            "Are you sure you want to logout?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "Logout",
+                onPress: () => {
+                  removeToken();
+                  setIsAuthenticated(false);
+                  router.push("/auth/sign-in");
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+        }}
+      >
+        <LogOut size={19} color={"black"} />
+      </TouchableOpacity> */}
 
       <TouchableOpacity
         onPress={() => {
-          removeToken();
-          // ToastAndroid.show("Logged out!", ToastAndroid.SHORT);
-          setIsAuthenticated(false);
-          router.push("/sign-in");
+          Alert.alert(
+            "Logout",
+            "Are you sure you want to logout?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "Logout",
+                onPress: () => {
+                  removeToken();
+                  setIsAuthenticated(false);
+                  setTimeout(() => {
+                    router.push("/auth/sign-in");
+                  }, 0);
+                },
+              },
+            ],
+            { cancelable: false }
+          );
         }}
       >
         <LogOut size={19} color={"black"} />

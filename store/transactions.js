@@ -17,10 +17,13 @@ export const useTransactionsStore = create((set) => ({
   setIsLoading: (value) => set({ isLoading: value }),
   getTransactions: async () => {
     try {
-      set({ isLoading: true });
-      const res = await getTransactions();
-      set({ transactions: res?.data });
-      set({ isLoading: false });
+      const token = await getToken();
+      if (token) {
+        set({ isLoading: true });
+        const res = await getTransactions();
+        set({ transactions: res?.data });
+        set({ isLoading: false });
+      }
     } catch (error) {
       console.error("API call error::::::", error);
     }

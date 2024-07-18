@@ -15,14 +15,15 @@ import { savePushToken } from "../apicalls/auth";
 
 import Logo from "../assets/Logo.png";
 import CustomDrawer from "../components/Drawer";
+import SignIn from "./auth/sign-in";
 
 SplashScreen.preventAutoHideAsync();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: true,
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -175,7 +176,87 @@ const AuthWrapper = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      {isAuthenticated ? (
+      <Stack
+        initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="transactions/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="transactions/[id]"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="transactions/single-transction/[id]"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(goals)/create-goal"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="categories/index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="categories/[id]"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="categories/create"
+          options={{
+            headerShown: false,
+          }}
+        />
+        {/* <Stack.Screen
+          name="sign-in"
+          options={{
+            headerShown: false,
+          }}
+        /> */}
+        {/* <Stack.Screen
+          name="register"
+          options={{
+            headerShown: false,
+          }}
+        /> */}
+        {/* <Stack.Screen
+          name="reset-password"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="verify-email"
+          options={{
+            headerShown: false,
+          }}
+        /> */}
+      </Stack>
+
+      {/* {isAuthenticated ? (
         <>
           <Stack
             initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
@@ -265,7 +346,7 @@ const AuthWrapper = () => {
             }}
           />
         </Stack>
-      )}
+      )} */}
     </GestureHandlerRootView>
   );
 };

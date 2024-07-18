@@ -5,13 +5,17 @@ import {
   getGoals,
   updateGoal,
 } from "../apicalls/goals";
+import { getToken } from "../utils/storage";
 
 export const useGoalsStore = create((set, get) => ({
   goals: [],
   goal: {},
   getGoals: async () => {
-    const res = await getGoals();
-    set({ goals: res.data });
+    const token = await getToken();
+    if (token) {
+      const res = await getGoals();
+      set({ goals: res.data });
+    }
   },
   createGoal: async (payload) => {
     const res = await createGoal(payload);

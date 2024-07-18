@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import {
-  getCategories,
+  getCategories as getCategoriesRes,
   getCategoryIcons,
   createCategory,
   updateCategory,
@@ -17,21 +17,26 @@ export const useCategoriesStore = create((set) => ({
   totalIncome: 0,
   totalExpense: 0,
   getCategories: async () => {
-    const token = await getToken();
-    if (token === null) {
-      console.log("null token");
-      return;
-    }
-    const res = await getCategories();
-    if (res.status === 200) {
-      set({ categories: res.data });
+    try {
+      const token = await getToken();
+      if (token) {
+        const res = await getCategoriesRes();
+        console.log("::::Categories resdata:: ", res.status);
+        if (res.data.success) {
+          set({ categories: res.data });
+        }
+      }
+    } catch (error) {
+      console.error("API call error::::::", error);
     }
   },
   getCategoryIcons: async () => {
-    if (!getToken()) return;
-    const res = await getCategoryIcons();
-    if (res) {
-      set({ icons: res.data?.icons });
+    const token = await getToken();
+    if (token) {
+      const res = await getCategoryIcons();
+      if (res) {
+        set({ icons: res.data?.icons });
+      }
     }
   },
   createCategory: async (payload) => {
@@ -77,11 +82,10 @@ const initializeStore = async () => {
   const token = await getToken();
 
   console.log("emitting", token);
-  if (token === null) {
-    return null;
+  if (token) {
+    useCategoriesStore.getState().getCategoryIcons();
+    useCategoriesStore.getState().getCategories();
   }
-  useCategoriesStore.getState().getCategoryIcons();
-  useCategoriesStore.getState().getCategories();
 };
 
 initializeStore();

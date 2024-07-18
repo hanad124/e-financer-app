@@ -39,7 +39,7 @@ export default function Page() {
             </Text>
             <CustomButton
               text={"Get Started"}
-              handlePress={() => router.push("/sign-in")}
+              handlePress={() => router.push("/auth/sign-in")}
               // handlePress={() => router.push("/home")}
               containerStyles="w-full mt-10"
             />

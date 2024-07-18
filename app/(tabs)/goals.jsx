@@ -7,6 +7,7 @@ import {
   Animated,
   Image,
   Alert,
+  Platform,
 } from "react-native";
 import { router } from "expo-router";
 

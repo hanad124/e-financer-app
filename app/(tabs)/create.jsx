@@ -102,6 +102,7 @@ const Create = () => {
       category: selectedCategory,
       accountType: selectedAccountType,
       number: 0,
+      amount: 0,
     },
   });
 

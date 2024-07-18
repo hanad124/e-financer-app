@@ -1,4 +1,4 @@
-const baseURL = "http://192.168.1.4:8082/api";
+const baseURL = "http://172.20.10.2:8082/api";
 
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";

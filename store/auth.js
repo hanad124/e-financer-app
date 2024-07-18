@@ -20,7 +20,7 @@ export const useAuthStore = create((set) => ({
       set({ user, isAuthenticated: true });
       set({ isLoading: false });
     } catch (error) {
-      console.error("API call error::::::", error);
+      console.error(":::::::API call error::::::", error);
     }
   },
 }));

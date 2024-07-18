@@ -63,10 +63,10 @@ const SignIn = () => {
     }
   };
 
-  if (isAuthenticated) {
-    router.push("/home");
-    return null;
-  }
+  // if (isAuthenticated) {
+  //   router.push("/home");
+  //   return null;
+  // }
 
   return (
     <SafeAreaView>
