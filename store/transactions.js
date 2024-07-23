@@ -21,6 +21,8 @@ export const useTransactionsStore = create((set) => ({
       if (token) {
         set({ isLoading: true });
         const res = await getTransactions();
+
+        console.log("transaction res", res);
         set({ transactions: res?.data });
         set({ isLoading: false });
       }

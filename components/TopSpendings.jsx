@@ -11,7 +11,7 @@ const TopSpendings = () => {
 
   return (
     <View>
-      <View className="flex flex-row justify-between items-center">
+      <View className="flex flex-row justify-between items-center ">
         <TouchableOpacity onPress={() => router.push("/categories")}>
           <Text className="text-[16px] font-pregular">Top Spendings</Text>
         </TouchableOpacity>
@@ -26,10 +26,7 @@ const TopSpendings = () => {
           />
         </TouchableOpacity>
       </View>
-      {/* 
-      display top 3 categories with highest spending with their icons
-       */}
-      <View className="flex flex-row mt-2">
+      <View className="flex flex-row ">
         {categoriesData
           ?.sort((a, b) => b.totalExpense - a.totalExpense)
           .slice(0, 4)

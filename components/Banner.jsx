@@ -18,11 +18,14 @@ const Banner = () => {
 
   const { transactions } = useTransactionsStore();
 
-  const startMonthExpense = transactions?.startMonthExpense;
-  const endMonthExpense = transactions?.endMonthExpense;
+  // const startMonthExpense = transactions?.startMonthExpense;
+  // const endMonthExpense = transactions?.endMonthExpense;
   const totalBalance = transactions?.totalBalance;
 
-  const progressValue = (endMonthExpense / totalBalance) * 100;
+  const totalExpense = transactions?.totalExpense;
+  const totalIncome = transactions?.totalIncome;
+
+  const progressPercentage = (totalIncome - totalExpense) / totalBalance;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,9 +71,7 @@ const Banner = () => {
               : "$" + transactions?.totalBalance
           }
         </Text>
-        <Text className="text-white text-start  text-sm">
-          Monthly Expenses
-        </Text>
+        {/* <Text className="text-white text-start  text-sm">Monthly Expenses</Text>
         <View style={styles.progressBarBackground} className="mt-2">
           <Animated.View
             style={[
@@ -84,19 +85,13 @@ const Banner = () => {
         <View className="flex flex-row justify-between mt-2">
           <Text className="text-white text-start text-sm ">
             {" "}
-            <Text className="text-white text-start mt-2">
-              {/* ${transactions?.startOfMonthExpense} */}
-              $0
-            </Text>
+            <Text className="text-white text-start mt-2">$0</Text>
           </Text>
           <Text className="text-white text-right text-sm">
             {" "}
-            <Text className="text-white text-start mt-2">
-              {/* ${transactions?.totalMonthlyExpense} */}
-              $0
-            </Text>
+            <Text className="text-white text-start mt-2">$0</Text>
           </Text>
-        </View>
+        </View> */}
 
         <View className="flex items-center flex-row justify-between mt-2">
           {/* income banner */}

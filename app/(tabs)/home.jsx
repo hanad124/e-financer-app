@@ -6,15 +6,16 @@ import Avatar from "../../components/Avatar";
 import Banner from "../../components/Banner";
 import TopSpendings from "../../components/TopSpendings";
 import RecentTransactions from "../../components/RecentTransactions";
+import Budgets from "../../components/Budgets";
 
 const Home = () => {
-
   return (
     <SafeAreaView className="bg-white">
       <ScrollView className="">
         <View className="w-full  min-h-[90vh] px-4 my-6">
           <Avatar />
           <Banner />
+          <Budgets />
           <TopSpendings />
           <RecentTransactions />
         </View>
