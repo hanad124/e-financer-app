@@ -16,6 +16,7 @@ const Budgets = () => {
 
   const date = new Date();
   const currentMonth = date.toLocaleString("default", { month: "long" });
+  console.log("budgets:", budgets);
 
   return (
     <View style={{ paddingHorizontal: 10 }}>
@@ -37,14 +38,14 @@ const Budgets = () => {
         width={width}
         height={119}
         autoPlay={true}
-        data={budgets ? budgets : [...new Array(1).keys()]}
+        data={budgets ? budgets?.budgets : [...new Array(1).keys()]}
         scrollAnimationDuration={2000}
         onSnapToItem={(index) => console.log("current index:", index)}
         renderItem={({ item }) => (
           <View style={{ width: width - 50 }}>
             <View
               key={item.id}
-              className="rounded-lg border border-[#E3E3E5] relative px-6 py-2"
+              className="rounded-xl border border-[#E3E3E5] relative px-6 py-2"
             >
               <Text className="text-center font-psemibold">{item?.name}</Text>
               <View className="flex flex-row justify-between items-center">

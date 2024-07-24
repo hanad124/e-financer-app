@@ -12,47 +12,48 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { router, useNavigation } from "expo-router";
-import { BlurView } from "expo-blur";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTransactionsStore } from "../../store/transactions";
-import {
-  // deleteTransaction,
-  getTransactions,
-} from "../../apicalls/transactions";
-import LoadingOverlay from "../../components/LoadingOverlay";
+import { useBudgetsStore } from "../../store/budgets";
+import { deleteBudget } from "../../apicalls/budgets";
 
 import { ChevronLeft, Trash2, Pencil, Plus } from "lucide-react-native";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const index = () => {
   const [search, setSearch] = useState("");
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [filteredBudgets, setFilteredBudgets] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const navigation = useNavigation();
 
-  const { transactions, setTransactionId, deleteTransaction } =
-    useTransactionsStore();
+  const { budgets, setBudgetId } = useBudgetsStore();
 
-  console.log("transactions", transactions?.transactions);
+  console.log("budgets: ", budgets);
 
-  //  search transactions
+  useEffect(() => {
+    if (budgets?.budgets) {
+      setFilteredBudgets(budgets?.budgets);
+    }
+  }, [budgets?.budgets]);
+
+  //  search budgets
   useEffect(() => {
     if (search.length > 0) {
-      const filtered = transactions?.transactions?.filter((transaction) =>
-        transaction?.title?.toLowerCase().includes(search.toLowerCase())
-      );
-      setFilteredTransactions(filtered);
+      const filtered = budgets?.budgets?.filter((budget) => {
+        console.log("Budget::", budget);
+        return budget?.name?.toLowerCase().includes(search.toLowerCase());
+      });
+      setFilteredBudgets(filtered);
     } else {
-      setFilteredTransactions(transactions?.transactions);
+      setFilteredBudgets(budgets?.budgets);
     }
   }, [search]);
 
-  // delete transaction
+  // delete budget
   const handleDelete = async (id) => {
     // 1st ask for confirmation
-    Alert.alert("Delete Transaction", "Are you sure you want to delete?", [
+    Alert.alert("Delete Budget", "Are you sure you want to delete?", [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -62,23 +63,20 @@ const index = () => {
         text: "OK",
         onPress: async () => {
           setLoading(true);
-          const res = await deleteTransaction(id);
+          const res = await deleteBudget(id);
           console.log("delete res:::", res);
-          useTransactionsStore.getState().getTransactions();
-          // update the the filtered transactions and transactions
-          setFilteredTransactions(
-            transactions?.transactions.filter(
-              (transaction) => transaction.id !== id
-            )
+          useBudgetsStore.getState().getBudgets();
+          // update the the filtered budgets
+          setFilteredBudgets(
+            budgets?.budgets.filter((budget) => budget.id !== id)
           );
 
-          alert("Transaction deleted successfully");
+          alert("Badget deleted successfully");
           setLoading(false);
         },
       },
     ]);
   };
-
   return (
     <>
       <LoadingOverlay loading={loading} />
@@ -94,34 +92,29 @@ const index = () => {
                 <Text className="text-[16px] text-gray-800 ml-2">Back</Text>
               </TouchableOpacity>
             </View>
-
             <View className="flex flex-row items-center justify-between">
-              <Text className="text-lg font-pmedium text-gray-800 ml-2 my-4">
-                Transactions
-              </Text>
+              <Text className="text-lg  text-gray-800 ml-2 mb-4">Budgets</Text>
               <TouchableOpacity
-                onPress={() => router.push("/create")}
-                className="flex flex-row items-center justify-between"
+                onPress={() => router.push("/budgets/create")}
+                className="flex flex-row items-center justify-between bg-primary px-2 py-1 rounded-md"
               >
-                <Plus size={16} color={"black"} />
-                <Text className="text-black font-pmedium">Add Transaction</Text>
+                <Plus size={16} color={"white"} />
+                <Text className="text-white ml-1">Add Budget</Text>
               </TouchableOpacity>
             </View>
-            {/* 
-            search input
-          */}
+
             <View className="">
               <TextInput
-                placeholder="Search Transactions"
+                placeholder="Search budgets"
                 value={search}
                 onChangeText={(text) => setSearch(text)}
-                className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[7px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
               />
             </View>
 
             <View className="flex flex-col justify-center gap-y-2 items-center w-full mt-5">
-              {filteredTransactions?.length > 0 ? (
-                filteredTransactions?.map((transaction, index) => (
+              {filteredBudgets?.length > 0 ? (
+                filteredBudgets?.map((budget, index) => (
                   <View
                     key={index}
                     className="flex flex-row justify-between items-center w-full bg-primary/5 rounded-lg py-2"
@@ -129,17 +122,22 @@ const index = () => {
                     <View className="flex flex-row items-center gap-2 px-4 rounded-lg">
                       <View className="bg-white rounded-xl p-1">
                         <Image
-                          source={{ uri: transaction?.category?.icon }}
+                          source={{ uri: budget?.icon }}
                           className="w-9 h-9 "
                           resizeMode="contain"
                         />
                       </View>
                       <View className="flex flex-col gap-[2px]">
-                        <Text className="text-black font-pmedium">
-                          {transaction?.title}
-                        </Text>
+                        <View className="flex flex-row items-center gap-2">
+                          <Text className="text-black font-pmedium">
+                            {budget?.name}
+                          </Text>
+                          <Text className="text-black font-pregular">
+                            ({budget?.leftToSpend})
+                          </Text>
+                        </View>
                         <Text className="text-[#348F9F]  text-sm">
-                          {transaction?.description}
+                          {budget?.description}
                         </Text>
                       </View>
                     </View>
@@ -147,10 +145,10 @@ const index = () => {
                       <View className="flex flex-row gap-2">
                         <TouchableOpacity
                           onPress={() => {
-                            router.push(`/transactions/${transaction.id}`);
-                            setTransactionId(transaction.id);
-                            useTransactionsStore.setState({
-                              transaction: transaction,
+                            router.push(`/budgets/${budget.id}`);
+                            setBudgetId(budget.id);
+                            useBudgetsStore.setState({
+                              budget: budget,
                             });
                           }}
                           className="p-2 bg-primary rounded-lg"
@@ -159,7 +157,7 @@ const index = () => {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() => {
-                            handleDelete(transaction.id);
+                            handleDelete(budget?.id);
                           }}
                           className="p-2 bg-primary rounded-lg"
                         >
@@ -171,7 +169,7 @@ const index = () => {
                 ))
               ) : (
                 <View className="flex justify-center items-center">
-                  <Text>No transactiosn</Text>
+                  <Text>No budgets</Text>
                 </View>
               )}
             </View>
@@ -181,29 +179,5 @@ const index = () => {
     </>
   );
 };
-const styles = StyleSheet.create({
-  overlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent black
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 50,
-  },
-  absolute: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
-  loadingText: {
-    color: "white",
-    fontSize: 18,
-  },
-});
+
 export default index;

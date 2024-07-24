@@ -23,80 +23,65 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-import {  ChevronLeft } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 
-import { createGoal } from "../../apicalls/goals";
-import { useGoalsStore } from "../../store/goals";
+import { updateBudget as updateBudgetData } from "../../apicalls/budgets";
+import { useBudgetsStore } from "../../store/budgets";
 import { useCategoriesStore } from "../../store/categories";
 
-// schema [name, amount, targetDate, icon]
+// schema [name, amount, description, icon]
 const schema = z.object({
-  name: z
-    .string()
-    .nonempty("Name is required")
-    .min(3, "Name is too short")
-    .max(15, "Name is too long"),
-  amount: z
-    .number()
-    .min(1, "Amount is required")
-    .max(1000000, "Amount is too high"),
-  targetDate: z.date("Please enter a valid date "),
+  name: z.string().nonempty("Name is required").min(3, "Name is too short"),
+  amount: z.number().positive().int().min(1),
+  description: z.string().optional(),
   icon: z.string().optional(),
 });
 
-const CreateGoal = () => {
+const updateBudget = () => {
   const navigation = useNavigation();
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [loading, setLoading] = useState(false);
   const [seatchIcon, setSearchIcon] = useState("");
   const [filteredIcons, setFilteredIcons] = useState([]);
 
+  const { budgetId, budget } = useBudgetsStore();
+  console.log("BUDGET::", budget);
+
   const icons = useCategoriesStore((state) => state.icons);
 
-  console.log("icons", icons);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  useEffect(() => {
+    reset(budget);
+    setValue("amount", Number(budget?.amount));
+  }, [budget, setValue, reset]);
 
   //   track errors
   useEffect(() => {
     console.log("errors", errors);
   }, [errors]);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date) => {
-    setSelectedDate(date);
-    hideDatePicker();
-  };
-
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
-  });
-
   const onSubmit = async (data) => {
     data.icon = selectedIcon;
     console.log("data", data);
     setLoading(true);
     try {
-      const response = await createGoal(data);
-      console.log("category response", response?.data?.message);
+      const response = await updateBudgetData(budgetId, data);
+      console.log("budget response", response?.data?.message);
       // if (response?.data?.status === 200) {
       Alert.alert(response?.data?.message);
       setLoading(false);
       reset();
-      useGoalsStore.getState().getGoals();
-      router.push("goals");
+      useBudgetsStore.getState().getBudgets();
+      router.push("/budgets");
       // }
     } catch (error) {
       console.log(error);
@@ -129,7 +114,7 @@ const CreateGoal = () => {
               }}
             >
               <ChevronLeft className="text-black " size={18} />
-              
+
               <Text
                 style={{
                   color: "black",
@@ -138,13 +123,10 @@ const CreateGoal = () => {
                 }}
                 className="text-center ml-10 font-pmedium"
               >
-                Create Goal
+                Update budget
               </Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-black text-lg mt-5">
-            What is your goal?
-          </Text>
 
           {/* ===== form ====== */}
           {/* name */}
@@ -158,7 +140,7 @@ const CreateGoal = () => {
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
-                  placeholder="Goal Name"
+                  placeholder="Budget Name"
                 />
               )}
               name="name"
@@ -173,66 +155,46 @@ const CreateGoal = () => {
             <Text className="text-sm font-pregular text-gray-800">Amount</Text>
             <Controller
               control={control}
+              name="amount"
+              rules={{ required: "Amount is required" }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   keyboardType="numeric"
-                  style={{
-                    padding: 10,
-                  }}
+                  style={{ padding: 10 }}
                   className="border-[1px] border-slate-400  rounded-lg shadow py-[6px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
                   onBlur={onBlur}
                   onChangeText={(text) => {
-                    // check if the value is a number
-                    // change the value to a number
-                    const numberValue = parseFloat(text);
+                    const numberValue = parseFloat(text) || 0; // Handle non-numeric input
                     onChange(numberValue);
                   }}
-                  value={value}
+                  value={String(value)} // Ensure value is correctly handled
                   placeholder="Amount"
                 />
               )}
-              name="amount"
-              rules={{ required: "Amount is required" }}
             />
             {errors.amount && (
               <Text className="text-red-500">{errors.amount.message}</Text>
             )}
           </View>
-          {/* target date */}
+          {/* description */}
           <View className="mt-5">
-            <Text className="text-black ">Target Date</Text>
+            <Text className="text-black">Description</Text>
             <Controller
               control={control}
-              name="targetDate"
-              render={({ field: { onChange, value } }) => (
-                <>
-                  <TouchableOpacity
-                    onPress={showDatePicker}
-                    // style={styles.dateButton}
-                    className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[10px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-                  >
-                    <Text>
-                      {selectedDate
-                        ? selectedDate.toDateString()
-                        : "Select Date"}
-                    </Text>
-                  </TouchableOpacity>
-                  <DateTimePickerModal
-                    isVisible={isDatePickerVisible}
-                    mode="date"
-                    onConfirm={(date) => {
-                      onChange(date);
-                      handleConfirm(date);
-                    }}
-                    onCancel={hideDatePicker}
-                  />
-                </>
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[6px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Description"
+                />
               )}
-              rules={{ required: "Target date is required" }}
+              name="description"
+              defaultValue=""
             />
-
-            {errors.targetDate && (
-              <Text style={{ color: "red" }}>{errors.targetDate.message}</Text>
+            {errors.name && (
+              <Text style={{ color: "red" }}>{errors.name.message}</Text>
             )}
           </View>
 
@@ -342,17 +304,13 @@ const CreateGoal = () => {
           {/* submit button */}
           <View className="my-5" style={{ marginBottom: ".5rem" }}>
             <CustomButton
-              text="Create Goal"
+              text="Update Budget"
               handlePress={() => {
                 handleSubmit(onSubmit)();
-
-                if (errors.targetDate) {
-                  Alert.alert("Target Date is required");
-                }
               }}
               isLoading={loading}
               containerStyles="mb-10"
-              loadinState={"Creating Goal"}
+              loadinState={"Updating budget..."}
             />
           </View>
 
@@ -363,4 +321,4 @@ const CreateGoal = () => {
   );
 };
 
-export default CreateGoal;
+export default updateBudget;

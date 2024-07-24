@@ -361,30 +361,6 @@ const UpdateTransaction = () => {
               <Text className="text-sm font-pregular text-gray-800">
                 Amount
               </Text>
-              {/* <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    keyboardType="numeric"
-                    style={{
-                      padding: 10,
-                    }}
-                    className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-                    onBlur={onBlur}
-                    onChangeText={(text) => {
-                      // check if the value is a number
-                      // change the value to a number
-                      const numberValue = parseFloat(text);
-                      onChange(numberValue);
-                    }}
-                    value={value}
-                    placeholder="Amount"
-                  />
-                )}
-                name="amount"
-                rules={{ required: "Amount is required" }}
-              /> */}
-
               <Controller
                 control={control}
                 name="amount"
