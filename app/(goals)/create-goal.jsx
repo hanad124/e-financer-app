@@ -8,9 +8,6 @@ import {
   Button,
   Animated,
   Image,
-  //   styleSheet
-  StyleSheet,
-  ToastAndroid,
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,7 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CustomButton from "../../components/CustomButton";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-import {  ChevronLeft } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 
 import { createGoal } from "../../apicalls/goals";
 import { useGoalsStore } from "../../store/goals";
@@ -129,7 +126,7 @@ const CreateGoal = () => {
               }}
             >
               <ChevronLeft className="text-black " size={18} />
-              
+
               <Text
                 style={{
                   color: "black",
@@ -142,9 +139,7 @@ const CreateGoal = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-black text-lg mt-5">
-            What is your goal?
-          </Text>
+          <Text className="text-black text-lg mt-5">What is your goal?</Text>
 
           {/* ===== form ====== */}
           {/* name */}

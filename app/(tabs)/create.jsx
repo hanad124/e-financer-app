@@ -15,6 +15,7 @@ import { router, useNavigation } from "expo-router";
 import call from "react-native-phone-call";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
+import { Dropdown } from "react-native-element-dropdown";
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,6 +26,7 @@ import CustomButton from "../../components/CustomButton";
 import { useCategoriesStore } from "../../store/categories";
 import { useTransactionsStore } from "../../store/transactions";
 import { useGoalsStore } from "../../store/goals";
+import { useBudgetsStore } from "../../store/budgets";
 import { RadioButton } from "react-native-paper";
 // import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -48,6 +50,42 @@ const TransactionSchema = z.object({
 
 const Create = () => {
   const { categories } = useCategoriesStore();
+  const { budgets } = useBudgetsStore();
+
+  const [value2, setValue2] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+  const [selectedBudget, setSelectedBudget] = useState("");
+  const [data, setData] = useState([]);
+
+  const renderLabel = () => {
+    if (value2 || isFocus) {
+      return (
+        <Text style={[styles.label, isFocus && { color: "blue" }]}>
+          Select budget
+        </Text>
+      );
+    }
+    return null;
+  };
+
+  const uncompletedBudgets = budgets?.budgets?.filter(
+    (budget) => !budget.isCompleted
+  );
+
+  useEffect(() => {
+    const getBudgets = () => {
+      const budgetData = uncompletedBudgets?.map((budget) => ({
+        label: `${budget?.name} (${budget?.leftToSpend})`,
+        value: budget.id,
+        leftToSpend: budget?.leftToSpend,
+      }));
+      setData(budgetData || []);
+    };
+    getBudgets();
+  }, [budgets]);
+  console.log({
+    selectedBudget,
+  });
 
   const navigation = useNavigation();
 
@@ -181,8 +219,16 @@ const Create = () => {
 
     image && (data.receipt = image);
 
+    data.budgetId = selectedBudget?.id;
+
     setLoading(true);
     try {
+      const leftToSpend = selectedBudget?.leftToSpend;
+      if (data?.amount > leftToSpend) {
+        alert("Amount exceeds the budget left to spend.");
+        setLoading(false);
+        return;
+      }
       const res = await createTransaction(data);
 
       if (res.status === 200) {
@@ -211,6 +257,7 @@ const Create = () => {
           }
         }
         await useTransactionsStore.getState().getTransactions();
+        useBudgetsStore.getState().getBudgets();
         resetForm();
         setSelectedCategory("");
         setSelectedTransactionType("");
@@ -323,6 +370,38 @@ const Create = () => {
               </View>
             </View>
           )}
+
+          <View className="">
+            <View className="mt-2">{renderLabel()}</View>
+            <View className="border border-primary rounded-md mt-2 p-3">
+              <Dropdown
+                style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={data}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? "Select type" : "..."}
+                searchPlaceholder="Search..."
+                value={value2}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={(item) => {
+                  setValue(item.value);
+                  setIsFocus(false);
+
+                  setSelectedBudget({
+                    id: item.value,
+                    leftToSpend: item.leftToSpend,
+                  });
+                }}
+              />
+            </View>
+          </View>
 
           <View className="mt-4">
             <Text className="text-sm font-pregular text-gray-800">Name</Text>

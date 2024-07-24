@@ -142,8 +142,8 @@ const index = () => {
                       </View>
                     </View>
                     <View>
-                      <View className="flex flex-row gap-2">
-                        <TouchableOpacity
+                      <View className="flex flex-row gap-2 mr-2">
+                        {/* <TouchableOpacity
                           onPress={() => {
                             router.push(`/budgets/${budget.id}`);
                             setBudgetId(budget.id);
@@ -154,7 +154,7 @@ const index = () => {
                           className="p-2 bg-primary rounded-lg"
                         >
                           <Pencil size={16} color={"white"} />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity
                           onPress={() => {
                             handleDelete(budget?.id);

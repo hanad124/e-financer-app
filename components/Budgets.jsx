@@ -18,6 +18,16 @@ const Budgets = () => {
   const currentMonth = date.toLocaleString("default", { month: "long" });
   console.log("budgets:", budgets);
 
+  // get all the budgets of the current month
+  const currentMonthBudgets = budgets?.budgets?.filter(
+    (budget) =>
+      new Date(budget.createdAt).toLocaleString("default", {
+        month: "long",
+      }) === currentMonth
+  );
+
+  console.log("currentMonthBudgets:", currentMonthBudgets);
+
   return (
     <View style={{ paddingHorizontal: 10 }}>
       <View className="flex flex-row justify-between items-center mb-2">
@@ -38,7 +48,11 @@ const Budgets = () => {
         width={width}
         height={119}
         autoPlay={true}
-        data={budgets ? budgets?.budgets : [...new Array(1).keys()]}
+        data={
+          currentMonthBudgets
+            ? currentMonthBudgets?.slice(0, 3)
+            : [...new Array(1).keys()]
+        }
         scrollAnimationDuration={2000}
         onSnapToItem={(index) => console.log("current index:", index)}
         renderItem={({ item }) => (
