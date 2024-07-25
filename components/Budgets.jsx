@@ -11,7 +11,7 @@ import { useBudgetsStore } from "../store/budgets";
 import { router } from "expo-router";
 
 const Budgets = () => {
-  const { budgets } = useBudgetsStore();
+  const { budgets, setBudgetId } = useBudgetsStore();
   const width = Dimensions.get("window").width;
 
   const date = new Date();
@@ -59,41 +59,53 @@ const Budgets = () => {
           <View style={{ width: width - 50 }}>
             <View
               key={item.id}
-              className="rounded-xl border border-[#E3E3E5] relative px-6 py-2"
+              className="rounded-xl border  border-[#E3E3E5] bg-[#332379] relative px-6 py-2"
             >
-              <Text className="text-center font-psemibold">{item?.name}</Text>
-              <View className="flex flex-row justify-between items-center">
-                <View>
-                  <Text className="text-[#67677A]">Left to spend</Text>
-                  <Text className="text-lg font-psemibold">
-                    ${item?.leftToSpend}
-                  </Text>
-                </View>
-                <View>
-                  <Text className="text-[#67677A]">Budget</Text>
-                  <Text className="text-lg font-psemibold">
-                    ${item?.amount}
-                  </Text>
-                </View>
-              </View>
-
-              <View
-                style={{
-                  backgroundColor: "#E3E3E5",
-                  height: 6,
-                  borderRadius: 20,
+              <TouchableOpacity
+                onPress={() => {
+                  router.push("/budgets/self");
+                  setBudgetId(item.id);
+                  useBudgetsStore.setState({
+                    budget: item,
+                  });
                 }}
-                className="my-2"
               >
-                <Animated.View
+                <Text className="text-center font-psemibold text-white">
+                  {item?.name}
+                </Text>
+                <View className="flex flex-row justify-between items-center">
+                  <View>
+                    <Text className="text-[#E3E3E5]">Left to spend</Text>
+                    <Text className="text-lg font-psemibold text-white">
+                      ${item?.leftToSpend}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text className="text-[#E3E3E5]">Budget</Text>
+                    <Text className="text-lg font-psemibold text-white">
+                      ${item?.amount}
+                    </Text>
+                  </View>
+                </View>
+
+                <View
                   style={{
-                    width: `${(item?.leftToSpend / item?.amount) * 100}%`,
+                    backgroundColor: "#E3E3E5",
                     height: 6,
-                    backgroundColor: "#6957E7",
                     borderRadius: 20,
                   }}
-                />
-              </View>
+                  className="my-2"
+                >
+                  <Animated.View
+                    style={{
+                      width: `${(item?.leftToSpend / item?.amount) * 100}%`,
+                      height: 6,
+                      backgroundColor: "#6957E7",
+                      borderRadius: 20,
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         )}
