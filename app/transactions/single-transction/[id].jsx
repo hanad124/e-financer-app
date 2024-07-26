@@ -87,7 +87,7 @@ const TransactionDetail = () => {
 
               <View className="flex flex-row items-center justify-between mt-2">
                 <Text className="text-gray-500 font-pregular text-[14px]">
-                  Status
+                  Type
                 </Text>
                 <Text
                   className={`capitalize ${

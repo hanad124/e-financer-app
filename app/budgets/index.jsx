@@ -119,7 +119,15 @@ const index = () => {
                     key={index}
                     className="flex flex-row justify-between items-center w-full bg-primary/5 rounded-lg py-2"
                   >
-                    <View className="flex flex-row items-center gap-2 px-4 rounded-lg">
+                    <TouchableOpacity
+                      onPress={() => {
+                        router.push("/budgets/self");
+                        useBudgetsStore.setState({
+                          budget: budget,
+                        });
+                      }}
+                      className="flex flex-row items-center gap-2 px-4 rounded-lg flex-1"
+                    >
                       <View className="bg-white rounded-xl p-1">
                         <Image
                           source={{ uri: budget?.icon }}
@@ -132,18 +140,20 @@ const index = () => {
                           <Text className="text-black font-pmedium">
                             {budget?.name}
                           </Text>
-                          <Text className="text-black font-pregular">
-                            ({budget?.leftToSpend})
-                          </Text>
+                          <View className=" bg-primary/10 border border-primary px-2 rounded flex justify-center items-center">
+                            <Text className="text-primary font-pregular">
+                              {budget?.leftToSpend}
+                            </Text>
+                          </View>
                         </View>
                         <Text className="text-[#348F9F]  text-sm">
                           {budget?.description}
                         </Text>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                     <View>
                       <View className="flex flex-row gap-2 mr-2">
-                        {/* <TouchableOpacity
+                        <TouchableOpacity
                           onPress={() => {
                             router.push(`/budgets/${budget.id}`);
                             setBudgetId(budget.id);
@@ -154,7 +164,7 @@ const index = () => {
                           className="p-2 bg-primary rounded-lg"
                         >
                           <Pencil size={16} color={"white"} />
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() => {
                             handleDelete(budget?.id);

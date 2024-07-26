@@ -67,9 +67,8 @@ const Create = () => {
     }
     return null;
   };
-
   const uncompletedBudgets = budgets?.budgets?.filter(
-    (budget) => !budget.isCompleted
+    (budget) => !budget.isCompleted && budget.leftToSpend > 0
   );
 
   useEffect(() => {

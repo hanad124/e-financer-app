@@ -5,8 +5,8 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Button,
   Animated,
+  Button,
   Image,
   //   styleSheet
   StyleSheet,
@@ -32,7 +32,7 @@ import { useCategoriesStore } from "../../store/categories";
 // schema [name, amount, description, icon]
 const schema = z.object({
   name: z.string().nonempty("Name is required").min(3, "Name is too short"),
-  amount: z.number().positive().int().min(1),
+  amount: z.number().positive().int().min(1, "Amount required"),
   description: z.string().optional(),
   icon: z.string().optional(),
 });
@@ -192,7 +192,7 @@ const CreateBudget = () => {
               name="description"
               defaultValue=""
             />
-            {errors.name && (
+            {errors.description && (
               <Text style={{ color: "red" }}>{errors.name.message}</Text>
             )}
           </View>

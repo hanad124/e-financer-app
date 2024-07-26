@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTransactionsStore } from "../../store/transactions";
 import {
-  // deleteTransaction,
+  deleteTransaction,
   getTransactions,
 } from "../../apicalls/transactions";
 import LoadingOverlay from "../../components/LoadingOverlay";
@@ -32,8 +32,7 @@ const index = () => {
 
   const navigation = useNavigation();
 
-  const { transactions, setTransactionId, deleteTransaction } =
-    useTransactionsStore();
+  const { transactions, setTransactionId } = useTransactionsStore();
 
   console.log("transactions", transactions?.transactions);
 
@@ -62,15 +61,14 @@ const index = () => {
         text: "OK",
         onPress: async () => {
           setLoading(true);
-          const res = await deleteTransaction(id);
-          console.log("delete res:::", res);
+          await deleteTransaction(id);
           useTransactionsStore.getState().getTransactions();
           // update the the filtered transactions and transactions
-          setFilteredTransactions(
-            transactions?.transactions.filter(
-              (transaction) => transaction.id !== id
-            )
-          );
+          // setFilteredTransactions(
+          //   transactions?.transactions?.filter(
+          //     (transaction) => transaction.id !== id
+          //   )
+          // );
 
           alert("Transaction deleted successfully");
           setLoading(false);

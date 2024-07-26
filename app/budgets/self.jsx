@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useBudgetsStore } from "../../store/budgets";
 
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, Pen } from "lucide-react-native";
 
 const Self = () => {
   const { budget } = useBudgetsStore();
@@ -35,6 +35,18 @@ const Self = () => {
               >
                 <ChevronLeft size={18} color={"black"} />
                 <Text className="text-[16px] text-gray-800 ml-2">Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push(`/budgets/${budget.id}`);
+                  useBudgetsStore.setState({
+                    budget: budget,
+                  });
+                }}
+                className="flex flex-row items-center"
+              >
+                <Pen size={18} color={"black"} />
+                <Text className="text-[16px] text-gray-800 ml-2">Edit</Text>
               </TouchableOpacity>
             </View>
 
@@ -57,7 +69,12 @@ const Self = () => {
                 </Text>
               </View>
 
-              <View className="rounded-xl border  border-[#E3E3E5] mt-10 relative px-6 py-2">
+              <View className="rounded-xl border  border-[#E3E3E5] mt-10 px-6 py-2 relative">
+                {budget?.isEditted && (
+                  <View className="bg-red-500/20 border border-orange-500 rounded-lg p-1 absolute -right-3 -top-4">
+                    <Text className="text-orange-500 text-xs">Edited</Text>
+                  </View>
+                )}
                 <View className="flex flex-row justify-between items-center">
                   <View>
                     <Text className="text-[#67677A]">Left to spend</Text>
@@ -92,56 +109,73 @@ const Self = () => {
                 </View>
               </View>
 
-              <Text className="mt-10 text-[#303048] text-lg">
-                Transacrions uses this budget
-              </Text>
+              {budget?.transactions.length <= 0 ? (
+                <Text className="mt-10 text-[#303048] text-lg text-center">
+                  Not used yet (:
+                </Text>
+              ) : (
+                <>
+                  <Text className="mt-10 text-[#303048] text-lg">
+                    Transacrions used this budget
+                  </Text>
 
-              <View className="rounded-xl border  border-[#E3E3E5] mt-4 relative px-6 py-2">
-                {budget?.transactions.map((transaction, index) => (
-                  <View
-                    key={index}
-                    className="flex flex-row justify-between items-center py-2 px-2 border-b-[#E3E3E5]"
-                  >
-                    <View
-                      className={`w-full ${
-                        index !== budget.transactions.length - 1
-                          ? "border-b"
-                          : "border-none"
-                      } pb-2 border-[#E3E3E5]`}
-                    >
-                      <View className="flex flex-row items-center justify-between">
-                        <Text className="text-lg text-[#303048] capitalize">
-                          {transaction?.title}
-                        </Text>
-                        <Text className="text-lg text-[#303048]">
-                          ${transaction?.amount}
-                        </Text>
-                      </View>
-                      <View>
+                  <View className="rounded-xl border  border-[#E3E3E5] mt-4 relative px-6 py-2">
+                    {budget?.transactions.map((transaction, index) => (
+                      <View
+                        key={index}
+                        className="flex flex-row justify-between items-center py-2 px-2 border-b-[#E3E3E5]"
+                      >
                         <View
-                          style={{
-                            backgroundColor: "#E3E3E5",
-                            height: 4,
-                            borderRadius: 20,
-                          }}
-                          className="my-2"
+                          className={`w-full ${
+                            index !== budget.transactions.length - 1
+                              ? "border-b"
+                              : "border-none"
+                          } pb-2 border-[#E3E3E5]`}
                         >
-                          <View
-                            style={{
-                              width: `${
-                                (transaction?.amount / budget?.amount) * 100
-                              }%`,
-                              height: 4,
-                              backgroundColor: "#6957E7",
-                              borderRadius: 20,
-                            }}
-                          />
+                          <View className="flex flex-row items-center justify-between">
+                            <Text className="text-lg text-[#303048] capitalize">
+                              {transaction?.title}
+                            </Text>
+                            <Text className=" text-[#303048] capitalize">
+                              {new Date(
+                                transaction?.createdAt
+                              ).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </Text>
+                            <Text className="text-lg text-[#303048]">
+                              ${transaction?.amount}
+                            </Text>
+                          </View>
+                          <View>
+                            <View
+                              style={{
+                                backgroundColor: "#E3E3E5",
+                                height: 4,
+                                borderRadius: 20,
+                              }}
+                              className="my-2"
+                            >
+                              <View
+                                style={{
+                                  width: `${
+                                    (transaction?.amount / budget?.amount) * 100
+                                  }%`,
+                                  height: 4,
+                                  backgroundColor: "#6957E7",
+                                  borderRadius: 20,
+                                }}
+                              />
+                            </View>
+                          </View>
                         </View>
                       </View>
-                    </View>
+                    ))}
                   </View>
-                ))}
-              </View>
+                </>
+              )}
             </View>
           </View>
         </ScrollView>
