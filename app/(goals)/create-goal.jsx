@@ -72,6 +72,9 @@ const CreateGoal = () => {
     hideDatePicker();
   };
 
+  const minimumDate = new Date();
+  minimumDate.setDate(minimumDate.getDate() + 1);
+
   const {
     control,
     handleSubmit,
@@ -203,6 +206,35 @@ const CreateGoal = () => {
                 <>
                   <TouchableOpacity
                     onPress={showDatePicker}
+                    className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[10px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                  >
+                    <Text>
+                      {selectedDate
+                        ? selectedDate.toDateString()
+                        : "Select Date"}
+                    </Text>
+                  </TouchableOpacity>
+                  <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    minimumDate={minimumDate}
+                    onConfirm={(date) => {
+                      onChange(date);
+                      handleConfirm(date);
+                    }}
+                    onCancel={hideDatePicker}
+                  />
+                </>
+              )}
+              rules={{ required: "Target date is required" }}
+            />
+            {/* <Controller
+              control={control}
+              name="targetDate"
+              render={({ field: { onChange, value } }) => (
+                <>
+                  <TouchableOpacity
+                    onPress={showDatePicker}
                     // style={styles.dateButton}
                     className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[10px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
                   >
@@ -224,7 +256,7 @@ const CreateGoal = () => {
                 </>
               )}
               rules={{ required: "Target date is required" }}
-            />
+            /> */}
 
             {errors.targetDate && (
               <Text style={{ color: "red" }}>{errors.targetDate.message}</Text>

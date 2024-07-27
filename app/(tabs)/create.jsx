@@ -261,7 +261,6 @@ const Create = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("selectedBudget", selectedBudget);
     console.log("data", data);
 
     image && (data.receipt = image);
