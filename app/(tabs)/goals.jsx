@@ -378,7 +378,9 @@ const Goals = () => {
                                   (goal?.savedAmount / goal?.amount) * 100
                                 }%`,
                                 height: 8,
-                                backgroundColor: "#FF6D3F",
+                                backgroundColor: `${
+                                  goal?.achieved ? "#1ED760" : "#FF6D3F"
+                                }`,
                                 borderRadius: 20,
                               }}
                             />

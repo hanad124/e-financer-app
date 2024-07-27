@@ -19,6 +19,8 @@ import { Dropdown } from "react-native-element-dropdown";
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller, set } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { number, z } from "zod";
@@ -38,15 +40,58 @@ import IncomeIcon from "../../assets/icons/income-icon.png";
 import PlusIcon from "../../assets/icons/category-plus-icon.png";
 import { Plus } from "lucide-react-native";
 
-const TransactionSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters long"),
-  amount: z.number().min(1, "Amount must be greater than 0"),
-  // amount: z.number().min(1, "Amount must be greater than 0"),
-  number: z.number().min("Number is required"),
-  type: z.string().min(1, "Type is required"),
-  category: z.string().min(1, "Category is required"),
-  description: z.string().optional(),
+const TransactionSchema = yup.object().shape({
+  title: yup
+    .string()
+    .min(3, "Title must be at least 3 characters long")
+    .required("Title is required"),
+  amount: yup
+    .number()
+    .min(1, "Amount must be greater than 0")
+    .required("Amount is required"),
+  type: yup.string().required("Type is required"),
+  number: yup
+    .number()
+    .nullable()
+    .test(
+      "number-required",
+      "Transaction number is required",
+      function (value) {
+        const { type } = this.parent;
+        if (type === "EXPENSE") {
+          return value != null && value.trim() !== "";
+        }
+        return true;
+      }
+    ),
+  category: yup
+    .string()
+    .min(1, "Category is required")
+    .required("Category is required"),
+  description: yup.string().optional(),
 });
+
+// const TransactionSchema = z.object({
+//   title: z.string().min(3, "Title must be at least 3 characters long"),
+//   amount: z.number().min(1, "Amount must be greater than 0"),
+//   number: z
+//     .number()
+//     .nullable()
+//     .test(
+//       "number-required",
+//       "Transaction number is required",
+//       function (value) {
+//         const { type } = this.parent;
+//         if (type === "EXPENSE") {
+//           return value != null && value.trim() !== "";
+//         }
+//         return true;
+//       }
+//     ),
+//   type: z.string().min(1, "Type is required"),
+//   category: z.string().min(1, "Category is required"),
+//   description: z.string().optional(),
+// });
 
 const Create = () => {
   const { categories } = useCategoriesStore();
@@ -68,7 +113,7 @@ const Create = () => {
     return null;
   };
   const uncompletedBudgets = budgets?.budgets?.filter(
-    (budget) => !budget.isCompleted && budget.leftToSpend > 0
+    (budget) => budget.leftToSpend > 0
   );
 
   useEffect(() => {
@@ -131,7 +176,7 @@ const Create = () => {
     getValues,
     register,
   } = useForm({
-    resolver: zodResolver(TransactionSchema),
+    resolver: yupResolver(TransactionSchema),
 
     // if the selected transaction type is expense make it optional to select an account type and number
     defaultValues: {
@@ -142,6 +187,8 @@ const Create = () => {
       amount: 0,
     },
   });
+
+  console.log("selectedTransactionType:", selectedTransactionType);
 
   // reset form
   const resetForm = () => {
@@ -214,11 +261,12 @@ const Create = () => {
   };
 
   const onSubmit = async (data) => {
+    console.log("selectedBudget", selectedBudget);
     console.log("data", data);
 
     image && (data.receipt = image);
 
-    data.budgetId = selectedBudget?.id;
+    selectedBudget?.id?.lenght > 0 && (data.budgetId = selectedBudget?.id);
 
     setLoading(true);
     try {
@@ -384,7 +432,7 @@ const Create = () => {
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? "Select type" : "..."}
+                placeholder={!isFocus ? "Select budget" : "..."}
                 searchPlaceholder="Search..."
                 value={value2}
                 onFocus={() => setIsFocus(true)}

@@ -16,13 +16,13 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useBudgetsStore } from "../../store/budgets";
 
-import { ChevronLeft, Pen } from "lucide-react-native";
+import { ChevronLeft, Pen, CheckCheck } from "lucide-react-native";
 
 const Self = () => {
   const { budget } = useBudgetsStore();
   const navigation = useNavigation();
 
-  console.log("budget detail:", budget);
+  console.log("budget detail:", budget?.transactions);
   return (
     <>
       <SafeAreaView className="bg-white pt-5">
@@ -36,6 +36,11 @@ const Self = () => {
                 <ChevronLeft size={18} color={"black"} />
                 <Text className="text-[16px] text-gray-800 ml-2">Back</Text>
               </TouchableOpacity>
+              {budget?.leftToSpend <= 0 && (
+                <View className="flex flex-row items-center bg-green-500/10 p-2 rounded-full border border-green-500">
+                  <CheckCheck size={18} className="text-green-500" />
+                </View>
+              )}
               <TouchableOpacity
                 onPress={() => {
                   router.push(`/budgets/${budget.id}`);
@@ -120,59 +125,74 @@ const Self = () => {
                   </Text>
 
                   <View className="rounded-xl border  border-[#E3E3E5] mt-4 relative px-6 py-2">
-                    {budget?.transactions.map((transaction, index) => (
-                      <View
-                        key={index}
-                        className="flex flex-row justify-between items-center py-2 px-2 border-b-[#E3E3E5]"
-                      >
+                    {budget?.transactions.map((transaction, index) => {
+                      return (
                         <View
-                          className={`w-full ${
-                            index !== budget.transactions.length - 1
-                              ? "border-b"
-                              : "border-none"
-                          } pb-2 border-[#E3E3E5]`}
+                          key={index}
+                          className="flex flex-row justify-between items-center py-2 px-2 border-b-[#E3E3E5]"
                         >
-                          <View className="flex flex-row items-center justify-between">
-                            <Text className="text-lg text-[#303048] capitalize">
-                              {transaction?.title}
-                            </Text>
-                            <Text className=" text-[#303048] capitalize">
-                              {new Date(
-                                transaction?.createdAt
-                              ).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })}
-                            </Text>
-                            <Text className="text-lg text-[#303048]">
-                              ${transaction?.amount}
-                            </Text>
-                          </View>
-                          <View>
-                            <View
-                              style={{
-                                backgroundColor: "#E3E3E5",
-                                height: 4,
-                                borderRadius: 20,
-                              }}
-                              className="my-2"
-                            >
+                          <View
+                            className={`w-full ${
+                              index !== budget.transactions.length - 1
+                                ? "border-b"
+                                : "border-none"
+                            } pb-2 border-[#E3E3E5]`}
+                          >
+                            <View className="flex flex-row items-center justify-between">
+                              <View className="flex flex-row items-center gap-3">
+                                <View className="p-2 rounded-xl bg-primary/20">
+                                  <Image
+                                    source={{
+                                      uri: transaction?.category?.icons?.icon,
+                                    }}
+                                    style={{ width: 20, height: 20 }}
+                                    resizeMode="contain"
+                                    tintColor={"#6957E7"}
+                                  />
+                                </View>
+                                <Text className="text-lg text-[#303048] capitalize">
+                                  {transaction?.title}
+                                </Text>
+                              </View>
+                              <Text className=" text-[#303048] capitalize">
+                                {new Date(
+                                  transaction?.createdAt
+                                ).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}
+                              </Text>
+                              <Text className="text-lg text-[#303048]">
+                                ${transaction?.amount}
+                              </Text>
+                            </View>
+                            <View className="mt-2">
                               <View
                                 style={{
-                                  width: `${
-                                    (transaction?.amount / budget?.amount) * 100
-                                  }%`,
+                                  backgroundColor: "#E3E3E5",
                                   height: 4,
-                                  backgroundColor: "#6957E7",
                                   borderRadius: 20,
                                 }}
-                              />
+                                className="my-2"
+                              >
+                                <View
+                                  style={{
+                                    width: `${
+                                      (transaction?.amount / budget?.amount) *
+                                      100
+                                    }%`,
+                                    height: 4,
+                                    backgroundColor: "#6957E7",
+                                    borderRadius: 20,
+                                  }}
+                                />
+                              </View>
                             </View>
                           </View>
                         </View>
-                      </View>
-                    ))}
+                      );
+                    })}
                   </View>
                 </>
               )}
