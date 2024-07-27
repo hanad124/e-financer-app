@@ -37,6 +37,7 @@ const Goals = () => {
       shouldSetBadge: true,
     }),
   });
+
   const responseListener = React.useRef();
   const notificationListener = React.useRef();
 
@@ -144,6 +145,8 @@ const Goals = () => {
         }).start();
       });
     }
+
+    useGoalsStore.getState().getGoals();
   }, [goals]);
 
   const filteredGoals = goals?.goals?.filter((goal) => {

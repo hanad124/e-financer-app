@@ -96,22 +96,38 @@ const TransactionSchema = yup.object().shape({
 const Create = () => {
   const { categories } = useCategoriesStore();
   const { budgets } = useBudgetsStore();
+  const { goals } = useGoalsStore();
 
   const [value2, setValue2] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [selectedBudget, setSelectedBudget] = useState("");
   const [data, setData] = useState([]);
+  const [selectedGoal, setSelectedGoal] = useState("");
+  const [goalsData, setGoalsData] = useState([]);
+  const [goalValue, setGoalValue] = useState(null);
+  const [isGoalFocus, setIsGoalFocus] = useState(false);
 
   const renderLabel = () => {
     if (value2 || isFocus) {
       return (
-        <Text style={[styles.label, isFocus && { color: "blue" }]}>
+        <Text style={[styles.label, isFocus && { color: "#6957E7" }]}>
           Select budget
         </Text>
       );
     }
     return null;
   };
+  const renderGoalLabel = () => {
+    if (goalValue || isGoalFocus) {
+      return (
+        <Text style={[styles.label, isGoalFocus && { color: "#6957E7" }]}>
+          Select goal
+        </Text>
+      );
+    }
+    return null;
+  };
+
   const uncompletedBudgets = budgets?.budgets?.filter(
     (budget) => budget.leftToSpend > 0
   );
@@ -127,9 +143,17 @@ const Create = () => {
     };
     getBudgets();
   }, [budgets]);
-  console.log({
-    selectedBudget,
-  });
+
+  useEffect(() => {
+    const getGoals = () => {
+      const goalsData = ongoingGoals?.map((goal) => ({
+        label: `${goal?.name} (${goal?.savedAmount})`,
+        value: goal.id,
+      }));
+      setGoalsData(goalsData || []);
+    };
+    getGoals();
+  }, [goals]);
 
   const navigation = useNavigation();
 
@@ -188,7 +212,7 @@ const Create = () => {
     },
   });
 
-  console.log("selectedTransactionType:", selectedTransactionType);
+  const ongoingGoals = goals?.goals?.filter((goal) => !goal.achieved);
 
   // reset form
   const resetForm = () => {
@@ -261,11 +285,10 @@ const Create = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("data", data);
-
     image && (data.receipt = image);
 
     selectedBudget?.id?.lenght > 0 && (data.budgetId = selectedBudget?.id);
+    data.goalId = selectedGoal?.id;
 
     setLoading(true);
     try {
@@ -304,6 +327,7 @@ const Create = () => {
         }
         await useTransactionsStore.getState().getTransactions();
         useBudgetsStore.getState().getBudgets();
+        useGoalsStore.getState().getGoals();
         resetForm();
         setSelectedCategory("");
         setSelectedTransactionType("");
@@ -417,6 +441,7 @@ const Create = () => {
             </View>
           )}
 
+          {/* budgets */}
           <View className="">
             <View className="mt-2">{renderLabel()}</View>
             <View className="border border-primary rounded-md mt-2 p-3">
@@ -448,6 +473,41 @@ const Create = () => {
               />
             </View>
           </View>
+
+          {/* goals */}
+          {selectedTransactionType === "INCOME" && (
+            <View className="">
+              <View className="mt-2">{renderGoalLabel()}</View>
+              <View className="border border-primary rounded-md mt-2 p-3">
+                <Dropdown
+                  style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={goalsData}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? "Select goal" : "..."}
+                  searchPlaceholder="Search..."
+                  value={goalValue}
+                  onFocus={() => setIsGoalFocus(true)}
+                  onBlur={() => setIsGoalFocus(false)}
+                  onChange={(item) => {
+                    setGoalValue(item.value);
+                    setIsGoalFocus(false);
+
+                    setSelectedGoal({
+                      id: item.value,
+                      // leftToSpend: item.leftToSpend,
+                    });
+                  }}
+                />
+              </View>
+            </View>
+          )}
 
           <View className="mt-4">
             <Text className="text-sm font-pregular text-gray-800">Name</Text>
