@@ -27,7 +27,7 @@ export const useCategoriesStore = create((set) => ({
         }
       }
     } catch (error) {
-      console.error("API call error::::::", error);
+      // console.error("API call error::::::", error);
     }
   },
   getCategoryIcons: async () => {

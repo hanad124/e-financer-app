@@ -230,6 +230,12 @@ const AuthWrapper = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="budgets/index"
+          options={{
+            headerShown: false,
+          }}
+        />
         {/* <Stack.Screen
           name="sign-in"
           options={{

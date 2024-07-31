@@ -60,6 +60,8 @@ const CreateBudget = () => {
     console.log("errors", errors);
   }, [errors]);
 
+  console.log("--selectedIcon--");
+
   const onSubmit = async (data) => {
     data.icon = selectedIcon;
     console.log("data", data);
@@ -220,7 +222,9 @@ const CreateBudget = () => {
             <Text className="text-black">Select Icon</Text>
             <View className="flex flex-wrap mt-2">
               <RadioButton.Group
-                onValueChange={(value) => setSelectedIcon(value)}
+                onValueChange={(value) => {
+                  setSelectedIcon(value);
+                }}
                 value={selectedIcon}
               >
                 <View className="flex flex-row flex-wrap w-full space-x-2 min-w-full">
@@ -228,7 +232,10 @@ const CreateBudget = () => {
                     ? filteredIcons?.map((icon) => (
                         <TouchableOpacity
                           key={icon?.id}
-                          onPress={() => setSelectedIcon(icon?.icon)}
+                          onPress={() => {
+                            setSelectedIcon(icon?.icon);
+                            console.log("selected icon", icon?.icon);
+                          }}
                           className=""
                         >
                           <View
@@ -263,7 +270,10 @@ const CreateBudget = () => {
                     : icons?.map((icon) => (
                         <TouchableOpacity
                           key={icon?.id}
-                          onPress={() => setSelectedIcon(icon?.icon)}
+                          onPress={() => {
+                            setSelectedIcon(icon?.icon);
+                            console.log("selected icon", icon?.icon);
+                          }}
                           className=""
                         >
                           <View

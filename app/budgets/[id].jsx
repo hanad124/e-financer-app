@@ -62,7 +62,10 @@ const updateBudget = () => {
   useEffect(() => {
     reset(budget);
     setValue("amount", Number(budget?.amount));
+    setSelectedIcon(budget?.icon);
   }, [budget, setValue, reset]);
+
+  console.log("---budget?.icon?.icon---", budget?.icon);
 
   //   track errors
   useEffect(() => {

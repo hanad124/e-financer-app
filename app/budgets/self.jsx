@@ -121,7 +121,7 @@ const Self = () => {
               ) : (
                 <>
                   <Text className="mt-10 text-[#303048] text-lg">
-                    Transacrions used this budget
+                    Transactions used for this budget
                   </Text>
 
                   <View className="rounded-xl border  border-[#E3E3E5] mt-4 relative px-6 py-2">

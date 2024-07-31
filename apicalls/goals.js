@@ -5,7 +5,7 @@ export const createGoal = async (goal) => {
     const res = await axiosInstance.post("/goals", goal);
     return res;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -14,7 +14,7 @@ export const getGoals = async () => {
     const res = await axiosInstance.get("/goals");
     return res;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -23,7 +23,7 @@ export const updateGoal = async (goal) => {
     const res = await axiosInstance.put(`/goals/${goal.id}`, goal);
     return res;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -32,7 +32,7 @@ export const deleteGoal = async (id) => {
     const res = await axiosInstance.delete(`/goals/${id}`);
     return res;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -45,6 +45,6 @@ export const sendPushNotification = async (id, payload) => {
     );
     return res;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };

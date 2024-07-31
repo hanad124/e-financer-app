@@ -49,6 +49,10 @@ const TransactionSchema = yup.object().shape({
     .number()
     .min(1, "Amount must be greater than 0")
     .required("Amount is required"),
+  // number: yup
+  //   .number()
+  //   // .min(1, "Amount must be greater than 0")
+  //   .required("Transaction number is required"),
   type: yup.string().required("Type is required"),
   number: yup
     .number()
@@ -70,28 +74,6 @@ const TransactionSchema = yup.object().shape({
     .required("Category is required"),
   description: yup.string().optional(),
 });
-
-// const TransactionSchema = z.object({
-//   title: z.string().min(3, "Title must be at least 3 characters long"),
-//   amount: z.number().min(1, "Amount must be greater than 0"),
-//   number: z
-//     .number()
-//     .nullable()
-//     .test(
-//       "number-required",
-//       "Transaction number is required",
-//       function (value) {
-//         const { type } = this.parent;
-//         if (type === "EXPENSE") {
-//           return value != null && value.trim() !== "";
-//         }
-//         return true;
-//       }
-//     ),
-//   type: z.string().min(1, "Type is required"),
-//   category: z.string().min(1, "Category is required"),
-//   description: z.string().optional(),
-// });
 
 const Create = () => {
   const { categories } = useCategoriesStore();
@@ -287,7 +269,7 @@ const Create = () => {
   const onSubmit = async (data) => {
     image && (data.receipt = image);
 
-    selectedBudget?.id?.lenght > 0 && (data.budgetId = selectedBudget?.id);
+    data.budgetId = selectedBudget?.id;
     data.goalId = selectedGoal?.id;
 
     setLoading(true);
@@ -442,37 +424,39 @@ const Create = () => {
           )}
 
           {/* budgets */}
-          <View className="">
-            <View className="mt-2">{renderLabel()}</View>
-            <View className="border border-primary rounded-md mt-2 p-3">
-              <Dropdown
-                style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={data}
-                search
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? "Select budget" : "..."}
-                searchPlaceholder="Search..."
-                value={value2}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                onChange={(item) => {
-                  setValue(item.value);
-                  setIsFocus(false);
+          {selectedTransactionType === "EXPENSE" && (
+            <View className="">
+              <View className="mt-2">{renderLabel()}</View>
+              <View className="border border-primary rounded-md mt-2 p-3">
+                <Dropdown
+                  style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={data}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? "Select budget" : "..."}
+                  searchPlaceholder="Search..."
+                  value={value2}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
+                  onChange={(item) => {
+                    setValue(item.value);
+                    setIsFocus(false);
 
-                  setSelectedBudget({
-                    id: item.value,
-                    leftToSpend: item.leftToSpend,
-                  });
-                }}
-              />
+                    setSelectedBudget({
+                      id: item.value,
+                      leftToSpend: item.leftToSpend,
+                    });
+                  }}
+                />
+              </View>
             </View>
-          </View>
+          )}
 
           {/* goals */}
           {selectedTransactionType === "INCOME" && (

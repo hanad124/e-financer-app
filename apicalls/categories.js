@@ -6,7 +6,7 @@ export const getCategories = async () => {
     const res = await axiosInstance.get("/categories");
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -17,7 +17,7 @@ export const getCategoryIcons = async () => {
     const res = await axiosInstance.get("/categories/icons");
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -28,7 +28,7 @@ export const createCategory = async (payload) => {
     const res = await axiosInstance.post("/categories", payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -39,7 +39,7 @@ export const updateCategory = async (id, payload) => {
     const res = await axiosInstance.patch(`/categories/${id}`, payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -50,7 +50,7 @@ export const deleteCategory = async (payload) => {
     const res = await axiosInstance.delete(`/categories/${payload}`);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -61,7 +61,7 @@ export const getCategoryById = async (id) => {
     const res = await axiosInstance.get(`/categories/${id}`);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };

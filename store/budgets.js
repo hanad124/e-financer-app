@@ -25,7 +25,7 @@ export const useBudgetsStore = create((set) => ({
         // }
       }
     } catch (error) {
-      console.error("API call error::::::", error);
+      // console.error("API call error::::::", error);
     }
     set({ isLoading: false });
   },

@@ -27,7 +27,7 @@ export const useTransactionsStore = create((set) => ({
         set({ isLoading: false });
       }
     } catch (error) {
-      console.error("API call error::::::", error);
+      // console.error("API call error::::::", error);
     }
   },
   getTransactionById: async (id) => {
@@ -40,7 +40,7 @@ export const useTransactionsStore = create((set) => ({
       const res = await createTransaction(payload);
       set({ transactions: [...set.transactions, res?.data] });
     } catch (error) {
-      console.error("API call error::::::", error);
+      // console.error("API call error::::::", error);
     }
   },
 
@@ -53,7 +53,7 @@ export const useTransactionsStore = create((set) => ({
         ),
       });
     } catch (error) {
-      console.error("API call error::::::", error);
+      // console.error("API call error::::::", error);
     }
   },
 
@@ -66,7 +66,7 @@ export const useTransactionsStore = create((set) => ({
         ),
       });
     } catch (error) {
-      console.error("API call error::::::", error);
+      // console.error("API call error::::::", error);
     }
   },
 

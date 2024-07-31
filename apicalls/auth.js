@@ -6,7 +6,7 @@ export const login = async (payload) => {
     const res = await axiosInstance.post("/auth/login", payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -18,7 +18,7 @@ export const signUp = async (payload) => {
     const res = await axiosInstance.post("/auth/register", payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -30,7 +30,7 @@ export const getUserInfo = async () => {
     console.log("response", res);
     return res;
   } catch (error) {
-    console.error("API call error:::::", error);
+    // console.error("API call error:::::", error);
     return error.response;
   }
 };
@@ -41,7 +41,7 @@ export const updateProfile = async (payload) => {
     const res = await axiosInstance.patch("/auth/update-profile", payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -52,7 +52,7 @@ export const verifyEmailLink = async (payload) => {
     const res = await axiosInstance.post("/auth/verify-email-link", payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -66,7 +66,7 @@ export const sendPasswordResetLink = async (payload) => {
     );
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -77,7 +77,7 @@ export const savePushToken = async (payload) => {
     const res = await axiosInstance.post("/auth/save-push-token", payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };

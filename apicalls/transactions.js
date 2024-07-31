@@ -5,7 +5,7 @@ export const getTransactions = async () => {
     const res = await axiosInstance.get("/transactions");
     return res;
   } catch (error) {
-    console.error("----- API call error ----", error);
+    // console.error("----- Transactions API call error ----", error);
     return error.response;
   }
 };
@@ -16,7 +16,7 @@ export const createTransaction = async (payload) => {
     const res = await axiosInstance.post("/transactions", payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -27,7 +27,7 @@ export const updateTransaction = async (id, payload) => {
     const res = await axiosInstance.patch(`/transactions/${id}`, payload);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -39,7 +39,7 @@ export const deleteTransaction = async (payload) => {
 
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
@@ -50,7 +50,7 @@ export const getTransactionById = async (id) => {
     const res = await axiosInstance.get(`/transactions/${id}`);
     return res;
   } catch (error) {
-    console.error("API call error", error);
+    // console.error("API call error", error);
     return error.response;
   }
 };
