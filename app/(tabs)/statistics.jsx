@@ -54,7 +54,7 @@ const GroupedBars = () => {
     }
     return null;
   };
-  
+
   const animatedValue = useRef(new Animated.Value(0)).current;
   const isFirstRender = useRef(true);
 
@@ -438,7 +438,7 @@ const GroupedBars = () => {
           >
             <View style={styles.chartContainer}>
               <ScrollView>
-                <BarChart
+                {/* <BarChart
                   key={selectedFilter}
                   data={calculateBarData()}
                   barWidth={26}
@@ -454,6 +454,37 @@ const GroupedBars = () => {
                   noOfSections={3}
                   maxValue={450}
                   width={360} // Adjust this width if needed, depending on the amount of data
+                /> */}
+                <BarChart
+                  key={selectedFilter}
+                  data={calculateBarData()}
+                  barWidth={18}
+                  height={200}
+                  width={290}
+                  minHeight={3}
+                  barBorderRadius={3}
+                  showGradient
+                  // frontColor={transactionType === "Expense" ? "#dc2626" : "#4f46e5"}
+                  // gradientColor={transactionType === "Expense" ? "#ea580c" : "#7c3aed"}
+                  spacing={20}
+                  noOfSections={4}
+                  yAxisThickness={0}
+                  xAxisThickness={0}
+                  xAxisLabelsVerticalShift={2}
+                  xAxisLabelTextStyle={{ color: "gray" }}
+                  yAxisTextStyle={{ color: "gray" }}
+                  isAnimated
+                  animationDuration={100}
+                  // rulesColor={"#00000020"}
+                  // backgroundColor={"white"}
+                  // showGradient
+                  // gradientColor={"blue"}
+                  // barInnerComponent={() => (
+                  //   <View style={{ backgroundColor: "pink", height: "100%" }} />
+                  // )}
+                  // showLine
+                  // dashGap={0}
+                  // dashWidth={0}
                 />
               </ScrollView>
             </View>

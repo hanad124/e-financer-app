@@ -65,7 +65,6 @@ const updateBudget = () => {
     setSelectedIcon(budget?.icon);
   }, [budget, setValue, reset]);
 
-  console.log("---budget?.icon?.icon---", budget?.icon);
 
   //   track errors
   useEffect(() => {
