@@ -117,9 +117,7 @@ const EditCategory = () => {
                 className="flex flex-row items-center"
               >
                 <ChevronLeft size={18} color={"black"} />
-                <Text className="text-[16px] text-gray-800 ml-2">
-                  Back
-                </Text>
+                <Text className="text-[16px] text-gray-800 ml-2">Back</Text>
               </TouchableOpacity>
             </View>
 
@@ -267,7 +265,7 @@ const EditCategory = () => {
                 handleSubmit(onSubmit)();
               }}
               isLoading={loading}
-              className="mt-5"
+              containerStyles="mt-5"
               loadinState={"Updating Category..."}
             />
           </View>
