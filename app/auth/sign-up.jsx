@@ -47,7 +47,7 @@ const SignIn = () => {
       const res = await signUp(data);
       if (res.data.success) {
         alert(`${res.data.message}`, ToastAndroid.SHORT);
-        router.push("/sign-in");
+        router.push("/auth/sign-in");
         setLoading(false);
         reset();
       } else {
@@ -73,7 +73,10 @@ const SignIn = () => {
           </Text>
           <Text className="text text-gray-400 mt-4 text-center ">
             Already have an account?{" "}
-            <Link href={"/sign-in"} className="text-blue-500 font-semibold">
+            <Link
+              href={"/auth/sign-in"}
+              className="text-blue-500 font-semibold"
+            >
               Sign In
             </Link>
           </Text>

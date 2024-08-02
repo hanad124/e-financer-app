@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -41,93 +41,93 @@ const Goals = () => {
   const responseListener = React.useRef();
   const notificationListener = React.useRef();
 
-  // useEffect(() => {
-  //   async function registerForPushNotificationsAsync() {
-  //     let token;
-  //     if (Device.isDevice) {
-  //       const { status: existingStatus } =
-  //         await Notifications.getPermissionsAsync();
-  //       let finalStatus = existingStatus;
-  //       if (existingStatus !== "granted") {
-  //         const { status } = await Notifications.requestPermissionsAsync();
+  useEffect(() => {
+    async function registerForPushNotificationsAsync() {
+      let token;
+      if (Device.isDevice) {
+        const { status: existingStatus } =
+          await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
 
-  //         finalStatus = status;
-  //       }
-  //       if (finalStatus !== "granted") {
-  //         alert("Failed to get push token for push notification!");
-  //         return;
-  //       }
-  //       // token = (await Notifications.getExpoPushTokenAsync()).data;
-  //       const projectId =
-  //         Constants?.expoConfig?.extra?.eas?.projectId ??
-  //         Constants?.easConfig?.projectId;
+          finalStatus = status;
+        }
+        if (finalStatus !== "granted") {
+          alert("Failed to get push token for push notification!");
+          return;
+        }
+        // token = (await Notifications.getExpoPushTokenAsync()).data;
+        const projectId =
+          Constants?.expoConfig?.extra?.eas?.projectId ??
+          Constants?.easConfig?.projectId;
 
-  //       if (!projectId) {
-  //         alert("Please set your project ID in app.json");
-  //       }
+        if (!projectId) {
+          alert("Please set your project ID in app.json");
+        }
 
-  //       token = (
-  //         await Notifications.getExpoPushTokenAsync({
-  //           projectId,
-  //         })
-  //       ).data;
+        token = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
 
-  //       setPushToken(token);
-  //     } else {
-  //       alert("Must use physical device for Push Notifications");
-  //     }
+        setPushToken(token);
+      } else {
+        // alert("Must use physical device for Push Notifications");
+      }
 
-  //     if (Platform.OS === "android") {
-  //       Notifications.setNotificationChannelAsync("default", {
-  //         name: "default",
-  //         importance: Notifications.AndroidImportance.MAX,
-  //         vibrationPattern: [0, 250, 250, 250],
-  //         lightColor: "#FF231F7C",
-  //       });
-  //     }
+      if (Platform.OS === "android") {
+        Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#FF231F7C",
+        });
+      }
 
-  //     return token;
-  //   }
+      return token;
+    }
 
-  //   registerForPushNotificationsAsync();
+    registerForPushNotificationsAsync();
 
-  //   responseListener.current =
-  //     Notifications.addNotificationResponseReceivedListener((response) => {
-  //       const {
-  //         notification: {
-  //           request: {
-  //             content: {
-  //               data: { screen },
-  //             },
-  //           },
-  //         },
-  //       } = response;
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const {
+          notification: {
+            request: {
+              content: {
+                data: { screen },
+              },
+            },
+          },
+        } = response;
 
-  //       // When the user taps on the notification, this line checks if they //are suppose to be taken to a particular screen
-  //       if (screen) {
-  //         router.push(screen);
-  //       }
-  //     });
+        // When the user taps on the notification, this line checks if they //are suppose to be taken to a particular screen
+        if (screen) {
+          router.push(screen);
+        }
+      });
 
-  //   // save push token
-  //   if (pushToken) {
-  //     // console.log("====pushToken====", pushToken);
-  //     savePushToken({
-  //       expoPushToken: pushToken,
-  //     });
-  //   }
+    // save push token
+    // if (pushToken) {
+    //   // console.log("====pushToken====", pushToken);
+    //   savePushToken({
+    //     expoPushToken: pushToken,
+    //   });
+    // }
 
-  //   const subscription = Notifications.addNotificationReceivedListener(
-  //     (notification) => {
-  //       console.log("=== subscription notification ===", notification);
-  //     }
-  //   );
+    // const subscription = Notifications.addNotificationReceivedListener(
+    //   (notification) => {
+    //     console.log("=== subscription notification ===", notification);
+    //   }
+    // );
 
-  //   useGoalsStore.getState().getGoals();
-  //   return () => {
-  //     subscription.remove();
-  //   };
-  // }, [goals]);
+    // useGoalsStore.getState().getGoals();
+    // return () => {
+    //   subscription.remove();
+    // };
+  }, [goals]);
 
   useEffect(() => {
     if (goals?.goals) {
@@ -405,7 +405,7 @@ const Goals = () => {
           </View>
 
           {/* add new goal button */}
-          <View className="flex flex-row items-center justify-center mt-5">
+          <View className="flex flex-row items-center justify-center mt-5 mb-32">
             <TouchableOpacity
               onPress={() => router.push("/(goals)/create-goal")}
               className="flex flex-row items-center space-x-2 justify-center text-black rounded-full p-4"

@@ -77,7 +77,10 @@ const SignIn = () => {
           </Text>
           <Text className="text text-gray-400 mt-4 text-center ">
             Don't have an account?{" "}
-            <Link href={"/sign-up"} className="text-blue-500 font-semibold">
+            <Link
+              href={"/auth/sign-up"}
+              className="text-blue-500 font-semibold"
+            >
               Sign up
             </Link>
           </Text>
@@ -135,13 +138,13 @@ const SignIn = () => {
             )}
             <View className="flex flex-row items-center justify-between">
               <Link
-                href={"(auth)/verify-email"}
+                href={"/auth/verify-email"}
                 className="text-blue-500 font-semibold text-right mt-4 block"
               >
                 <Text>Verify your email </Text>
               </Link>
               <Link
-                href={"(auth)/reset-password"}
+                href={"/auth/reset-password"}
                 className="text-blue-500 font-semibold text-right mt-4 block"
               >
                 <Text>Forgot password?</Text>

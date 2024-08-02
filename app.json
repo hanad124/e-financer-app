@@ -33,7 +33,8 @@
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.faaruuq.efinancer"
     },
     "web": {
       "favicon": "./assets/Logo.png"

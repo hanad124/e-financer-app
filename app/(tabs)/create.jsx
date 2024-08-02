@@ -49,10 +49,6 @@ const TransactionSchema = yup.object().shape({
     .number()
     .min(1, "Amount must be greater than 0")
     .required("Amount is required"),
-  // number: yup
-  //   .number()
-  //   // .min(1, "Amount must be greater than 0")
-  //   .required("Transaction number is required"),
   type: yup.string().required("Type is required"),
   number: yup
     .number()
@@ -63,7 +59,7 @@ const TransactionSchema = yup.object().shape({
       function (value) {
         const { type } = this.parent;
         if (type === "EXPENSE") {
-          return value != null && value.trim() !== "";
+          return value != null && !isNaN(value);
         }
         return true;
       }
@@ -252,7 +248,7 @@ const Create = () => {
 
       console.log("result", result);
 
-      if (!result.cancelled) {
+      if (!result.canceled) {
         const base64Image = await FileSystem.readAsStringAsync(
           result?.assets[0]?.uri,
           {

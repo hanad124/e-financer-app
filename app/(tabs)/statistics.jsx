@@ -438,23 +438,6 @@ const GroupedBars = () => {
           >
             <View style={styles.chartContainer}>
               <ScrollView>
-                {/* <BarChart
-                  key={selectedFilter}
-                  data={calculateBarData()}
-                  barWidth={26}
-                  spacing={14}
-                  roundedTop
-                  roundedBottom
-                  hideRules
-                  xAxisThickness={0}
-                  yAxisThickness={0}
-                  hideYAxisText
-                  xAxisLabelTextStyle={{ fontSize: 10, rotate: 45 }}
-                  yAxis={false}
-                  noOfSections={3}
-                  maxValue={450}
-                  width={360} // Adjust this width if needed, depending on the amount of data
-                /> */}
                 <BarChart
                   key={selectedFilter}
                   data={calculateBarData()}
