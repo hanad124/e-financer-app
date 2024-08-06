@@ -60,12 +60,26 @@ const RecentTransactions = () => {
         {/* </Link> */}
       </View>
       <View className="flex flex-col justify-center items-center w-full  ">
-        {transactions?.transactions
-          ?.slice(0, 11)
-          .reverse()
-          .map((transaction) => (
-            <View key={transaction?.id}>
-              {
+        {isLoading
+          ? // Loading skeleton
+            Array.from({ length: 5 }).map((_, index) => (
+              <MotiView
+                key={index}
+                from={{ opacity: 0.5 }}
+                animate={{ opacity: 1 }}
+                transition={{ type: "timing", duration: 1000, loop: true }}
+                className="w-full py-2 mt-3 rounded-lg"
+              >
+                <Skeleton
+                  colorMode="light"
+                  width={SCREEN_WIDTH * 0.9}
+                  height={60}
+                  radius={8}
+                />
+              </MotiView>
+            ))
+          : transactions?.transactions?.slice(-11).map((transaction) => (
+              <View key={transaction?.id}>
                 <View
                   className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
                   key={transaction?.id}
@@ -83,14 +97,6 @@ const RecentTransactions = () => {
                     className=" flex-1"
                   >
                     <View className="flex flex-row gap-2 items-center">
-                      {/* <Skeleton
-                      animate={isLoading}
-                      show={isLoading}
-                      colorMode="light"
-                      duration={500}
-                      style={{ width: 30, height: 30 }}
-                    >
-                    </Skeleton> */}
                       <View className="bg-primary/10 p-2 rounded-lg">
                         <Image
                           source={{ uri: transaction.category?.icon }}
@@ -98,39 +104,15 @@ const RecentTransactions = () => {
                         />
                       </View>
                       <View className="flex flex-col gap-1">
-                        {/* <Skeleton
-                        animate={isLoading}
-                        duration={500}
-                        style={{ width: 100, height: 20 }}
-                        colorMode="light"
-                        show={isLoading}
-                      >
-                      </Skeleton> */}
                         <Text className="text-sm font-pmedium">
                           {transaction?.title}
                         </Text>
-                        {/* <Skeleton
-                        animate={isLoading}
-                        duration={500}
-                        style={{ width: 10, height: 20, marginTop: 2 }}
-                        colorMode="light"
-                        show={isLoading}
-                      >
-                      </Skeleton> */}
                         <Text className="text-[#348F9F] text-sm">
                           {transaction.description}
                         </Text>
                       </View>
                     </View>
                   </TouchableOpacity>
-                  {/* <Skeleton
-                    animate={isLoading}
-                    duration={500}
-                    style={{ width: 100, height: 20 }}
-                    colorMode="light"
-                    show={isLoading}
-                  >
-                  </Skeleton> */}
                   <Text
                     className={` font-pmedium
                      ${
@@ -143,9 +125,8 @@ const RecentTransactions = () => {
                     {transaction.amount}
                   </Text>
                 </View>
-              }
-            </View>
-          ))}
+              </View>
+            ))}
       </View>
     </GestureHandlerRootView>
   );

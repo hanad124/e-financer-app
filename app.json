@@ -12,17 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#6957E7"
     },
-    "notification": {
-      "icon": "./assets/Logo.png",
-      "iconColor": "#6957E7",
-      "defaultTitle": "e-Financer",
-      "defaultBody": "Goal Achieved",
-      "priority": "high",
-      "showBadge": true,
-      "badgeColor": "#6957E7"
-    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.faaruuq.efinancer"
     },
     "android": {
       "adaptiveIcon": {

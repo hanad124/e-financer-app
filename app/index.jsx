@@ -7,6 +7,16 @@ import { images } from "../assets/constants";
 import CustomButton from "../components/CustomButton";
 import SplashScreenView from "../SplashScreenView";
 
+import 'react-native-url-polyfill/auto';
+
+if (typeof global.URL === 'undefined') {
+    global.URL = require('react-native-url-polyfill').URL;
+}
+if (typeof global.fetch === 'undefined') {
+    global.fetch = require('node-fetch');
+}
+
+
 export default function Page() {
   const [isShowSplashSCreen, setIsShowSplashScreen] = useState(true);
 
