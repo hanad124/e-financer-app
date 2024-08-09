@@ -36,7 +36,25 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 
 const TransactionSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
-  amount: z.number().min(1, "Amount must be greater than 0"),
+  amount: z
+    .number()
+    .positive("Amount must be greater than 0")
+    .refine((value) => /^\d+(\.\d{1,2})?$/.test(value.toString()), {
+      message: "Amount can have up to 2 decimal places",
+    })
+    .or(
+      z
+        .string()
+        .regex(
+          /^\d+(\.\d{1,2})?$/,
+          "Amount must be a valid number with up to 2 decimal places"
+        )
+    )
+    .transform((value) =>
+      typeof value === "string" ? parseFloat(value) : value
+    )
+    .pipe(z.number()),
+
   type: z.string().min(1, "Type is required"),
   category: z.string().min(1, "Category is required"),
   description: z.string().optional(),
@@ -102,7 +120,7 @@ const UpdateTransaction = () => {
       // number: 0,
     },
   });
-  
+
   // reset form
   const resetForm = () => {
     reset({
@@ -171,7 +189,7 @@ const UpdateTransaction = () => {
 
       console.log("result", result);
 
-      if (!result.cancelled) {
+      if (!result.canceled) {
         const base64Image = await FileSystem.readAsStringAsync(
           result?.assets[0]?.uri,
           {
@@ -369,10 +387,13 @@ const UpdateTransaction = () => {
                   <TextInput
                     keyboardType="numeric"
                     style={{ padding: 10 }}
-                    className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                    className="border-[1px] border-slate-400 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
                     onBlur={onBlur}
                     onChangeText={(text) => {
-                      const numberValue = parseFloat(text) || 0; // Handle non-numeric input
+                      // Using regex to validate the input as a float number
+                      const numberValue = text.match(/^\d*\.?\d*$/)
+                        ? text
+                        : value;
                       onChange(numberValue);
                     }}
                     value={String(value)} // Ensure value is correctly handled

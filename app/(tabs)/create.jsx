@@ -47,7 +47,14 @@ const TransactionSchema = yup.object().shape({
     .required("Title is required"),
   amount: yup
     .number()
-    .min(1, "Amount must be greater than 0")
+    .typeError("Amount must be a number")
+    .positive("Amount must be greater than 0")
+    .test(
+      "is-decimal",
+      "Amount can have up to 2 decimal places",
+      (value) =>
+        value === undefined || /^\d+(\.\d{1,2})?$/.test(value.toString())
+    )
     .required("Amount is required"),
   type: yup.string().required("Type is required"),
   number: yup
@@ -522,10 +529,13 @@ const Create = () => {
                 <TextInput
                   keyboardType="numeric"
                   style={{ padding: 10 }}
-                  className="border-[1px] border-slate-400  rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
+                  className="border-[1px] border-slate-400 rounded-lg shadow py-[9px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
                   onBlur={onBlur}
                   onChangeText={(text) => {
-                    const numberValue = parseFloat(text) || 0; // Handle non-numeric input
+                    // Using regex to validate the input as a float number
+                    const numberValue = text.match(/^\d*\.?\d*$/)
+                      ? text
+                      : value;
                     onChange(numberValue);
                   }}
                   value={String(value)} // Ensure value is correctly handled
@@ -533,6 +543,7 @@ const Create = () => {
                 />
               )}
             />
+
             {errors.amount && (
               <Text className="text-red-500">{errors.amount.message}</Text>
             )}
