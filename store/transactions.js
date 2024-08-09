@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getTransactions,
   getTransactionById,
@@ -9,10 +10,10 @@ import {
 
 import { getToken } from "../utils/storage";
 
-export const useTransactionsStore = create((set) => ({
+export const useTransactionsStore = create((set, get) => ({
   transactions: [],
   transaction: {},
-  transcactionDetails: {},
+  transactionDetails: {},
   isLoading: false,
   setIsLoading: (value) => set({ isLoading: value }),
   getTransactions: async () => {
@@ -20,56 +21,86 @@ export const useTransactionsStore = create((set) => ({
       const token = await getToken();
       if (token) {
         set({ isLoading: true });
+        // First, try to load cached transactions
+        const cachedTransactions = await AsyncStorage.getItem(
+          "cachedTransactions"
+        );
+        if (cachedTransactions) {
+          set({
+            transactions: JSON.parse(cachedTransactions),
+            isLoading: false,
+          });
+        }
+        // Then, fetch fresh data from the API
         const res = await getTransactions();
-
-        console.log("transaction res", res);
-        set({ transactions: res?.data });
+        if (res?.data) {
+          set({ transactions: res.data });
+          // Cache the new data
+          await AsyncStorage.setItem(
+            "cachedTransactions",
+            JSON.stringify(res.data)
+          );
+        }
         set({ isLoading: false });
       }
     } catch (error) {
-      // console.error("API call error::::::", error);
+      console.error("Error fetching transactions:", error);
+      set({ isLoading: false });
     }
   },
   getTransactionById: async (id) => {
     const res = await getTransactionById(id);
     set({ transaction: res?.data });
   },
-
   createTransaction: async (payload) => {
     try {
       const res = await createTransaction(payload);
-      set({ transactions: [...set.transactions, res?.data] });
+      set((state) => {
+        const newTransactions = [res?.data, ...state.transactions];
+        AsyncStorage.setItem(
+          "cachedTransactions",
+          JSON.stringify(newTransactions)
+        );
+        return { transactions: newTransactions };
+      });
     } catch (error) {
-      // console.error("API call error::::::", error);
+      console.error("Error creating transaction:", error);
     }
   },
-
   updateTransaction: async (id, payload) => {
     try {
       const res = await updateTransaction(id, payload);
-      set({
-        transactions: set.transactions.map((transaction) =>
+      set((state) => {
+        const updatedTransactions = state.transactions.map((transaction) =>
           transaction.id === id ? res?.data : transaction
-        ),
+        );
+        AsyncStorage.setItem(
+          "cachedTransactions",
+          JSON.stringify(updatedTransactions)
+        );
+        return { transactions: updatedTransactions };
       });
     } catch (error) {
-      // console.error("API call error::::::", error);
+      console.error("Error updating transaction:", error);
     }
   },
-
   deleteTransaction: async (id) => {
     try {
-      const res = await deleteTransaction(id);
-      set({
-        transactions: set.transactions.filter(
+      await deleteTransaction(id);
+      set((state) => {
+        const filteredTransactions = state.transactions.filter(
           (transaction) => transaction.id !== id
-        ),
+        );
+        AsyncStorage.setItem(
+          "cachedTransactions",
+          JSON.stringify(filteredTransactions)
+        );
+        return { transactions: filteredTransactions };
       });
     } catch (error) {
-      // console.error("API call error::::::", error);
+      console.error("Error deleting transaction:", error);
     }
   },
-
   transactionId: "",
   setTransactionId: (id) => set({ transactionId: id }),
 }));
@@ -77,10 +108,15 @@ export const useTransactionsStore = create((set) => ({
 const initializeStore = async () => {
   const token = await getToken();
   if (token) {
-    const transactions = useTransactionsStore.getState().getTransactions();
-    useTransactionsStore.setState({ transactions });
-  } else {
-    return null;
+    // Load cached transactions immediately
+    const cachedTransactions = await AsyncStorage.getItem("cachedTransactions");
+    if (cachedTransactions) {
+      useTransactionsStore.setState({
+        transactions: JSON.parse(cachedTransactions),
+      });
+    }
+    // Then fetch fresh data
+    useTransactionsStore.getState().getTransactions();
   }
 };
 

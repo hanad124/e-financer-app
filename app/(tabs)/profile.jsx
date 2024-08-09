@@ -57,27 +57,51 @@ const Profile = () => {
   const MAX_SIZE = 5 * 1024 * 1024; // 5 MB size limit
 
   const pickImage = async () => {
-    if (hasGalleryPermission) {
-      let result = await ImagePicker.launchImageLibraryAsync({
+    if (!hasGalleryPermission) {
+      Alert.alert(
+        "Permission Required",
+        "Please grant permission to access your gallery."
+      );
+      return;
+    }
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.8,
+        maxWidth: 1000,
+        maxHeight: 1000,
       });
 
-      console.log("result", result);
-
-      if (!result.cancelled) {
-        const base64Image = await FileSystem.readAsStringAsync(
-          result?.assets[0]?.uri,
-          {
-            encoding: "base64",
-          }
-        );
-        const imageData = `data:image/jpeg;base64,${base64Image}`;
-
-        setImage(imageData);
+      if (result.canceled) {
+        return;
       }
+
+      const { uri } = result.assets[0];
+      const fileInfo = await FileSystem.getInfoAsync(uri);
+
+      if (fileInfo.size > MAX_SIZE) {
+        Alert.alert(
+          "File Too Large",
+          "Please choose an image smaller than 5MB."
+        );
+        return;
+      }
+
+      const base64Image = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const imageData = `data:image/jpeg;base64,${base64Image}`;
+      setImage(imageData);
+    } catch (error) {
+      console.error("Error picking image:", error);
+      Alert.alert(
+        "Error",
+        "An error occurred while picking the image. Please try again."
+      );
     }
   };
 

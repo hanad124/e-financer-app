@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getBudgets as getBudgetsData,
   getBudgetById,
@@ -18,14 +19,21 @@ export const useBudgetsStore = create((set) => ({
       set({ isLoading: true });
       const token = await getToken();
       if (token) {
+        // First, try to load cached budgets
+        const cachedBudgets = await AsyncStorage.getItem("cachedBudgets");
+        if (cachedBudgets) {
+          set({ budgets: JSON.parse(cachedBudgets), isLoading: false });
+        }
+        // Then, fetch fresh data from the API
         const res = await getBudgetsData();
-        console.log("Budgets res|||", res);
-        // if (res.data.success) {
-        set({ budgets: res.data });
-        // }
+        if (res.data) {
+          set({ budgets: res.data });
+          // Cache the new data
+          await AsyncStorage.setItem("cachedBudgets", JSON.stringify(res.data));
+        }
       }
     } catch (error) {
-      // console.error("API call error::::::", error);
+      console.error("Error fetching budgets:", error);
     }
     set({ isLoading: false });
   },
@@ -39,10 +47,7 @@ export const useBudgetsStore = create((set) => ({
 const initializeStore = async () => {
   const token = await getToken();
   if (token) {
-    const budgets = useBudgetsStore.getState().getBudgets();
-    useBudgetsStore.setState({ budgets });
-  } else {
-    return null;
+    useBudgetsStore.getState().getBudgets();
   }
 };
 

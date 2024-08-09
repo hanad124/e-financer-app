@@ -11,12 +11,15 @@ import bacImage from "../assets/images/banner-img.png";
 import uppIcon from "../assets/icons/up-icon.png";
 import downIcon from "../assets/icons/down-icon.png";
 import { useTransactionsStore } from "../store/transactions";
+import { MotiView } from "moti";
+import { Skeleton } from "moti/skeleton";
+
 const Banner = () => {
   const [progress, setProgress] = useState(0);
   const animatedValue = useRef(new Animated.Value(0)).current;
   const isFirstRender = useRef(true);
 
-  const { transactions } = useTransactionsStore();
+  const { transactions, isLoading } = useTransactionsStore();
 
   // const startMonthExpense = transactions?.startMonthExpense;
   // const endMonthExpense = transactions?.endMonthExpense;
@@ -54,84 +57,92 @@ const Banner = () => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={bacImage} style={styles.backgroundImage}>
-        <Text style={styles.bannerText} className="text-white">
-          Total Balance
-        </Text>
-        <Text
-          style={styles.bannerText}
-          className={`${
-            transactions?.totalBalance < 0 ? "text-red-400" : "text-white"
-          }`}
-        >
-          {
-            // if expense has -1 remove the - sign and add $ sign
-            transactions?.totalBalance < 0
+      {transactions ? (
+        <ImageBackground source={bacImage} style={styles.backgroundImage}>
+          <Text style={styles.bannerText} className="text-white">
+            Total Balance
+          </Text>
+          <Text
+            style={styles.bannerText}
+            className={`${
+              transactions?.totalBalance < 0 ? "text-red-400" : "text-white"
+            }`}
+          >
+            {transactions?.totalBalance < 0
               ? "- $" + Math.abs(transactions?.totalBalance)
-              : "$" + transactions?.totalBalance
-          }
-        </Text>
-        {/* <Text className="text-white text-start  text-sm">Monthly Expenses</Text>
-        <View style={styles.progressBarBackground} className="mt-2">
-          <Animated.View
-            style={[
-              styles.progressBar,
-              {
-                width: progressBarWidth,
-              },
-            ]}
-          />
-        </View>
-        <View className="flex flex-row justify-between mt-2">
-          <Text className="text-white text-start text-sm ">
-            {" "}
-            <Text className="text-white text-start mt-2">$0</Text>
+              : "$" + transactions?.totalBalance}
           </Text>
-          <Text className="text-white text-right text-sm">
-            {" "}
-            <Text className="text-white text-start mt-2">$0</Text>
-          </Text>
-        </View> */}
 
-        <View className="flex items-center flex-row justify-between mt-2">
-          {/* income banner */}
-          <View className="flex items-center bg-white/70 flex-row justify-center gap-2 mt-2 p-4 py-[2px] rounded-xl">
-            <View className="bg-white rounded-full p-[7px]">
-              <Image
-                source={downIcon}
-                style={{ width: 14, height: 14 }}
-                resizeMode="contain"
-              />
+          <View className="flex items-center flex-row justify-between mt-2">
+            <View className="flex items-center bg-white/70 flex-row justify-center gap-2 mt-2 p-4 py-[2px] rounded-xl">
+              <View className="bg-white rounded-full p-[7px]">
+                <Image
+                  source={downIcon}
+                  style={{ width: 14, height: 14 }}
+                  resizeMode="contain"
+                />
+              </View>
+              <View className="flex flex-col items-center">
+                <Text className="text-black text-start  font-psemibold">
+                  Income
+                </Text>
+                <Text className="text-black text-start w-full  font-psemibold">
+                  $ {transactions?.totalIncome}
+                </Text>
+              </View>
             </View>
-            <View className="flex flex-col items-center">
-              <Text className="text-black text-start  font-psemibold">
-                Income
-              </Text>
-              <Text className="text-black text-start w-full  font-psemibold">
-                $ {transactions?.totalIncome}
-              </Text>
+            <View className="flex items-center bg-white/70 flex-row justify-center gap-2 mt-2 p-4 py-[2px] rounded-xl">
+              <View className="bg-white rounded-full p-[7px]">
+                <Image
+                  source={uppIcon}
+                  style={{ width: 14, height: 14 }}
+                  resizeMode="contain"
+                />
+              </View>
+              <View className="flex flex-col items-center">
+                <Text className="text-black text-start  font-psemibold">
+                  Expense
+                </Text>
+                <Text className="text-black text-left w-full  font-psemibold">
+                  $ {transactions?.totalExpense}
+                </Text>
+              </View>
             </View>
           </View>
-          {/* expense banner */}
-          <View className="flex items-center bg-white/70 flex-row justify-center gap-2 mt-2 p-4 py-[2px] rounded-xl">
-            <View className="bg-white rounded-full p-[7px]">
-              <Image
-                source={uppIcon}
-                style={{ width: 14, height: 14 }}
-                resizeMode="contain"
-              />
-            </View>
-            <View className="flex flex-col items-center">
-              <Text className="text-black text-start  font-psemibold">
-                Expense
-              </Text>
-              <Text className="text-black text-left w-full  font-psemibold">
-                $ {transactions?.totalExpense}
-              </Text>
-            </View>
+        </ImageBackground>
+      ) : (
+        <MotiView
+          from={{ opacity: 0.5 }}
+          animate={{ opacity: 1 }}
+          transition={{ type: "timing", duration: 1000, loop: true }}
+          style={styles.backgroundImage}
+        >
+          <Skeleton colorMode="light" width={200} height={30} radius={4} />
+          <Skeleton
+            colorMode="light"
+            width={150}
+            height={30}
+            radius={4}
+            style={{ marginTop: 10 }}
+          />
+          <View className="flex items-center flex-row justify-between mt-2">
+            <Skeleton
+              colorMode="light"
+              width={150}
+              height={60}
+              radius={10}
+              style={{ marginTop: 10 }}
+            />
+            <Skeleton
+              colorMode="light"
+              width={150}
+              height={60}
+              radius={10}
+              style={{ marginTop: 10 }}
+            />
           </View>
-        </View>
-      </ImageBackground>
+        </MotiView>
+      )}
     </View>
   );
 };

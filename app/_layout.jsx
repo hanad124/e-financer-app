@@ -57,29 +57,13 @@ const AuthWrapper = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    const routeHandler = async () => {
-      if (!isLoading) {
-        if (
-          (isAuthenticated && pathname.startsWith("/auth")) ||
-          (isAuthenticated && pathname === "/auth/sign-in")
-        ) {
-          router.push("/home");
-          return null;
-        }
-        if (isAuthenticated && pathname === "/") {
-          router.push("/home");
-          return null;
-        }
-        if (!isAuthenticated && pathname === "/home") {
-          router.push("/auth/sign-in");
-          return null;
-        } else {
-          return;
-        }
+    if (!isLoading && !isAuthenticated) {
+      router.replace("/auth/sign-in");
+    } else if (!isLoading && isAuthenticated) {
+      if (pathname === "/" || pathname.startsWith("/auth")) {
+        router.replace("/home");
       }
-    };
-
-    routeHandler();
+    }
   }, [isLoading, isAuthenticated, pathname]);
 
   if (isLoading) {
@@ -99,7 +83,7 @@ const AuthWrapper = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Stack
-        initialRouteName={isAuthenticated ? "/home" : "/sign-in"}
+        initialRouteName={isAuthenticated ? "/home" : "/auth/sign-in"}
         screenOptions={{
           headerShown: false,
         }}
