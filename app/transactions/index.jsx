@@ -120,7 +120,16 @@ const index = () => {
             <View className="flex flex-col justify-center gap-y-2 items-center w-full mt-5">
               {filteredTransactions?.length > 0 ? (
                 filteredTransactions?.map((transaction, index) => (
-                  <View
+                  <TouchableOpacity
+                    onPress={() => {
+                      router.push(
+                        `/transactions/single-transction/${transaction?.id}`
+                      );
+
+                      useTransactionsStore.setState({
+                        transactionDetails: transaction,
+                      });
+                    }}
                     key={index}
                     className="flex flex-row justify-between items-center w-full bg-primary/5 rounded-lg py-2"
                   >
@@ -165,7 +174,7 @@ const index = () => {
                         </TouchableOpacity>
                       </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 ))
               ) : (
                 <View className="flex justify-center items-center">

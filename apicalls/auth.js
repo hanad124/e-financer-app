@@ -57,6 +57,17 @@ export const verifyEmailLink = async (payload) => {
   }
 };
 
+// verify-otp
+export const verifyOTP = async (payload) => {
+  try {
+    const res = await axiosInstance.post("/auth/verify-otp", payload);
+    return res;
+  } catch (error) {
+    // console.error("API call error", error);
+    return error.response;
+  }
+};
+
 // send-password-reset-link
 export const sendPasswordResetLink = async (payload) => {
   try {

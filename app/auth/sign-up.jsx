@@ -47,7 +47,7 @@ const SignIn = () => {
       const res = await signUp(data);
       if (res.data.success) {
         alert(`${res.data.message}`, ToastAndroid.SHORT);
-        router.push("/auth/sign-in");
+        router.push("/auth/verify-otp");
         setLoading(false);
         reset();
       } else {

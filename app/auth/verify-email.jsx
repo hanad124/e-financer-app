@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, useRouter, useNavigation } from "expo-router";
+import { Link, useRouter, useNavigation, router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -65,6 +65,8 @@ const VerifyEmail = () => {
         setSuccess(`${res?.data.message}`);
         setLoading(false);
 
+        router.push("/auth/verify-otp");
+
         // start timer
         setTime(60);
       } else {
@@ -93,7 +95,7 @@ const VerifyEmail = () => {
             Verify Your Email
           </Text>
           <Text className="text text-gray-400 mt-4 text-center ">
-            Enter your email address to receive a link to verify your email
+            Enter your email address to receive OTP to verify your email
           </Text>
           <View className="my-16">
             <Text className="text-base text-slate-600 font-pmedium">Email</Text>
@@ -115,12 +117,6 @@ const VerifyEmail = () => {
               <Text className="text-red-500">{errors.email.message}</Text>
             )}
 
-            {/* <Link
-              href={"(auth)/reset-password"}
-              className="text-blue-500 font-semibold text-right mt-4 block"
-            >
-              <Text>Forgot password?</Text>
-            </Link> */}
             <View>
               <CustomButton
                 text={`${

@@ -57,7 +57,7 @@ const AuthWrapper = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated && !pathname.startsWith("/auth")) {
       router.replace("/auth/sign-in");
     } else if (!isLoading && isAuthenticated) {
       if (pathname === "/" || pathname.startsWith("/auth")) {
