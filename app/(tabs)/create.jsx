@@ -292,8 +292,9 @@ const Create = () => {
 
         if (selectedTransactionType === "EXPENSE") {
           if (selectedAccountType === "MERCHANT") {
+            const formattedAmount = data.amount.toString().replace(".", "*");
             args = {
-              number: `*789*${data.number}*${data.amount}#`,
+              number: `*789*${data.number}*${formattedAmount}#`,
               prompt: true,
               skipCanOpen: false,
             };
@@ -301,8 +302,9 @@ const Create = () => {
             call(args).catch(console.error);
           }
           if (selectedAccountType === "EVCPLUS") {
+            const formattedAmount = data.amount.toString().replace(".", "*");
             args = {
-              number: `*712*${data.number}*${data.amount}#`,
+              number: `*712*${data.number}*${formattedAmount}#`,
               prompt: true,
               skipCanOpen: false,
             };
