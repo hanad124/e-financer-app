@@ -2,7 +2,7 @@
 
 e-financer is an application that helps you track your expenses and income easily. It allows to import your receipts and invoices and automatically categorize them. It also provides a dashboard to visualize your expenses and income and export them to pdf. You can also create goals and track them, get notifications when you reach them.
 
-[![preview](./assets/images/showcase.jpg)](https://github.com/hanad124/react-native-expense-tracker-app)
+[![preview](./assets/images/showcase.svg)](https://github.com/hanad124/react-native-expense-tracker-app)
 
 ## Features
 
@@ -45,5 +45,5 @@ npx expo start
 ```
 
 ## Author
-[Hanad Mohamed](https://github.com/hanad124/)
 
+[Hanad Mohamed](https://github.com/hanad124/)
