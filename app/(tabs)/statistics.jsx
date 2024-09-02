@@ -456,8 +456,8 @@ const GroupedBars = () => {
                   xAxisLabelsVerticalShift={2}
                   xAxisLabelTextStyle={{ color: "gray" }}
                   yAxisTextStyle={{ color: "gray" }}
-                  isAnimated
-                  animationDuration={100}
+                  isAnimated={false}
+                  // animationDuration={100}
                   // rulesColor={"#00000020"}
                   // backgroundColor={"white"}
                   // showGradient

@@ -33,7 +33,7 @@ const Budgets = () => {
     <View style={{ paddingHorizontal: 10 }}>
       <View className="flex flex-row justify-between items-center mb-2">
         <TouchableOpacity onPress={() => router.push("/budgets")}>
-          <Text className="text-[16px] font-pregular">
+          <Text className="text-[16px] font-pregular ">
             {currentMonth} Budgets
           </Text>
         </TouchableOpacity>

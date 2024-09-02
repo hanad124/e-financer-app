@@ -1,19 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Button,
-  Animated,
   Image,
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, router } from "expo-router";
-import { useForm, Controller, set } from "react-hook-form";
-import { number, z } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
 import { RadioButton } from "react-native-paper";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +24,6 @@ import { createGoal } from "../../apicalls/goals";
 import { useGoalsStore } from "../../store/goals";
 import { useCategoriesStore } from "../../store/categories";
 
-// schema [name, amount, targetDate, icon]
 const schema = z.object({
   name: z
     .string()
@@ -47,33 +44,9 @@ const CreateGoal = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [seatchIcon, setSearchIcon] = useState("");
-  const [filteredIcons, setFilteredIcons] = useState([]);
+  const [searchIcon, setSearchIcon] = useState("");
 
   const icons = useCategoriesStore((state) => state.icons);
-
-  console.log("icons", icons);
-
-  //   track errors
-  useEffect(() => {
-    console.log("errors", errors);
-  }, [errors]);
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date) => {
-    setSelectedDate(date);
-    hideDatePicker();
-  };
-
-  const minimumDate = new Date();
-  minimumDate.setDate(minimumDate.getDate() + 1);
 
   const {
     control,
@@ -84,41 +57,49 @@ const CreateGoal = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data) => {
-    data.icon = selectedIcon;
-    console.log("data", data);
-    setLoading(true);
-    try {
-      const response = await createGoal(data);
-      console.log("category response", response?.data?.message);
-      // if (response?.data?.status === 200) {
-      Alert.alert(response?.data?.message);
-      setLoading(false);
-      reset();
-      useGoalsStore.getState().getGoals();
-      router.push("goals");
-      // }
-    } catch (error) {
-      console.log(error);
-      Alert.alert(response?.data?.message);
-    }
-  };
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
 
-  // search icons
-  const searchIcon = (text) => {
-    setSearchIcon(text);
-    const filteredIcons = icons.filter((icon) =>
-      icon?.name.toLowerCase().includes(text.toLowerCase())
+  const handleConfirm = useCallback((date) => {
+    setSelectedDate(date);
+    hideDatePicker();
+  }, []);
+
+  const minimumDate = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 1);
+    return date;
+  }, []);
+
+  const onSubmit = useCallback(
+    async (data) => {
+      data.icon = selectedIcon;
+      setLoading(true);
+      try {
+        const response = await createGoal(data);
+        Alert.alert(response?.data?.message);
+        setLoading(false);
+        reset();
+        useGoalsStore.getState().getGoals();
+        router.push("goals");
+      } catch (error) {
+        console.log(error);
+        Alert.alert("An error occurred");
+      }
+    },
+    [selectedIcon, reset]
+  );
+
+  const filteredIcons = useMemo(() => {
+    return icons.filter((icon) =>
+      icon?.name.toLowerCase().includes(searchIcon.toLowerCase())
     );
-    setFilteredIcons(filteredIcons);
-    console.log("filtered icons", filteredIcons);
-  };
+  }, [icons, searchIcon]);
 
   return (
     <SafeAreaView className="bg-white">
       <ScrollView className="h-screen">
         <View className="w-full  min-h-[90vh] px-4 mt-10  bg-white">
-          {/* header */}
           <View>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
@@ -129,7 +110,6 @@ const CreateGoal = () => {
               }}
             >
               <ChevronLeft className="text-black " size={18} />
-
               <Text
                 style={{
                   color: "black",
@@ -144,8 +124,6 @@ const CreateGoal = () => {
           </View>
           <Text className="text-black text-lg mt-5">What is your goal?</Text>
 
-          {/* ===== form ====== */}
-          {/* name */}
           <View className="mt-5">
             <Text className="text-black">Name</Text>
             <Controller
@@ -166,7 +144,7 @@ const CreateGoal = () => {
               <Text style={{ color: "red" }}>{errors.name.message}</Text>
             )}
           </View>
-          {/* amount */}
+
           <View className="mt-4">
             <Text className="text-sm font-pregular text-gray-800">Amount</Text>
             <Controller
@@ -180,12 +158,10 @@ const CreateGoal = () => {
                   className="border-[1px] border-slate-400  rounded-lg shadow py-[6px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
                   onBlur={onBlur}
                   onChangeText={(text) => {
-                    // check if the value is a number
-                    // change the value to a number
                     const numberValue = parseFloat(text);
                     onChange(numberValue);
                   }}
-                  value={value}
+                  value={value?.toString()}
                   placeholder="Amount"
                 />
               )}
@@ -196,7 +172,7 @@ const CreateGoal = () => {
               <Text className="text-red-500">{errors.amount.message}</Text>
             )}
           </View>
-          {/* target date */}
+
           <View className="mt-5">
             <Text className="text-black ">Target Date</Text>
             <Controller
@@ -228,44 +204,11 @@ const CreateGoal = () => {
               )}
               rules={{ required: "Target date is required" }}
             />
-            {/* <Controller
-              control={control}
-              name="targetDate"
-              render={({ field: { onChange, value } }) => (
-                <>
-                  <TouchableOpacity
-                    onPress={showDatePicker}
-                    // style={styles.dateButton}
-                    className="border-[1px] border-slate-400 px-2 rounded-lg shadow py-[10px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-                  >
-                    <Text>
-                      {selectedDate
-                        ? selectedDate.toDateString()
-                        : "Select Date"}
-                    </Text>
-                  </TouchableOpacity>
-                  <DateTimePickerModal
-                    isVisible={isDatePickerVisible}
-                    mode="date"
-                    onConfirm={(date) => {
-                      onChange(date);
-                      handleConfirm(date);
-                    }}
-                    onCancel={hideDatePicker}
-                  />
-                </>
-              )}
-              rules={{ required: "Target date is required" }}
-            /> */}
-
             {errors.targetDate && (
               <Text style={{ color: "red" }}>{errors.targetDate.message}</Text>
             )}
           </View>
 
-          {/* 
-          search icons
-           */}
           <View className="mt-5">
             <Text className="text-black">Search Icon</Text>
             <TextInput
@@ -273,110 +216,64 @@ const CreateGoal = () => {
                 padding: 10,
               }}
               className="border-[1px] border-slate-400  rounded-lg shadow py-[6px] w-full mt-2 focus:border-[2px] focus:border-primary focus:ring-4 focus:ring-primary"
-              onChangeText={(text) => searchIcon(text)}
-              value={seatchIcon}
+              onChangeText={setSearchIcon}
+              value={searchIcon}
               placeholder="Search Icon"
             />
           </View>
 
-          {/* 
-          icons section
-           */}
           <View className="mt-5">
             <Text className="text-black">Select Icon</Text>
             <View className="flex flex-wrap mt-2">
               <RadioButton.Group
-                onValueChange={(value) => setSelectedIcon(value)}
+                onValueChange={setSelectedIcon}
                 value={selectedIcon}
               >
                 <View className="flex flex-row flex-wrap w-full space-x-2 min-w-full">
-                  {filteredIcons.length > 0
-                    ? filteredIcons?.map((icon) => (
-                        <TouchableOpacity
-                          key={icon?.id}
-                          onPress={() => setSelectedIcon(icon?.icon)}
-                          className=""
+                  {(filteredIcons.length > 0 ? filteredIcons : icons).map(
+                    (icon) => (
+                      <TouchableOpacity
+                        key={icon?.id}
+                        onPress={() => setSelectedIcon(icon?.icon)}
+                        className=""
+                      >
+                        <View
+                          style={[
+                            {
+                              borderRadius: 8,
+                              padding: 8,
+                              margin: 4,
+                            },
+                          ]}
+                          className={`flex flex-col items-center p-4 rounded-lg ${
+                            selectedIcon === icon?.icon
+                              ? "bg-primary"
+                              : "bg-primary/5"
+                          }`}
                         >
-                          <View
-                            style={[
-                              {
-                                borderRadius: 8,
-                                padding: 8,
-                                margin: 4,
-                              },
-                            ]}
-                            className={`flex flex-col items-center p-4 rounded-lg ${
-                              selectedIcon === icon?.icon
-                                ? "bg-primary"
-                                : "bg-primary/5"
-                            }`}
-                          >
-                            <Image
-                              source={{ uri: icon?.icon }}
-                              style={{
-                                width: 35,
-                                height: 35,
-                              }}
-                              tintColor={
-                                selectedIcon === icon?.icon
-                                  ? "white"
-                                  : "#6957E7"
-                              }
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      ))
-                    : icons?.map((icon) => (
-                        <TouchableOpacity
-                          key={icon?.id}
-                          onPress={() => setSelectedIcon(icon?.icon)}
-                          className=""
-                        >
-                          <View
-                            style={[
-                              {
-                                borderRadius: 8,
-                                padding: 8,
-                                margin: 4,
-                              },
-                            ]}
-                            className={`flex flex-col items-center p-4 rounded-lg ${
-                              selectedIcon === icon?.icon
-                                ? "bg-primary"
-                                : "bg-primary/5"
-                            }`}
-                          >
-                            <Image
-                              source={{ uri: icon?.icon }}
-                              style={{
-                                width: 35,
-                                height: 35,
-                              }}
-                              tintColor={
-                                selectedIcon === icon?.icon
-                                  ? "white"
-                                  : "#6957E7"
-                              }
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      ))}
+                          <Image
+                            source={{ uri: icon?.icon }}
+                            style={{
+                              width: 35,
+                              height: 35,
+                            }}
+                            tintColor={
+                              selectedIcon === icon?.icon ? "white" : "#6957E7"
+                            }
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  )}
                 </View>
               </RadioButton.Group>
             </View>
           </View>
 
-          {/* submit button */}
           <View className="my-5" style={{ marginBottom: ".5rem" }}>
             <CustomButton
               text="Create Goal"
-              handlePress={() => {
-                handleSubmit(onSubmit)();
-
-                if (errors.targetDate) {
-                  Alert.alert("Target Date is required");
-                }
-              }}
+              handlePress={handleSubmit(onSubmit)}
               isLoading={loading}
               containerStyles="mb-10"
               loadinState={"Creating Goal"}

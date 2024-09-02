@@ -60,73 +60,55 @@ const RecentTransactions = () => {
         {/* </Link> */}
       </View>
       <View className="flex flex-col justify-center items-center w-full  ">
-        {isLoading
-          ? // Loading skeleton
-            Array.from({ length: 5 }).map((_, index) => (
-              <MotiView
-                key={index}
-                from={{ opacity: 0.5 }}
-                animate={{ opacity: 1 }}
-                transition={{ type: "timing", duration: 1000, loop: true }}
-                className="w-full py-2 mt-3 rounded-lg"
-              >
-                <Skeleton
-                  colorMode="light"
-                  width={SCREEN_WIDTH * 0.9}
-                  height={60}
-                  radius={8}
-                />
-              </MotiView>
-            ))
-          : transactions?.transactions?.slice(-11).map((transaction) => (
-              <View key={transaction?.id}>
-                <View
-                  className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
-                  key={transaction?.id}
-                >
-                  <TouchableOpacity
-                    onPress={() => {
-                      router.push(
-                        `/transactions/single-transction/${transaction?.id}`
-                      );
+        {transactions?.transactions?.slice(-11).map((transaction) => (
+          <View key={transaction?.id}>
+            <View
+              className="flex flex-row justify-between px-2 items-center w-full py-2 bg-primary/5 mt-3 rounded-lg"
+              key={transaction?.id}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  router.push(
+                    `/transactions/single-transction/${transaction?.id}`
+                  );
 
-                      useTransactionsStore.setState({
-                        transactionDetails: transaction,
-                      });
-                    }}
-                    className=" flex-1"
-                  >
-                    <View className="flex flex-row gap-2 items-center">
-                      <View className="bg-primary/10 p-2 rounded-lg">
-                        <Image
-                          source={{ uri: transaction.category?.icon }}
-                          style={{ width: 30, height: 30 }}
-                        />
-                      </View>
-                      <View className="flex flex-col gap-1">
-                        <Text className="text-sm font-pmedium">
-                          {transaction?.title}
-                        </Text>
-                        <Text className="text-[#348F9F] text-sm">
-                          {transaction.description}
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                  <Text
-                    className={` font-pmedium
+                  useTransactionsStore.setState({
+                    transactionDetails: transaction,
+                  });
+                }}
+                className=" flex-1"
+              >
+                <View className="flex flex-row gap-2 items-center">
+                  <View className="bg-primary/10 p-2 rounded-lg">
+                    <Image
+                      source={{ uri: transaction.category?.icon }}
+                      style={{ width: 30, height: 30 }}
+                    />
+                  </View>
+                  <View className="flex flex-col gap-1">
+                    <Text className="text-sm font-pmedium">
+                      {transaction?.title}
+                    </Text>
+                    <Text className="text-[#348F9F] text-sm">
+                      {transaction.description}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <Text
+                className={` font-pmedium
                      ${
                        transaction.type === "INCOME"
                          ? "text-green-500"
                          : "text-red-500"
                      }`}
-                  >
-                    {transaction.type === "INCOME" ? "$" : "- $"}
-                    {transaction.amount}
-                  </Text>
-                </View>
-              </View>
-            ))}
+              >
+                {transaction.type === "INCOME" ? "$" : "- $"}
+                {transaction.amount}
+              </Text>
+            </View>
+          </View>
+        ))}
       </View>
     </GestureHandlerRootView>
   );

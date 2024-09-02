@@ -319,7 +319,7 @@ const CreateBudget = () => {
               }}
               isLoading={loading}
               containerStyles="mb-10"
-              loadinState={"Creating Goal"}
+              loadinState={"Creating Budget"}
             />
           </View>
 
